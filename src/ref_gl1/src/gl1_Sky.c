@@ -1,0 +1,853 @@
+//
+// gl1_Sky.c
+//
+// Copyright 1998 Raven Software
+//
+
+#include "gl1_Sky.h"
+#include "gl1_Image.h"
+#include "Vector.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+#define MAX_CLIP_VERTS	64
+#define ON_EPSILON		0.1f // Point on plane side epsilon.
+
+#define SKY_CLOUD_GRID		8
+#define SKY_CLOUD_ALPHA		0.35f
+#define SKY_CLOUD_SPEED		0.02f
+#define SKY_STAR_COUNT		400
+
+#define SWAMP_LEAF_COUNT	60
+#define SWAMP_DUST_COUNT	80
+#define SWAMP_LEAF_SIZE		2.5f
+#define SWAMP_LEAF_FALL_SPEED	15.0f
+#define SWAMP_LEAF_DRIFT		25.0f
+#define SWAMP_DUST_SIZE		0.8f
+#define SWAMP_DUST_SPEED	8.0f
+
+typedef struct
+{
+	vec3_t pos;
+	vec3_t velocity;
+	float rotation;
+	float rot_speed;
+	float lifetime;
+	float alpha;
+} swamp_leaf_t;
+
+typedef struct
+{
+	vec3_t pos;
+	vec3_t velocity;
+	float lifetime;
+	float alpha;
+	float phase;
+} swamp_dust_t;
+
+static float skyrotate;
+static vec3_t skyaxis;
+static image_t* sky_images[6];
+
+static swamp_leaf_t swamp_leaves[SWAMP_LEAF_COUNT];
+static swamp_dust_t swamp_dust[SWAMP_DUST_COUNT];
+static qboolean swamp_particles_initialized = false;
+
+static float skymins[2][6];
+static float skymaxs[2][6];
+static float sky_min;
+static float sky_max;
+
+static float R_GetSkyClipDist(void)
+{
+	if ((int)r_fog->value)
+		return r_farclipdist->value;
+
+	return r_farclipdist->value * 0.5773503f;
+}
+
+static void R_SkyVec(float s, float t, const int axis, vec3_t out_pos, float* out_s, float* out_t)
+{
+	// 1 = s, 2 = t, 3 = 2048
+	static const int st_to_vec[6][3] =
+	{
+		{  3, -1,  2 },
+		{ -3,  1,  2 },
+
+		{  1,  3,  2 },
+		{ -1, -3,  2 },
+
+		{ -2, -1,  3 },	// 0 degrees yaw, look straight up.
+		{  2, -1, -3 }	// Look straight down.
+	};
+
+	const float clipdist = R_GetSkyClipDist();
+
+	vec3_t b;
+	VectorSet(b, s * clipdist, t * clipdist, clipdist);
+
+	for (int i = 0; i < 3; i++)
+	{
+		const int k = st_to_vec[axis][i];
+		if (k < 0)
+			out_pos[i] = -b[-k - 1];
+		else
+			out_pos[i] = b[k - 1];
+	}
+
+	// Avoid bilerp seam.
+	s = (s + 1.0f) * 0.5f;
+	t = (t + 1.0f) * 0.5f;
+
+	s = Clamp(s, sky_min, sky_max);
+	t = Clamp(t, sky_min, sky_max);
+
+	*out_s = s;
+	*out_t = 1.0f - t;
+}
+
+static float R_SkyNoise(const vec3_t dir, const float time, const float scale)
+{
+	const float n0 = sinf(dir[0] * (2.3f * scale) + time * (0.9f * scale));
+	const float n1 = sinf(dir[1] * (3.1f * scale) - time * (0.7f * scale));
+	const float n2 = sinf(dir[2] * (2.7f * scale) + time * (0.6f * scale));
+	return (n0 + n1 + n2) * (1.0f / 3.0f);
+}
+
+static float R_SkyCloudAlpha(const vec3_t dir, const float time)
+{
+	const float n0 = R_SkyNoise(dir, time, 0.6f);
+	const float n1 = R_SkyNoise(dir, time * 1.7f, 1.3f);
+	float n = (n0 * 0.6f + n1 * 0.4f) * 0.5f + 0.5f;
+
+	float alpha = Clamp((n - 0.55f) / 0.3f, 0.0f, 1.0f);
+	alpha *= alpha;
+	return alpha * SKY_CLOUD_ALPHA;
+}
+
+static float R_SkyRand01(uint* seed)
+{
+	*seed = (*seed * 1664525u) + 1013904223u;
+	return (float)((*seed >> 8) & 0x00FFFFFF) * (1.0f / 16777216.0f);
+}
+
+static void R_DrawSkyClouds(void)
+{
+	const float time = r_newrefdef.time * SKY_CLOUD_SPEED;
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
+
+	for (int i = 0; i < 6; i++)
+	{
+		if (skymins[0][i] >= skymaxs[0][i] || skymins[1][i] >= skymaxs[1][i])
+			continue;
+
+		for (int y = 0; y < SKY_CLOUD_GRID; y++)
+		{
+			const float t0 = skymins[1][i] + (skymaxs[1][i] - skymins[1][i]) * ((float)y / (float)SKY_CLOUD_GRID);
+			const float t1 = skymins[1][i] + (skymaxs[1][i] - skymins[1][i]) * ((float)(y + 1) / (float)SKY_CLOUD_GRID);
+
+			glBegin(GL_TRIANGLE_STRIP);
+			for (int x = 0; x <= SKY_CLOUD_GRID; x++)
+			{
+				const float s = skymins[0][i] + (skymaxs[0][i] - skymins[0][i]) * ((float)x / (float)SKY_CLOUD_GRID);
+
+				vec3_t pos0;
+				float s0, tt0;
+				R_SkyVec(s, t0, i, pos0, &s0, &tt0);
+				vec3_t dir0;
+				VectorNormalize2(pos0, dir0);
+				const float a0 = R_SkyCloudAlpha(dir0, time);
+				glColor4f(1.0f, 1.0f, 1.0f, a0);
+				glVertex3fv(pos0);
+
+				vec3_t pos1;
+				float s1, tt1;
+				R_SkyVec(s, t1, i, pos1, &s1, &tt1);
+				vec3_t dir1;
+				VectorNormalize2(pos1, dir1);
+				const float a1 = R_SkyCloudAlpha(dir1, time);
+				glColor4f(1.0f, 1.0f, 1.0f, a1);
+				glVertex3fv(pos1);
+			}
+			glEnd();
+		}
+	}
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+}
+
+static qboolean R_IsSilverpringMap(void)
+{
+	if (r_worldmodel == NULL || r_worldmodel->name[0] == '\0')
+		return false;
+
+	// Check if the map name contains any of the Silverpring level identifiers.
+	// Silverpring levels: ssdocks, sswarehouse, sstown, sspalace
+	return (strstr(r_worldmodel->name, "ssdocks") != NULL ||
+			strstr(r_worldmodel->name, "sswarehouse") != NULL ||
+			strstr(r_worldmodel->name, "sstown") != NULL ||
+			strstr(r_worldmodel->name, "sspalace") != NULL);
+}
+
+static qboolean R_IsDarkmireSwampMap(void)
+{
+	if (r_worldmodel == NULL || r_worldmodel->name[0] == '\0')
+		return false;
+
+	return (strstr(r_worldmodel->name, "dmireswamp") != NULL);
+}
+
+static void R_InitSwampLeaf(swamp_leaf_t* leaf, const float clipdist, uint* seed)
+{
+	const float angle = R_SkyRand01(seed) * 2.0f * (float)M_PI;
+	const float radius = R_SkyRand01(seed) * 800.0f; // Spread across level
+
+	// Position relative to player (in world space)
+	leaf->pos[0] = r_origin[0] + cosf(angle) * radius;
+	leaf->pos[1] = r_origin[1] + sinf(angle) * radius;
+	leaf->pos[2] = r_origin[2] + (R_SkyRand01(seed) - 0.2f) * 400.0f; // Height variation
+
+	leaf->velocity[0] = (R_SkyRand01(seed) - 0.5f) * SWAMP_LEAF_DRIFT;
+	leaf->velocity[1] = (R_SkyRand01(seed) - 0.5f) * SWAMP_LEAF_DRIFT;
+	leaf->velocity[2] = -SWAMP_LEAF_FALL_SPEED * (0.8f + R_SkyRand01(seed) * 0.4f);
+
+	leaf->rotation = R_SkyRand01(seed) * 360.0f;
+	leaf->rot_speed = (R_SkyRand01(seed) - 0.5f) * 90.0f;
+	leaf->lifetime = 0.0f;
+	leaf->alpha = 0.0f;
+}
+
+static void R_InitSwampDust(swamp_dust_t* dust, const float clipdist, uint* seed)
+{
+	const float angle = R_SkyRand01(seed) * 2.0f * (float)M_PI;
+	const float radius = R_SkyRand01(seed) * 600.0f; // Closer to player than leaves
+
+	// Position relative to player (in world space)
+	dust->pos[0] = r_origin[0] + cosf(angle) * radius;
+	dust->pos[1] = r_origin[1] + sinf(angle) * radius;
+	dust->pos[2] = r_origin[2] + (R_SkyRand01(seed) - 0.5f) * 300.0f; // Height variation
+
+	dust->velocity[0] = (R_SkyRand01(seed) - 0.5f) * SWAMP_DUST_SPEED;
+	dust->velocity[1] = (R_SkyRand01(seed) - 0.5f) * SWAMP_DUST_SPEED;
+	dust->velocity[2] = (R_SkyRand01(seed) - 0.5f) * SWAMP_DUST_SPEED * 0.5f;
+
+	dust->phase = R_SkyRand01(seed) * 2.0f * (float)M_PI;
+	dust->lifetime = 0.0f;
+	dust->alpha = 0.0f;
+}
+
+static void R_InitSwampParticles(void)
+{
+	const float clipdist = R_GetSkyClipDist();
+	uint seed = 0x5ca1ab1eu;
+
+	for (int i = 0; i < SWAMP_LEAF_COUNT; i++)
+		R_InitSwampLeaf(&swamp_leaves[i], clipdist, &seed);
+
+	for (int i = 0; i < SWAMP_DUST_COUNT; i++)
+		R_InitSwampDust(&swamp_dust[i], clipdist, &seed);
+
+	swamp_particles_initialized = true;
+}
+
+static void R_UpdateSwampLeaves(const float dt, uint* seed)
+{
+	const float clipdist = R_GetSkyClipDist();
+	const float time = r_newrefdef.time;
+
+	for (int i = 0; i < SWAMP_LEAF_COUNT; i++)
+	{
+		swamp_leaf_t* leaf = &swamp_leaves[i];
+
+		leaf->lifetime += dt;
+
+		// Fade in at start
+		if (leaf->lifetime < 1.0f)
+			leaf->alpha = leaf->lifetime;
+		else
+			leaf->alpha = 1.0f;
+
+		// Wind drift (sinusoidal)
+		const float wind_x = sinf(time * 0.5f + (float)i * 0.1f) * 5.0f;
+		const float wind_y = cosf(time * 0.3f + (float)i * 0.15f) * 5.0f;
+
+		// Update position
+		leaf->pos[0] += (leaf->velocity[0] + wind_x) * dt;
+		leaf->pos[1] += (leaf->velocity[1] + wind_y) * dt;
+		leaf->pos[2] += leaf->velocity[2] * dt;
+
+		// Update rotation
+		leaf->rotation += leaf->rot_speed * dt;
+
+		// Respawn if too far from player or fallen below
+		const float dx = leaf->pos[0] - r_origin[0];
+		const float dy = leaf->pos[1] - r_origin[1];
+		const float dz = leaf->pos[2] - r_origin[2];
+		const float dist_sq = dx * dx + dy * dy;
+
+		if (dist_sq > 1000.0f * 1000.0f || dz < -200.0f)
+			R_InitSwampLeaf(leaf, clipdist, seed);
+	}
+}
+
+static void R_UpdateSwampDust(const float dt, uint* seed)
+{
+	const float clipdist = R_GetSkyClipDist();
+	const float time = r_newrefdef.time;
+
+	for (int i = 0; i < SWAMP_DUST_COUNT; i++)
+	{
+		swamp_dust_t* dust = &swamp_dust[i];
+
+		dust->lifetime += dt;
+
+		// Fade in/out cycle
+		const float cycle = fmodf(dust->lifetime, 8.0f);
+		if (cycle < 2.0f)
+			dust->alpha = cycle * 0.5f;
+		else if (cycle > 6.0f)
+			dust->alpha = (8.0f - cycle) * 0.5f;
+		else
+			dust->alpha = 1.0f;
+
+		// Swirling motion
+		const float swirl_time = time + dust->phase;
+		const float swirl_x = sinf(swirl_time * 0.8f) * 3.0f;
+		const float swirl_y = cosf(swirl_time * 0.6f) * 3.0f;
+		const float swirl_z = sinf(swirl_time * 0.4f) * 2.0f;
+
+		// Update position
+		dust->pos[0] += (dust->velocity[0] + swirl_x) * dt;
+		dust->pos[1] += (dust->velocity[1] + swirl_y) * dt;
+		dust->pos[2] += (dust->velocity[2] + swirl_z) * dt;
+
+		// Respawn if too far from player
+		const float dx = dust->pos[0] - r_origin[0];
+		const float dy = dust->pos[1] - r_origin[1];
+		const float dz = dust->pos[2] - r_origin[2];
+		const float dist_sq = dx * dx + dy * dy;
+
+		if (dist_sq > 800.0f * 800.0f || fabsf(dz) > 400.0f)
+			R_InitSwampDust(dust, clipdist, seed);
+	}
+}
+
+static void R_DrawSkyStars(void)
+{
+	const float clipdist = R_GetSkyClipDist();
+	const float twinkle_time = r_newrefdef.time * 0.7f;
+	uint seed = 0x1a2b3c4du;
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	glDepthMask(GL_FALSE);
+	glPointSize(1.5f);
+
+	glBegin(GL_POINTS);
+	for (int i = 0; i < SKY_STAR_COUNT; i++)
+	{
+		const float u = R_SkyRand01(&seed);
+		const float v = R_SkyRand01(&seed);
+		const float w = R_SkyRand01(&seed);
+		const float phase = R_SkyRand01(&seed) * (2.0f * (float)M_PI);
+
+		const float theta = u * (2.0f * (float)M_PI);
+		const float z = 0.2f + 0.8f * v;
+		const float r = sqrtf(max(0.0f, 1.0f - z * z));
+
+		vec3_t dir = { r * cosf(theta), r * sinf(theta), z };
+		vec3_t pos;
+		VectorScale(dir, clipdist, pos);
+
+		const float base_intensity = 0.6f + 0.4f * w;
+		const float twinkle = 0.75f + 0.25f * sinf(twinkle_time + phase);
+		const float intensity = base_intensity * twinkle;
+		glColor4f(intensity, intensity, intensity, 1.0f);
+		glVertex3fv(pos);
+	}
+	glEnd();
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+}
+
+//mxd. Northern lights (aurora borealis) effect for night sky.
+#define AURORA_BAND_COUNT		4
+#define AURORA_SEGMENTS			24	// Horizontal segments per band.
+
+static void R_DrawSkyAurora(void)
+{
+	const float clipdist = R_GetSkyClipDist();
+	const float time = r_newrefdef.time;
+
+	// Aurora colors: greens, teals, blues, purples.
+	static const vec3_t aurora_colors[AURORA_BAND_COUNT] =
+	{
+		{ 0.3f, 1.0f, 0.4f },	// Bright green.
+		{ 0.2f, 0.9f, 0.6f },	// Teal.
+		{ 0.4f, 0.6f, 1.0f },	// Blue.
+		{ 0.7f, 0.4f, 0.9f }	// Purple.
+	};
+
+	// Band parameters: z_base (height 0-1), curtain_height, wave_amplitude, phase.
+	static const float aurora_params[AURORA_BAND_COUNT][4] =
+	{
+		{ 0.45f, 0.25f, 0.05f, 0.0f },
+		{ 0.52f, 0.20f, 0.04f, 1.0f },
+		{ 0.58f, 0.18f, 0.03f, 2.0f },
+		{ 0.65f, 0.15f, 0.02f, 3.0f }
+	};
+
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE); // Additive blending for glow effect.
+	glDepthMask(GL_FALSE);
+
+	for (int band = 0; band < AURORA_BAND_COUNT; band++)
+	{
+		const float z_base = aurora_params[band][0];
+		const float curtain_height = aurora_params[band][1];
+		const float wave_amp = aurora_params[band][2];
+		const float phase = aurora_params[band][3];
+
+		// Global pulse for this band.
+		const float pulse = 0.6f + 0.4f * sinf(time * 0.2f + phase);
+		const float base_alpha = 0.5f * pulse;
+
+		glBegin(GL_QUAD_STRIP);
+		for (int seg = 0; seg <= AURORA_SEGMENTS; seg++)
+		{
+			// Full 360 degree sweep.
+			const float t = (float)seg / (float)AURORA_SEGMENTS;
+			const float theta = t * 2.0f * (float)M_PI;
+
+			// Wavy vertical offset.
+			const float wave = sinf(t * 4.0f * (float)M_PI + time * 0.5f + phase) * wave_amp;
+
+			// Z heights for top and bottom of curtain (same coordinate system as stars).
+			const float z_top = min(z_base + curtain_height + wave, 0.99f);
+			const float z_bot = z_base + wave;
+
+			// Calculate horizontal radius from z (unit sphere).
+			const float r_top = sqrtf(max(0.0f, 1.0f - z_top * z_top));
+			const float r_bot = sqrtf(max(0.0f, 1.0f - z_bot * z_bot));
+
+			// Fade alpha across the band (optional: vary by segment for shimmer).
+			const float shimmer = 0.7f + 0.3f * sinf(t * 8.0f * (float)M_PI + time * 2.0f);
+			const float alpha = base_alpha * shimmer;
+
+			// Top vertex (faded out).
+			vec3_t pos_top = {
+				r_top * cosf(theta) * clipdist,
+				r_top * sinf(theta) * clipdist,
+				z_top * clipdist
+			};
+			glColor4f(aurora_colors[band][0], aurora_colors[band][1], aurora_colors[band][2], alpha * 0.1f);
+			glVertex3fv(pos_top);
+
+			// Bottom vertex (brighter).
+			vec3_t pos_bot = {
+				r_bot * cosf(theta) * clipdist,
+				r_bot * sinf(theta) * clipdist,
+				z_bot * clipdist
+			};
+			glColor4f(aurora_colors[band][0], aurora_colors[band][1], aurora_colors[band][2], alpha);
+			glVertex3fv(pos_bot);
+		}
+		glEnd();
+	}
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+}
+
+static void R_DrawSwampLeaves(void)
+{
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
+
+	// Fog is already enabled by R_Clear() if needed, ensure it stays enabled for particles
+
+	// Brownish-green leaf color
+	const vec3_t leaf_color = { 0.4f, 0.3f, 0.15f };
+
+	for (int i = 0; i < SWAMP_LEAF_COUNT; i++)
+	{
+		const swamp_leaf_t* leaf = &swamp_leaves[i];
+
+		if (leaf->alpha < 0.01f)
+			continue;
+
+		const float size = SWAMP_LEAF_SIZE;
+		const float rot_rad = leaf->rotation * ((float)M_PI / 180.0f);
+		const float cos_r = cosf(rot_rad);
+		const float sin_r = sinf(rot_rad);
+
+		// Compute billboard corners with rotation
+		vec3_t right = { cos_r * size, sin_r * size, 0.0f };
+		vec3_t up = { -sin_r * size, cos_r * size, 0.0f };
+
+		glColor4f(leaf_color[0], leaf_color[1], leaf_color[2], leaf->alpha * 0.8f);
+		glBegin(GL_QUADS);
+		glVertex3f(leaf->pos[0] - right[0] - up[0], leaf->pos[1] - right[1] - up[1], leaf->pos[2] - right[2] - up[2]);
+		glVertex3f(leaf->pos[0] + right[0] - up[0], leaf->pos[1] + right[1] - up[1], leaf->pos[2] + right[2] - up[2]);
+		glVertex3f(leaf->pos[0] + right[0] + up[0], leaf->pos[1] + right[1] + up[1], leaf->pos[2] + right[2] + up[2]);
+		glVertex3f(leaf->pos[0] - right[0] + up[0], leaf->pos[1] - right[1] + up[1], leaf->pos[2] - right[2] + up[2]);
+		glEnd();
+	}
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+static void R_DrawSwampDust(void)
+{
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE);
+	glPointSize(SWAMP_DUST_SIZE);
+
+	// Fog is already enabled by R_Clear() if needed, ensure it stays enabled for particles
+
+	// Misty gray-green dust color
+	const vec3_t dust_color = { 0.6f, 0.65f, 0.55f };
+
+	glBegin(GL_POINTS);
+	for (int i = 0; i < SWAMP_DUST_COUNT; i++)
+	{
+		const swamp_dust_t* dust = &swamp_dust[i];
+
+		if (dust->alpha < 0.01f)
+			continue;
+
+		glColor4f(dust_color[0], dust_color[1], dust_color[2], dust->alpha * 0.3f);
+		glVertex3fv(dust->pos);
+	}
+	glEnd();
+
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+}
+
+// Q2 counterpart.
+static void R_DrawSkyPolygon(const int nump, vec3_t vecs)
+{
+	// s = [0]/[2], t = [1]/[2]
+	static const int vec_to_st[6][3] =
+	{
+		{ -2,  3,  1 },
+		{  2,  3, -1 },
+
+		{  1,  3,  2 },
+		{ -1,  3, -2 },
+
+		{ -2, -1,  3 },
+		{ -2,  1, -3 }
+	};
+
+	// Decide which face it maps to.
+	vec3_t v = VEC3_ZERO;
+
+	float* vp = vecs;
+	for (int i = 0; i < nump; i++, vp += 3)
+		Vec3AddAssign(vp, v);
+
+	vec3_t av;
+	VectorAbs(v, av);
+
+	int axis;
+	if (av[0] > av[1] && av[0] > av[2])
+		axis = (v[0] < 0 ? 1 : 0);
+	else if (av[1] > av[2] && av[1] > av[0])
+		axis = (v[1] < 0 ? 3 : 2);
+	else
+		axis = (v[2] < 0 ? 5 : 4);
+
+	float dv;
+	float s;
+	float t;
+
+	// Project new texture coords.
+	for (int i = 0; i < nump; i++, vecs += 3)
+	{
+		int j = vec_to_st[axis][2];
+		if (j > 0)
+			dv = vecs[j - 1];
+		else
+			dv = -vecs[-j - 1];
+
+		if (dv < 0.001f)
+			continue; // Don't divide by zero.
+
+		j = vec_to_st[axis][0];
+		if (j < 0)
+			s = -vecs[-j - 1] / dv;
+		else
+			s = vecs[j - 1] / dv;
+
+		j = vec_to_st[axis][1];
+		if (j < 0)
+			t = -vecs[-j - 1] / dv;
+		else
+			t = vecs[j - 1] / dv;
+
+		skymins[0][axis] = min(s, skymins[0][axis]);
+		skymins[1][axis] = min(t, skymins[1][axis]);
+
+		skymaxs[0][axis] = max(s, skymaxs[0][axis]);
+		skymaxs[1][axis] = max(t, skymaxs[1][axis]);
+	}
+}
+
+// Q2 counterpart
+static void R_ClipSkyPolygon(const int nump, vec3_t vecs, const int stage)
+{
+	static const vec3_t skyclip[] =
+	{
+		{  1.0f,  1.0f, 0.0f },
+		{  1.0f, -1.0f, 0.0f },
+		{  0.0f, -1.0f, 1.0f },
+		{  0.0f,  1.0f, 1.0f },
+		{  1.0f,  0.0f, 1.0f },
+		{ -1.0f,  0.0f, 1.0f }
+	};
+
+	if (nump > MAX_CLIP_VERTS - 2)
+		ri.Sys_Error(ERR_DROP, "R_ClipSkyPolygon: MAX_CLIP_VERTS");
+
+	if (stage == 6)
+	{
+		// Fully clipped, so draw it.
+		R_DrawSkyPolygon(nump, vecs);
+		return;
+	}
+
+	qboolean front = false;
+	qboolean back = false;
+	const float* norm = skyclip[stage];
+	float dists[MAX_CLIP_VERTS];
+	int sides[MAX_CLIP_VERTS];
+
+	float* v = &vecs[0];
+	for (int i = 0; i < nump; i++, v += 3)
+	{
+		const float d = DotProduct(v, norm);
+
+		if (d > ON_EPSILON)
+		{
+			front = true;
+			sides[i] = SIDE_FRONT;
+		}
+		else if (d < -ON_EPSILON)
+		{
+			back = true;
+			sides[i] = SIDE_BACK;
+		}
+		else
+		{
+			sides[i] = SIDE_ON;
+		}
+
+		dists[i] = d;
+	}
+
+	if (!front || !back)
+	{
+		// Not clipped.
+		R_ClipSkyPolygon(nump, vecs, stage + 1);
+		return;
+	}
+
+	// Clip it.
+	sides[nump] = sides[0];
+	dists[nump] = dists[0];
+	VectorCopy(vecs, &vecs[nump * 3]);
+
+	vec3_t newv[2][MAX_CLIP_VERTS];
+	int newc[2] = { 0 };
+
+	v = &vecs[0];
+	for (int i = 0; i < nump; i++, v += 3)
+	{
+		switch (sides[i])
+		{
+			case SIDE_FRONT:
+				VectorCopy(v, newv[0][newc[0]]);
+				newc[0]++;
+				break;
+
+			case SIDE_BACK:
+				VectorCopy(v, newv[1][newc[1]]);
+				newc[1]++;
+				break;
+
+			case SIDE_ON:
+				VectorCopy(v, newv[0][newc[0]]);
+				newc[0]++;
+				VectorCopy(v, newv[1][newc[1]]);
+				newc[1]++;
+				break;
+		}
+
+		if (sides[i] == SIDE_ON || sides[i + 1] == SIDE_ON || sides[i + 1] == sides[i])
+			continue;
+
+		const float d = dists[i] / (dists[i] - dists[i + 1]);
+		for (int j = 0; j < 3; j++)
+		{
+			const float e = v[j] + d * (v[j + 3] - v[j]);
+			newv[0][newc[0]][j] = e;
+			newv[1][newc[1]][j] = e;
+		}
+
+		newc[0]++;
+		newc[1]++;
+	}
+
+	// Continue.
+	R_ClipSkyPolygon(newc[0], newv[0][0], stage + 1);
+	R_ClipSkyPolygon(newc[1], newv[1][0], stage + 1);
+}
+
+// Q2 counterpart
+void R_AddSkySurface(const msurface_t* fa)
+{
+	vec3_t verts[MAX_CLIP_VERTS];
+
+	// Calculate vertex values for sky box.
+	for (const glpoly_t* p = fa->polys; p != NULL; p = p->next)
+	{
+		for (int i = 0; i < p->numverts; i++)
+			VectorSubtract(p->verts[i], r_origin, verts[i]);
+
+		R_ClipSkyPolygon(p->numverts, verts[0], 0);
+	}
+}
+
+// Q2 counterpart
+void R_ClearSkyBox(void)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		skymins[0][i] = 9999.0f;
+		skymins[1][i] = 9999.0f;
+		skymaxs[0][i] = -9999.0f;
+		skymaxs[1][i] = -9999.0f;
+	}
+}
+
+static void R_MakeSkyVec(float s, float t, const int axis)
+{
+   vec3_t v;
+	float s_coord;
+	float t_coord;
+	R_SkyVec(s, t, axis, v, &s_coord, &t_coord);
+	glTexCoord2f(s_coord, t_coord);
+	glVertex3fv(v);
+}
+
+void R_DrawSkyBox(void)
+{
+	static const int skytexorder[] = { 0, 2, 1, 3, 4, 5 }; //mxd. Made local static.
+
+	// Disable depth writes and testing to ensure skybox is always drawn.
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
+
+	glPushMatrix();
+	glTranslatef(r_origin[0], r_origin[1], r_origin[2]);
+	glRotatef(r_newrefdef.time * skyrotate, skyaxis[0], skyaxis[1], skyaxis[2]);
+
+	for (int i = 0; i < 6; i++)
+	{
+		// Always force full sky to draw to avoid culling artifacts.
+		skymins[0][i] = -1.0f;
+		skymins[1][i] = -1.0f;
+		skymaxs[0][i] = 1.0f;
+		skymaxs[1][i] = 1.0f;
+
+		R_BindImage(sky_images[skytexorder[i]]); // Q2: GL_Bind()
+
+		glBegin(GL_QUADS);
+		R_MakeSkyVec(skymins[0][i], skymins[1][i], i);
+		R_MakeSkyVec(skymins[0][i], skymaxs[1][i], i);
+		R_MakeSkyVec(skymaxs[0][i], skymaxs[1][i], i);
+		R_MakeSkyVec(skymaxs[0][i], skymins[1][i], i);
+		glEnd();
+	}
+
+	if (R_IsSilverpringMap())
+	{
+		R_DrawSkyAurora();
+		R_DrawSkyStars();
+	}
+
+	glPopMatrix();
+
+	// Restore depth state.
+	glDepthMask(GL_TRUE);
+	glDepthFunc(GL_LEQUAL);
+
+	// Draw swamp particles for Darkmire Swamp level (in world space, not sky space)
+	if (R_IsDarkmireSwampMap())
+	{
+		static float last_time = 0.0f;
+		const float current_time = r_newrefdef.time;
+		const float dt = (last_time > 0.0f) ? (current_time - last_time) : 0.016f;
+		last_time = current_time;
+
+		if (!swamp_particles_initialized)
+			R_InitSwampParticles();
+
+		uint seed = 0x5ca1ab1eu;
+		R_UpdateSwampLeaves(dt, &seed);
+		R_UpdateSwampDust(dt, &seed);
+
+		R_DrawSwampLeaves();
+		R_DrawSwampDust();
+	}
+}
+
+void RI_SetSky(const char* name, const float rotate, const vec3_t axis)
+{
+	static const char* surf[] = { "rt", "bk", "lf", "ft", "up", "dn" }; // 3dstudio environment map names. //mxd. Made local static.
+
+	skyrotate = rotate;
+	VectorCopy(axis, skyaxis);
+
+	for (int i = 0; i < 6; i++)
+	{
+		// H2: missing gl_skymip and qglColorTableEXT logic, 'env/%s%s.pcx' / 'env/%s%s.tga' -> 'pics/skies/%s%s.m8'
+		sky_images[i] = R_FindImage(va("pics/skies/%s%s.m8", name, surf[i]), it_sky);
+
+		if (skyrotate != 0.0f) // H2: gl_skymip -> gl_picmip //mxd. Removed gl_picmip cvar.
+		{
+			// Take less memory.
+			sky_min = 1.0f / 256.0f;
+			sky_max = 255.0f / 256.0f;
+		}
+		else
+		{
+			sky_min = 1.0f / 512.0f;
+			sky_max = 511.0f / 512.0f;
+		}
+	}
+}

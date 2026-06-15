@@ -1,0 +1,53 @@
+ January, 29, 1999
+================================================================
+
+Title                   : I never thought of one
+Filename                : blupipe.bsp
+Author                  : Mark Smith
+Email Address           : god@lava.net
+			  Please mail me about this level - I love feedback :)
+Homepage		: N/A (as of now :))
+Description             : Heretic II SP map.
+
+			  This was my first real map other then the 2 room H2ed thing
+Additional Credits to   : Raven Software for Heretic II.
+			  Jon Zuk for help and advice, and all those who helped at the H2 message board.
+			
+=========================
+			  
+
+=========================
+
+* Play Information *
+
+Single Player           : yes 
+Cooperative             : No
+Deathmatch              : no
+Difficulty Settings     : im not sure
+New Sounds              : No
+New Graphics            : No
+New Music               : No
+
+
+* Construction *
+
+Base                    : New level from scratch.
+Editor used             : HereticEd
+Known bugs              : -
+Build time              : about a week on and off
+Texture Sets used       : mines, sliverspring, gen, palace
+Compile machine         : P 180, 48RAM
+
+
+* How to play this BSP *
+    1. Put blupipe in 'base\maps' directory under your Heretic II directory
+       (no quotes, create one if it doesn't exist.)
+    2. Start Heretic II and enter 'map bluepipe' (no quotes) at the console.
+
+
+
+
+THIS LEVEL MAY NOT BE DISTRIBUTED FOR COMMERCIAL PURPOSES. 
+
+
+Please send any commplants, praise, ect. to god@lava.net

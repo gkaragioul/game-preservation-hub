@@ -1,0 +1,167 @@
+//
+// InfoStrings.c
+//
+// Copyright 1998 Raven Software
+//
+
+#include "Console.h"
+#include "q_shared.h"
+
+// Q2 counterpart. Searches the string for the given key and returns the associated value, or an empty string.
+H2COMMON_API char* Info_ValueForKey(const char* s, const char* key)
+{
+	static char value[2][512]; // Use two buffers so compares work without stomping on each other.
+	static int valueindex;
+	char pkey[512];
+
+	valueindex ^= 1;
+
+	if (*s == '\\')
+		s++;
+
+	while (true)
+	{
+		char* o = &pkey[0];
+
+		while (*s != '\\')
+		{
+			if (*s == 0)
+				return "";
+
+			*o++ = *s++;
+		}
+
+		*o = 0;
+		s++;
+
+		o = value[valueindex];
+
+		while (*s != '\\' && *s != 0)
+			*o++ = *s++;
+
+		*o = 0;
+
+		if (strcmp(key, pkey) == 0)
+			return value[valueindex];
+
+		if (*s == 0)
+			return "";
+
+		s++;
+	}
+}
+
+// Q2 counterpart
+H2COMMON_API void Info_RemoveKey(char* s, const char* key)
+{
+	char pkey[512];
+	char value[512];
+
+	if (strchr(key, '\\') != NULL) //mxd. strstr() -> strchr().
+		return;
+
+	while (true)
+	{
+		char* start = s;
+
+		if (*s == '\\')
+			s++;
+
+		char* o = &pkey[0];
+
+		while (*s != '\\')
+		{
+			if (*s == 0)
+				return;
+
+			*o++ = *s++;
+		}
+
+		*o = 0;
+		s++;
+
+		o = &value[0];
+
+		while (*s != '\\' && *s != 0)
+			*o++ = *s++;
+
+		*o = 0;
+
+		if (strcmp(key, pkey) == 0)
+		{
+			memmove(start, s, strlen(s) + 1); // Remove this part //mxd. strcpy -> memmove.
+			return;
+		}
+
+		if (*s == 0)
+			return;
+	}
+}
+
+// Q2 counterpart. H2: Com_Printf replaced with com_printf reference.
+H2COMMON_API void Info_SetValueForKey(char* s, const char* key, const char* value)
+{
+	if (key == NULL)
+		return;
+
+	if (strchr(key, '\\') != NULL || (value != NULL && strchr(value, '\\') != NULL)) //mxd. strstr() -> strchr().
+	{
+		(*com_printf)("Can't use keys or values with a \\\n");
+		return;
+	}
+
+	if (strchr(key, ';') != NULL) //mxd. strstr() -> strchr().
+	{
+		(*com_printf)("Can't use keys with a semicolon\n");
+		return;
+	}
+
+	if (strchr(key, '\"') != NULL || (value != NULL && strchr(value, '\"') != NULL)) //mxd. strstr() -> strchr().
+	{
+		(*com_printf)("Can't use keys or values with a \"\n");
+		return;
+	}
+
+	if (strlen(key) > MAX_INFO_KEY - 1 || (value != NULL && strlen(value) > MAX_INFO_VALUE - 1))
+	{
+		(*com_printf)("Keys and values must be < 64 characters.\n");
+		return;
+	}
+
+	Info_RemoveKey(s, key);
+
+	if (value == NULL || value[0] == 0) //mxd. strlen(str) -> str[0] check.
+		return;
+
+	char newi[MAX_INFO_STRING];
+	Com_sprintf(newi, sizeof(newi), "\\%s\\%s", key, value);
+
+	if (strlen(newi) + strlen(s) >= MAX_INFO_STRING)
+	{
+		(*com_printf)("Info string length exceeded\n");
+		return;
+	}
+
+	// Only copy ascii values.
+	s += strlen(s);
+	const char* v = &newi[0];
+
+	while (*v != 0)
+	{
+		const char c = *v++; //mxd. int c -> char c.
+		if (c >= ' ')
+			*s++ = c;
+	}
+
+	*s = 0;
+}
+
+// Q2 counterpart
+// Some characters are illegal in info strings because they can mess up the server's parsing.
+H2COMMON_API qboolean Info_Validate(const char* s)
+{
+	if (strchr(s, '\"') != NULL || strchr(s, ';') != NULL) //mxd. strstr() -> strchr().
+		return false;
+
+	return true;
+}

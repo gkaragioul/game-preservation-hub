@@ -1,0 +1,21 @@
+********************************************************************************************
+Name of Map -			cauthor
+Full Name -			Cauthor S'Gath
+Created By -			Dann Pigdon (2003)
+
+Single player -			As the 4th level of the Shadow Slayer add-on
+Coop -                          (As above)
+Deathmatch -			Five spawn points
+Special Features -		Uses a separate armour model
+				(/lanius/models/objects/armour/)
+
+Description -			This is the only map included with the Shadow Slayer
+				add-on that also functions as a deathmatch map.
+				After defeating Shadow Slayer, invite some 'friends'
+				to explore the abandoned city - and then kill them!
+				Weapons include the hellstaff, solar flare, firewall,
+                                the mana bow & the phoenix bow (look underground). 
+				Defensive spells include lightning shield, doom cloud, 
+				morph ovum, and whirlwind. Shrines include mana (look
+				for the sparkles), blade and armour (as an armour model).
+********************************************************************************************

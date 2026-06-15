@@ -1,0 +1,36 @@
+/.DS_Store
+*.log
+*.obj
+*.pdb
+*.ipdb
+*.iobj
+*.ilk
+*.recipe
+*.tlog
+*.lastbuildstate
+*.FileListAbsolute.txt
+unsuccessfulbuild
+
+# Generated native builds and packaged app bundles.
+/build/**
+/release
+/*.app/**
+
+# Local archives and packaged deliverables.
+*.dmg
+*.zip
+*.7z
+*.tar
+*.tar.gz
+
+/lib/*.exp
+/lib/*.lib
+/src/.vs
+/src/**/[Dd]ebug*/
+/src/**/[Rr]elease*/
+/src/**/x64/
+/src/x64/
+/src/tools/build/
+/src/launcher/*.aps
+*.aps
+*.user

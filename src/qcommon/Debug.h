@@ -1,0 +1,55 @@
+//
+// Debug.h -- Development aids
+//
+// Copyright 2024 mxd
+//
+
+#pragma once
+
+#include "Heretic2.h"
+#include "q_Typedef.h"
+
+#ifdef _DEBUG
+	#define NOT_IMPLEMENTED		__debugbreak() // https://learn.microsoft.com/en-us/cpp/intrinsics/debugbreak
+#else
+	#define NOT_IMPLEMENTED
+#endif
+
+#define DEBUG_LABEL_SIZE	64 //mxd
+
+// Debug colors.
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_white;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_red;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_green;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_blue;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_yellow;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_orange;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_cyan;
+Q2DLL_DECLSPEC extern paletteRGBA_t dc_purple;
+
+#ifdef __cplusplus //mxd. Needed, so code in game/ds.cpp could build...
+extern "C"
+{
+#endif
+Q2DLL_DECLSPEC extern void DBG_IDEPrint(const char* fmt, ...);
+#ifdef __cplusplus
+}
+#endif
+
+Q2DLL_DECLSPEC extern void DBG_HudPrint(int slot, const char* label, const char* fmt, ...);
+
+Q2DLL_DECLSPEC extern void DBG_AddBox(const vec3_t center, float size, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddBbox(const vec3_t center, const vec3_t mins, const vec3_t maxs, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddEntityBbox(const edict_t* ent, paletteRGBA_t color);
+
+Q2DLL_DECLSPEC extern void DBG_AddLabel(const vec3_t origin, paletteRGBA_t color, float lifetime, const char* fmt, ...);
+Q2DLL_DECLSPEC extern void DBG_AddEntityLabel(const edict_t* ent, paletteRGBA_t color, const char* fmt, ...);
+
+Q2DLL_DECLSPEC extern void DBG_AddLine(const vec3_t start, const vec3_t end, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddArrow(const vec3_t start, const vec3_t end, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddDirection(const vec3_t start, const vec3_t direction, float size, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddAngles(const vec3_t start, const vec3_t angles_deg, float size, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddAnglesRad(const vec3_t start, const vec3_t angles_rad, float size, paletteRGBA_t color, float lifetime);
+Q2DLL_DECLSPEC extern void DBG_AddMarker(const vec3_t center, float size, paletteRGBA_t color, float lifetime);
+
+extern void DBG_DrawMessages(void);
