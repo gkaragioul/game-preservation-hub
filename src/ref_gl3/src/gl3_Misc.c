@@ -245,15 +245,49 @@ void R_HandleTransparency(const entity_t* e)
 		if (e->flags & RF_ALPHA_TEXTURE)
 		{
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			GL3_Set3DColor(
+				(float)e->color.r / 255.0f,
+				(float)e->color.g / 255.0f,
+				(float)e->color.b / 255.0f,
+				(float)e->color.a / 255.0f);
 		}
 		else
 		{
-			glBlendFunc(GL_ONE, GL_ONE);
+			if (e->flags & RF_TRANS_ADD_ALPHA)
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				GL3_Set3DColor(
+					(float)e->color.r / 255.0f,
+					(float)e->color.g / 255.0f,
+					(float)e->color.b / 255.0f,
+					(float)e->color.a / 255.0f);
+			}
+			else
+			{
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				GL3_Set3DColor((float)e->color.r / 255.0f, (float)e->color.g / 255.0f, (float)e->color.b / 255.0f, 1.0f);
+			}
 		}
 	}
 	else
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		if (!(e->flags & RF_TRANS_GHOST))
+		{
+			if (e->flags & RF_LM_COLOR)
+			{
+				const paletteRGBA_t c = R_ModulateRGBA(e->color, R_GetSpriteShadelight(e->origin, e->color.a));
+				GL3_Set3DColor((float)c.r / 255.0f, (float)c.g / 255.0f, (float)c.b / 255.0f, (float)e->color.a / 255.0f);
+			}
+			else
+			{
+				GL3_Set3DColor(
+					(float)e->color.r / 255.0f,
+					(float)e->color.g / 255.0f,
+					(float)e->color.b / 255.0f,
+					(float)e->color.a / 255.0f);
+			}
+		}
 	}
 
 	glEnable(GL_BLEND);
@@ -263,4 +297,5 @@ void R_CleanupTransparency(const entity_t* e)
 {
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GL3_Set3DColor(1.0f, 1.0f, 1.0f, 1.0f);
 }

@@ -34,32 +34,10 @@ static qboolean LightningShieldSparkAddToView(client_entity_t* self, centity_t* 
 
 	self->lastThinkTime = fx_time;
 
-	// Leave a trail sometimes.
-	if (self->SpawnDelay < fx_time)
-	{
-		int particle_type = PART_16x16_SPARK_B;
-		paletteRGBA_t color = { .c = color_white.c };
-
-		// If we are in software, make the blue bits single point particles half the time.
-		if (ref_soft && ++self->SpawnInfo & 1)
-		{
-			particle_type |= PFL_SOFT_MASK;
-			color.c = 0xffff0000;
-		}
-
-		client_particle_t* spark = ClientParticle_new(particle_type, color, 500);
-
-		VectorCopy(self->r.origin, spark->origin);
-		spark->scale = 6.0f;
-		spark->d_scale = -10.0f;
-		spark->acceleration[2] = 0.0f; // Don't fall due to gravity...
-
-		AddParticleToList(self, spark);
-
-		// Do it again in 1/10 sec.
-		self->SpawnDelay = fx_time + SHIELD_TRAIL_DELAY;
-	}
-
+	// The original shield drew orbiting spark_blue sprites plus 16x16 spark
+	// trails. In OpenGL those sprites are visible diamond/card billboards around
+	// the player while the defensive spell is being cooked. Keep the shield
+	// timing/effect entity alive, but do not draw that card layer.
 	return true;
 }
 
@@ -84,7 +62,7 @@ void FXLightningShield(centity_t* owner, const int type, const int flags, vec3_t
 		client_entity_t* spark = ClientEntity_new(type, flags & (~CEF_OWNERS_ORIGIN), origin, NULL, SHIELD_DURATION * 1000);
 
 		spark->radius = SHIELD_RADIUS;
-		spark->flags |= (CEF_ADDITIVE_PARTS | CEF_ABSOLUTE_PARTS);
+		spark->flags |= (CEF_ADDITIVE_PARTS | CEF_ABSOLUTE_PARTS | CEF_NO_DRAW);
 		spark->r.flags = (RF_TRANS_ADD | RF_TRANS_ADD_ALPHA);
 		spark->r.model = &shield_model;
 		spark->color = color_white;

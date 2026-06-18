@@ -642,7 +642,7 @@ void M_Init(void)
 	m_item_minlight = Cvar_Get("m_item_minlight", "Min. light level", 0); //mxd
 		m_item_detail = Cvar_Get("m_item_detail", "Detail Level", 0);
 		m_item_graphics_profile = Cvar_Get("m_item_graphics_profile", "Graphics Profile", 0);
-		m_item_custom_max_fps = Cvar_Get("m_item_custom_max_fps", "Custom Max FPS", 0);
+		m_item_custom_max_fps = Cvar_Get("m_item_custom_max_fps", "Custom FPS Cap", 0);
 		m_item_hd_mode = Cvar_Get("m_item_hd_mode", "HD Mode", 0);
 		m_item_antialiasing = Cvar_Get("m_item_antialiasing", "Anti-Aliasing", 0);
 

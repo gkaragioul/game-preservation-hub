@@ -42,12 +42,14 @@ static menuslider_t s_gamma_slider;
 static menuslider_t s_brightness_slider;
 static menuslider_t s_contrast_slider;
 
-static const char* ref_list_titles[MAX_REFLIBS];
+static const char* ref_list_titles[MAX_REFLIBS + 1];
 static int initial_reflib_index; // vid_ref index when entering menu.
 
-#define MAX_DISPLAYED_VIDMODES	64 //mxd. This is kinda ugly, since vid_modes array itself is dynamically allocated... 
-static const char* vid_mode_titles[MAX_DISPLAYED_VIDMODES];
+#define MAX_DISPLAYED_VIDMODES	64 //mxd. This is kinda ugly, since vid_modes array itself is dynamically allocated...
+static const char* vid_mode_titles[MAX_DISPLAYED_VIDMODES + 1];
 static int initial_vid_mode; // vid_mode when entering menu.
+
+#define FULL_POWER_TARGET_FPS	120.0f
 
 #pragma region ========================== MENU ITEM CALLBACKS ==========================
 
@@ -63,12 +65,13 @@ typedef struct graphics_profile_s
 	float shadows;
 	float reflections;
 	float detail;
+	float vsync;
 } graphics_profile_t;
 
 static const graphics_profile_t graphics_profiles[] =
 {
-	{ "Full Power", "Uses the Mac's full graphics power.", "Targets the monitor's highest smooth refresh.", 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 3.0f },
-	{ "Battery Saver", "Uses less power and keeps the Mac cooler.", "Caps at 72 FPS, or 60 FPS on 60 Hz screens.", 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f }
+	{ "Full Power", "Best for plugged-in Macs and fast displays.", "Aims for 120 FPS with richer effects.", 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f },
+	{ "Power Saver", "Best for MacBooks on battery or cooler play.", "Locks to 60 FPS and avoids costly extras.", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f }
 };
 
 static int NormalizeGraphicsProfileIndex(const int profile_index)
@@ -115,9 +118,9 @@ static float ResolveGraphicsProfileFPS(const int profile_index)
 		return min(custom_cap, display_cap);
 
 	if (NormalizeGraphicsProfileIndex(profile_index) == 1)
-		return min(72.0f, display_cap);
+		return min(60.0f, display_cap);
 
-	return display_cap;
+	return min(FULL_POWER_TARGET_FPS, display_cap);
 }
 
 static void ApplyGraphicsFrameCap(const int profile_index)
@@ -126,6 +129,7 @@ static void ApplyGraphicsFrameCap(const int profile_index)
 
 	Cvar_SetValue("vid_maxfps", frame_cap);
 	Cvar_SetValue("cl_maxfps", frame_cap);
+	Cvar_SetValue("scr_adaptive_fps", 0.0f);
 }
 
 static void ApplyGraphicsProfile(const int profile_index)
@@ -145,7 +149,7 @@ static void ApplyGraphicsProfile(const int profile_index)
 	Cvar_SetValue("r_shadows", profile->shadows);
 	Cvar_SetValue("r_reflections", profile->reflections);
 	Cvar_SetValue("r_detail", profile->detail);
-	Cvar_SetValue("r_vsync", 1.0f);
+	Cvar_SetValue("r_vsync", profile->vsync);
 }
 
 static void UpdateGraphicsProfileFunc(void* self)
@@ -193,7 +197,14 @@ static void ApplyChanges(const qboolean close_menu) //mxd. +close_menu arg.
 {
 	UpdateCustomMaxFPSFunc(&s_custom_maxfps_field);
 
-	if (initial_vid_mode != s_mode_list.curvalue)
+	if (initial_reflib_index != s_ref_list.curvalue && s_ref_list.curvalue >= 0 && s_ref_list.curvalue < num_reflib_infos)
+	{
+		Cvar_Set("vid_ref", reflib_infos[s_ref_list.curvalue].id);
+		initial_reflib_index = s_ref_list.curvalue;
+		vid_restart_required = true;
+	}
+
+	if (initial_vid_mode != s_mode_list.curvalue && s_mode_list.curvalue >= 0 && s_mode_list.curvalue < min(MAX_DISPLAYED_VIDMODES, num_vid_modes))
 	{
 		Cvar_SetValue("vid_mode", (float)s_mode_list.curvalue);
 		initial_vid_mode = s_mode_list.curvalue;
@@ -224,6 +235,9 @@ static void ApplyChanges(const qboolean close_menu) //mxd. +close_menu arg.
 
 void VID_PreMenuInit(void)
 {
+	initial_reflib_index = 0;
+	s_ref_list.curvalue = 0;
+
 	//mxd. Refresher library titles.
 	for (int i = 0; i < num_reflib_infos; i++)
 	{
@@ -239,10 +253,12 @@ void VID_PreMenuInit(void)
 	ref_list_titles[num_reflib_infos] = NULL;
 
 	//mxd. Window resolution labels.
-	for (int i = 0; i < min(MAX_DISPLAYED_VIDMODES, num_vid_modes); i++)
+	const int displayed_vid_modes = min(MAX_DISPLAYED_VIDMODES, num_vid_modes);
+
+	for (int i = 0; i < displayed_vid_modes; i++)
 		vid_mode_titles[i] = vid_modes[i].description;
 
-	vid_mode_titles[num_vid_modes] = NULL;
+	vid_mode_titles[displayed_vid_modes] = NULL;
 
 	if (vid_mode == NULL)
 	{
@@ -258,7 +274,7 @@ void VID_PreMenuInit(void)
 
 static void VID_MenuInit(void)
 {
-		static const char* graphics_profile_names[] = { "Full Power", "Battery Saver", NULL };
+		static const char* graphics_profile_names[] = { "Full Power", "Power Saver", NULL };
 
 		static char name_driver[MAX_QPATH];
 		static char name_vidmode[MAX_QPATH];
@@ -376,6 +392,7 @@ static void VID_MenuInit(void)
 
 			Menu_AddItem(&s_video_menu, &s_graphics_profile_list);
 			Menu_AddItem(&s_video_menu, &s_custom_maxfps_field);
+			Menu_AddItem(&s_video_menu, &s_ref_list);
 			Menu_AddItem(&s_video_menu, &s_mode_list);
 			Menu_AddItem(&s_video_menu, &s_gamma_slider);
 			Menu_AddItem(&s_video_menu, &s_brightness_slider);
@@ -393,7 +410,7 @@ static void VID_DrawProfileBenefit(void)
 	color.a = (byte)(alpha * 210.0f);
 
 	const int center_x = (M_GetMenuLabelX(0) * ui_screen_width / DEF_WIDTH) + ui_screen_offset_x;
-	const int y1 = (s_video_menu.y + 330) * viddef.height / DEF_HEIGHT;
+	const int y1 = (s_video_menu.y + 300) * viddef.height / DEF_HEIGHT;
 	const int y2 = y1 + ui_line_height;
 	const int y3 = y2 + ui_line_height;
 	const int x1 = center_x - ((int)strlen(profile->benefit1) * ui_char_size) / 2;
@@ -403,9 +420,9 @@ static void VID_DrawProfileBenefit(void)
 	DrawString(x2, y2, profile->benefit2, color, -1);
 
 	if (GetCustomMaxFPS() >= 30.0f)
-		Com_sprintf(cap_text, sizeof(cap_text), "Custom cap active: %.0f FPS", ResolveGraphicsProfileFPS(s_graphics_profile_list.curvalue));
+		Com_sprintf(cap_text, sizeof(cap_text), "Custom FPS overrides this mode: %.0f FPS cap", ResolveGraphicsProfileFPS(s_graphics_profile_list.curvalue));
 	else
-		Com_sprintf(cap_text, sizeof(cap_text), "Leave Custom Max FPS blank to use this profile: %.0f FPS", ResolveGraphicsProfileFPS(s_graphics_profile_list.curvalue));
+		Com_sprintf(cap_text, sizeof(cap_text), "Blank Custom FPS uses this mode: %.0f FPS cap", ResolveGraphicsProfileFPS(s_graphics_profile_list.curvalue));
 
 	const int x3 = center_x - ((int)strlen(cap_text) * ui_char_size) / 2;
 	DrawString(x3, y3, cap_text, color, -1);

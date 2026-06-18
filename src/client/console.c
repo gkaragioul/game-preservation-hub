@@ -9,6 +9,7 @@
 console_t con;
 
 static cvar_t* con_notifytime;
+static cvar_t* con_drawnotify;
 static cvar_t* con_alpha; // H2
 static cvar_t* nextserver; // H2
 
@@ -262,6 +263,7 @@ void Con_Init(void)
 
 	// Register our commands
 	con_notifytime = Cvar_Get("con_notifytime", "3", 0);
+	con_drawnotify = Cvar_Get("con_drawnotify", "0", CVAR_ARCHIVE);
 	con_alpha = Cvar_Get("con_alpha", "0.7", CVAR_ARCHIVE); // H2_1.07: "0.7" -> "0.5".
 	nextserver = Cvar_Get("nextserver", "", 0); // H2
 
@@ -385,18 +387,21 @@ void Con_DrawNotify(void)
 {
 	int y = 0;
 
-	for (int i = con.current - NUM_CON_TIMES + 1; i <= con.current; i++)
+	if ((int)developer->value && (int)con_drawnotify->value)
 	{
-		if (i < 0)
-			continue;
-
-		const int time = (int)con.times[i % NUM_CON_TIMES];
-
-		if (time > 0 && cls.realtime - time <= (int)(con_notifytime->value * 1000))
+		for (int i = con.current - NUM_CON_TIMES + 1; i <= con.current; i++)
 		{
-			const int line_index = (i % con.totallines);
-			DrawString(ui_char_size, y, &con.text[line_index * con.linewidth], con.color[line_index], con.linewidth);
-			y += ui_char_size;
+			if (i < 0)
+				continue;
+
+			const int time = (int)con.times[i % NUM_CON_TIMES];
+
+			if (time > 0 && cls.realtime - time <= (int)(con_notifytime->value * 1000))
+			{
+				const int line_index = (i % con.totallines);
+				DrawString(ui_char_size, y, &con.text[line_index * con.linewidth], con.color[line_index], con.linewidth);
+				y += ui_char_size;
+			}
 		}
 	}
 

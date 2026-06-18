@@ -309,6 +309,7 @@ typedef struct refimport_s
 
 	qboolean (*Vid_GetModeInfo)(int* width, int* height, int mode);
 	qboolean (*GLimp_InitGraphics)(int width, int height); // YQ2
+	qboolean (*GLimp_GetDrawableSize)(int* width, int* height);
 
 #ifdef _DEBUG
 	//mxd. Debug logic.

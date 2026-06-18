@@ -7,6 +7,7 @@
 #include "gl3_Image.h"
 #include "gl3_Draw.h"
 #include "gl3_Light.h"
+#include <ctype.h>
 #include <stb/stb_image.h>
 #include <io.h> // _findfirst, _findnext, _findclose
 
@@ -23,6 +24,8 @@ int gl_filter_max = GL_LINEAR;
 
 static paletteRGBA_t* upload_buffer = NULL;
 static uint upload_buffer_size = 0;
+
+static qboolean R_IsParticleAtlas(const image_t* image);
 
 typedef struct
 {
@@ -174,14 +177,32 @@ void R_TextureMode(const char* string)
 		{
 			R_BindImage(glt);
 
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			if (glt->type == it_sprite)
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			}
+			else
+			{
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			}
 		}
 	}
 }
 
 void R_SetFilter(const image_t* image)
 {
+	if (R_IsParticleAtlas(image))
+	{
+		// Particle atlases are sub-rect sampled. Keep them profile-proof:
+		// no mip filtering and no nearest fallback, or spell FX can expose
+		// atlas-cell cards when quality profiles change texture filtering.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		return;
+	}
+
 	switch (image->type)
 	{
 		case it_pic:
@@ -192,6 +213,14 @@ void R_SetFilter(const image_t* image)
 		case it_sky:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_max);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
+			break;
+
+		case it_sprite:
+			// Sprite FX are authored as black-background additive/cutout cards.
+			// Their baked mip levels average the bright center into the empty
+			// border, which makes spell rectangles visible when minified.
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			break;
 
 		default:
@@ -306,8 +335,172 @@ static qboolean R_IsAdditiveParticleAtlas(const image_t* image)
 	return image != NULL && Q_stricmp(image->name, "pics/misc/aparticle.m8") == 0;
 }
 
+static qboolean R_IsParticleAtlas(const image_t* image)
+{
+	if (image == NULL)
+		return false;
+	return Q_stricmp(image->name, "pics/misc/particle.m32") == 0
+		|| Q_stricmp(image->name, "pics/misc/aparticle.m8") == 0;
+}
+
+static qboolean R_ImageNameContains(const image_t* image, const char* needle)
+{
+	if (image == NULL || needle == NULL || needle[0] == '\0')
+		return false;
+
+	const char* name = image->name;
+	const int needle_len = (int)strlen(needle);
+
+	for (int i = 0; name[i] != '\0'; i++)
+	{
+		int j;
+		for (j = 0; j < needle_len; j++)
+		{
+			const char a = name[i + j];
+			const char b = needle[j];
+			if (a == '\0' || tolower((unsigned char)a) != tolower((unsigned char)b))
+				break;
+		}
+
+		if (j == needle_len)
+			return true;
+	}
+
+	return false;
+}
+
+static qboolean R_ShouldRadialMaskSprite(const image_t* image)
+{
+	if (image == NULL)
+		return false;
+
+	if (R_ImageNameContains(image, "sprites/lens/"))
+		return false;
+
+	if (R_ImageNameContains(image, "spark")
+		|| R_ImageNameContains(image, "halo")
+		|| R_ImageNameContains(image, "glow")
+		|| R_ImageNameContains(image, "ball")
+		|| R_ImageNameContains(image, "bluering")
+		|| R_ImageNameContains(image, "spellhands"))
+		return true;
+
+	return Q_stricmp(image->name, "Sprites/fx/core_b_0.m8") == 0
+		|| Q_stricmp(image->name, "Sprites/fx/spark_0.m8") == 0;
+}
+
+static float R_SpriteRadialMask(const int x, const int y, const int width, const int height)
+{
+	const float cx = ((float)width - 1.0f) * 0.5f;
+	const float cy = ((float)height - 1.0f) * 0.5f;
+	const float radius = min((float)width, (float)height) * 0.5f;
+	const float dx = ((float)x - cx) / radius;
+	const float dy = ((float)y - cy) / radius;
+	const float dist = sqrtf(dx * dx + dy * dy);
+
+	if (dist <= 0.55f)
+		return 1.0f;
+	if (dist >= 0.98f)
+		return 0.0f;
+
+	return (0.98f - dist) / (0.98f - 0.55f);
+}
+
+static void R_UploadSpriteAlpha(const int level, const byte* data, const image_t* image, const paletteRGB_t* palette, const int width, const int height)
+{
+	enum { SPRITE_ALPHA_CUTOFF = 24 };
+
+	const uint src_size = width * height;
+	const uint dst_size = src_size * sizeof(paletteRGBA_t);
+	const qboolean radial_mask = R_ShouldRadialMaskSprite(image);
+
+	if (dst_size > upload_buffer_size)
+	{
+		upload_buffer = realloc(upload_buffer, dst_size);
+
+		if (upload_buffer == NULL)
+			ri.Sys_Error(ERR_DROP, "R_UploadSpriteAlpha: failed to allocate upload buffer for %i x %i image!\n", width, height);
+
+		upload_buffer_size = dst_size;
+	}
+
+	for (uint i = 0; i < src_size; i++)
+	{
+		const paletteRGB_t* src_p = &palette[data[i]];
+		paletteRGBA_t* dst_p = &upload_buffer[i];
+		const int brightness = max(src_p->r, max(src_p->g, src_p->b));
+		float alpha = (float)ClampI((brightness - SPRITE_ALPHA_CUTOFF) * 255 / (255 - SPRITE_ALPHA_CUTOFF), 0, 255);
+
+		if (radial_mask)
+			alpha *= R_SpriteRadialMask((int)(i % (uint)width), (int)(i / (uint)width), width, height);
+
+		const int alpha_i = (int)alpha;
+
+		dst_p->r = (alpha_i > 0 ? src_p->r : 0);
+		dst_p->g = (alpha_i > 0 ? src_p->g : 0);
+		dst_p->b = (alpha_i > 0 ? src_p->b : 0);
+		dst_p->a = (byte)alpha_i;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, upload_buffer);
+}
+
+static float R_AdditiveParticleSparkFade(const int x, const int y, const int width, const int height)
+{
+	typedef struct particle_fade_cell_s
+	{
+		float s0;
+		float t0;
+		float s1;
+		float t1;
+		float inner_radius;
+	} particle_fade_cell_t;
+
+	static const particle_fade_cell_t fade_cells[] =
+	{
+		{ 0.50390625f, 0.00390625f, 0.74609375f, 0.24609375f, 0.62f }, // PART_32x32_FIRE0.
+		{ 0.75390625f, 0.00390625f, 0.99609375f, 0.24609375f, 0.62f }, // PART_32x32_FIRE1.
+		{ 0.50390625f, 0.25390625f, 0.74609375f, 0.49609375f, 0.62f }, // PART_32x32_FIRE2.
+		{ 0.75390625f, 0.25390625f, 0.87109375f, 0.37109375f, 0.35f }, // PART_16x16_SPARK_B.
+		{ 0.87890625f, 0.25390625f, 0.99609375f, 0.37109375f, 0.35f }, // PART_16x16_SPARK_R.
+		{ 0.75390625f, 0.37890625f, 0.87109375f, 0.49609375f, 0.35f }, // PART_16x16_SPARK_G.
+		{ 0.87890625f, 0.37890625f, 0.99609375f, 0.49609375f, 0.35f }, // PART_16x16_SPARK_Y.
+		{ 0.25390625f, 0.75390625f, 0.49609375f, 0.99609375f, 0.45f }, // PART_32x32_ALPHA_GLOBE.
+		{ 0.50390625f, 0.50390625f, 0.62109375f, 0.62109375f, 0.35f }, // PART_16x16_SPARK_I.
+		{ 0.75390625f, 0.75390625f, 0.87109375f, 0.87109375f, 0.55f }, // PART_16x16_FIRE1.
+		{ 0.87890625f, 0.75390625f, 0.99609375f, 0.87109375f, 0.55f }, // PART_16x16_FIRE2.
+		{ 0.75390625f, 0.87890625f, 0.87109375f, 0.99609375f, 0.55f }, // PART_16x16_FIRE3.
+	};
+
+	for (uint i = 0; i < sizeof(fade_cells) / sizeof(fade_cells[0]); i++)
+	{
+		const particle_fade_cell_t* cell = &fade_cells[i];
+		const float x0 = cell->s0 * (float)width;
+		const float y0 = cell->t0 * (float)height;
+		const float x1 = cell->s1 * (float)width;
+		const float y1 = cell->t1 * (float)height;
+
+		if ((float)x < x0 || (float)x >= x1 || (float)y < y0 || (float)y >= y1)
+			continue;
+
+		const float cx = (x0 + x1) * 0.5f;
+		const float cy = (y0 + y1) * 0.5f;
+		const float half_size = min(x1 - x0, y1 - y0) * 0.5f;
+		const float dx = ((float)x + 0.5f - cx) / half_size;
+		const float dy = ((float)y + 0.5f - cy) / half_size;
+		const float dist = sqrtf(dx * dx + dy * dy);
+		const float fade = (1.0f - dist) / (1.0f - cell->inner_radius);
+
+		return min(max(fade, 0.0f), 1.0f);
+	}
+
+	return 1.0f;
+}
+
 static void R_UploadAdditiveParticleAtlas(const int level, const byte* data, const paletteRGB_t* palette, const int width, const int height)
 {
+	enum { ADDITIVE_PARTICLE_ALPHA_CUTOFF = 64 };
+
 	const uint src_size = width * height;
 	const uint dst_size = src_size * sizeof(paletteRGBA_t);
 
@@ -325,13 +518,95 @@ static void R_UploadAdditiveParticleAtlas(const int level, const byte* data, con
 	{
 		const paletteRGB_t* src_p = &palette[data[i]];
 		paletteRGBA_t* dst_p = &upload_buffer[i];
-		const int alpha = max(src_p->r, max(src_p->g, src_p->b));
+		const int brightness = max(src_p->r, max(src_p->g, src_p->b));
+		const float spark_fade = R_AdditiveParticleSparkFade((int)(i % (uint)width), (int)(i / (uint)width), width, height);
+		const int alpha = (int)((float)ClampI((brightness - ADDITIVE_PARTICLE_ALPHA_CUTOFF) * 255 / (255 - ADDITIVE_PARTICLE_ALPHA_CUTOFF), 0, 255) * spark_fade);
+		const int premul_r = src_p->r * alpha / 255;
+		const int premul_g = src_p->g * alpha / 255;
+		const int premul_b = src_p->b * alpha / 255;
 
-		dst_p->r = src_p->r;
-		dst_p->g = src_p->g;
-		dst_p->b = src_p->b;
-		dst_p->a = (byte)ClampI((alpha - 8) * 255 / 247, 0, 255);
+		// Additive particles draw with GL_ONE, GL_ONE, so texture alpha is not
+		// part of the blend equation. Bake the soft alpha into RGB here or the
+		// low-alpha atlas edges still add as visible spell-cooking cards.
+		dst_p->r = (byte)premul_r;
+		dst_p->g = (byte)premul_g;
+		dst_p->b = (byte)premul_b;
+		dst_p->a = (byte)alpha;
 	}
+
+	glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, upload_buffer);
+}
+
+static void R_SoftenAlphaGlobeParticle(paletteRGBA_t* pixels, const int width, const int height)
+{
+	if (pixels == NULL || width < 4 || height < 4)
+		return;
+
+	// PART_32x32_ALPHA_GLOBE lives in the lower-left middle cell of particle.m32.
+	// The source texture has faint non-zero alpha on the square cell border; when
+	// spell cooking tints/scales the particle, those edge pixels read as cards.
+	const int x0 = max((int)(0.25390625f * (float)width), 0);
+	const int y0 = max((int)(0.75390625f * (float)height), 0);
+	const int x1 = min((int)(0.49609375f * (float)width), width);
+	const int y1 = min((int)(0.99609375f * (float)height), height);
+
+	const float cx = ((float)(x0 + x1 - 1)) * 0.5f;
+	const float cy = ((float)(y0 + y1 - 1)) * 0.5f;
+	const float radius = min((float)(x1 - x0), (float)(y1 - y0)) * 0.5f;
+
+	if (radius <= 0.0f)
+		return;
+
+	for (int y = y0; y < y1; y++)
+	{
+		for (int x = x0; x < x1; x++)
+		{
+			paletteRGBA_t* pixel = &pixels[y * width + x];
+
+			if (pixel->a == 0)
+				continue;
+
+			const float dx = ((float)x - cx) / radius;
+			const float dy = ((float)y - cy) / radius;
+			const float dist = sqrtf(dx * dx + dy * dy);
+			float mask;
+
+			if (dist <= 0.45f)
+				mask = 1.0f;
+			else if (dist >= 0.72f)
+				mask = 0.0f;
+			else
+				mask = (0.72f - dist) / (0.72f - 0.45f);
+
+			pixel->a = (byte)((float)pixel->a * mask);
+
+			if (pixel->a == 0)
+			{
+				pixel->r = 0;
+				pixel->g = 0;
+				pixel->b = 0;
+			}
+		}
+	}
+}
+
+static void R_UploadParticleAtlasM32(const int level, const byte* data, const int width, const int height)
+{
+	const uint src_size = width * height;
+	const uint dst_size = src_size * sizeof(paletteRGBA_t);
+
+	if (dst_size > upload_buffer_size)
+	{
+		upload_buffer = realloc(upload_buffer, dst_size);
+
+		if (upload_buffer == NULL)
+			ri.Sys_Error(ERR_DROP, "R_UploadParticleAtlasM32: failed to allocate upload buffer for %i x %i image!\n", width, height);
+
+		upload_buffer_size = dst_size;
+	}
+
+	memcpy(upload_buffer, data, dst_size);
+	R_SoftenAlphaGlobeParticle(upload_buffer, width, height);
 
 	glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, upload_buffer);
 }
@@ -386,16 +661,20 @@ static void R_UploadM8(miptex_t* mt, const image_t* image)
 	{
 		if (R_IsAdditiveParticleAtlas(image))
 			R_UploadAdditiveParticleAtlas(mip, (byte*)mt + mt->offsets[mip], image->palette, (int)mt->width[mip], (int)mt->height[mip]);
+		else if (image->type == it_sprite)
+			R_UploadSpriteAlpha(mip, (byte*)mt + mt->offsets[mip], image, image->palette, (int)mt->width[mip], (int)mt->height[mip]);
 		else
 			R_UploadPaletted(mip, (byte*)mt + mt->offsets[mip], image->palette, (int)mt->width[mip], (int)mt->height[mip]);
 	}
 
-	// GL 3.3 Core: set max mip level to avoid incomplete texture.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max(mip - 1, 0));
+	// GL 3.3 Core: set max mip level to avoid incomplete texture. Sprite FX use
+	// mip 0 only; older spell mipmaps contain colored border bleed.
+	// Particle atlases also get MAX_LEVEL=0 to prevent mipmap averaging of adjacent tiles.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, ((image->type == it_sprite || R_IsParticleAtlas(image)) ? 0 : max(mip - 1, 0)));
 
 	R_SetFilter(image);
 
-	if (R_IsAdditiveParticleAtlas(image))
+	if (R_IsParticleAtlas(image))
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -439,7 +718,7 @@ static image_t* R_LoadM8(const char* name, const imagetype_t type)
 	image->height = (int)mt->height[0];
 	image->type = type;
 	image->palette = palette;
-	image->has_alpha = R_IsAdditiveParticleAtlas(image);
+	image->has_alpha = (image->type == it_sprite || R_IsAdditiveParticleAtlas(image));
 	image->num_frames = (byte)mt->value;
 
 	glGenTextures(1, (GLuint*)&image->texnum);
@@ -479,12 +758,25 @@ static void R_UploadM32(miptex32_t* mt, const image_t* img)
 {
 	int mip;
 	for (mip = 0; mip < MIPLEVELS && mt->width[mip] > 0 && mt->height[mip] > 0; mip++)
-		glTexImage2D(GL_TEXTURE_2D, mip, GL_RGBA, (int)mt->width[mip], (int)mt->height[mip], 0, GL_RGBA, GL_UNSIGNED_BYTE, (byte*)mt + mt->offsets[mip]);
+	{
+		if (R_IsParticleAtlas(img))
+			R_UploadParticleAtlasM32(mip, (byte*)mt + mt->offsets[mip], (int)mt->width[mip], (int)mt->height[mip]);
+		else
+			glTexImage2D(GL_TEXTURE_2D, mip, GL_RGBA, (int)mt->width[mip], (int)mt->height[mip], 0, GL_RGBA, GL_UNSIGNED_BYTE, (byte*)mt + mt->offsets[mip]);
+	}
 
-	// GL 3.3 Core: set max mip level to avoid incomplete texture.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, max(mip - 1, 0));
+	// GL 3.3 Core: set max mip level to avoid incomplete texture. Sprite FX use
+	// mip 0 only; older spell mipmaps contain colored border bleed.
+	// Particle atlases also get MAX_LEVEL=0 to prevent mipmap averaging of adjacent tiles.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, ((img->type == it_sprite || R_IsParticleAtlas(img)) ? 0 : max(mip - 1, 0)));
 
 	R_SetFilter(img);
+
+	if (R_IsParticleAtlas(img))
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	}
 }
 
 static image_t* R_LoadM32(const char* name, const imagetype_t type)
@@ -685,13 +977,16 @@ static void R_ApplyGammaHD(byte* pixels, const int width, const int height, cons
 static void R_UploadHD(byte* pixels, const image_t* image)
 {
 	// Reset max mip level (M8/M32 uploads set this to a low value, which would limit glGenerateMipmap).
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1000);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, (image->type == it_sprite ? 0 : 1000));
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, image->hd_width, image->hd_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-	glGenerateMipmap(GL_TEXTURE_2D);
 
-	// HD textures always use high-quality trilinear filtering.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	if (image->type != it_sprite)
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+	// HD world textures use trilinear filtering; sprite FX stay on mip 0 to avoid
+	// colored-card bleed around additive/cutout artwork.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (image->type == it_sprite ? GL_LINEAR : GL_LINEAR_MIPMAP_LINEAR));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Apply max anisotropic filtering if supported.

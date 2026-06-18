@@ -11,7 +11,7 @@
 #include "clfx_dll.h"
 #include "glimp_sdl3.h" // YQ2
 
-#define FALLBACK_REFLIB	"gl3" //mxd. GL3 is the only supported renderer.
+#define FALLBACK_REFLIB	"gl3" //mxd. GL3 is the active macOS renderer.
 
 // Structure containing functions exported from refresh DLL.
 refexport_t re;
@@ -59,7 +59,7 @@ void VID_Printf(const int print_level, const char* fmt, ...)
 	switch (print_level)
 	{
 		case PRINT_ALL:
-		default: //mxd. Added 'default' case 
+		default: //mxd. Added 'default' case
 			Com_Printf("%s", msg);
 			break;
 
@@ -128,7 +128,7 @@ void VID_InitModes(viddef_t* modes, const int num_modes)
 
 	vid_modes = malloc(sizeof(vidmode_t) * num_modes);
 	num_vid_modes = num_modes;
-	
+
 	viddef_t* src_mode = &modes[0];
 	vidmode_t* dst_mode = &vid_modes[0];
 
@@ -212,6 +212,7 @@ static qboolean VID_LoadRefresh(const char* name)
 	ri.Vid_WriteScreenshot = VID_WriteScreenshot; // YQ2
 	ri.Vid_GetModeInfo = VID_GetModeInfo;
 	ri.GLimp_InitGraphics = GLimp_InitGraphics; // YQ2
+	ri.GLimp_GetDrawableSize = GLimp_GetDrawableSize;
 	ri.Is_Screen_Flashing = Is_Screen_Flashing;
 	ri.Deactivate_Screen_Flash = Deactivate_Screen_Flash;
 	ri.skeletalJoints = skeletal_joints;
@@ -271,7 +272,7 @@ static qboolean VID_StroreReflibInfo(const char* ref_path) //mxd
 		return false;
 	}
 
-	const refimport_t ref_import = { 0 }; // Assume GetRefAPI() doesn't use ref_import function pointers... 
+	const refimport_t ref_import = { 0 }; // Assume GetRefAPI() doesn't use ref_import function pointers...
 	const refexport_t ref_export = GetRefAPI(ref_import);
 
 	if (ref_export.api_version != REF_API_VERSION || ref_export.title == NULL)
@@ -286,11 +287,23 @@ static qboolean VID_StroreReflibInfo(const char* ref_path) //mxd
 
 	if (is_valid)
 	{
+		char id[sizeof(reflib_infos[0].id)];
+		strncpy_s(id, sizeof(id), start + 1, end - start - 1); // Strip "ref_" and extension parts...
+
+		for (int i = 0; i < num_reflib_infos; i++)
+		{
+			if (Q_stricmp(reflib_infos[i].id, id) == 0)
+			{
+				FreeLibrary(reflib);
+				return false;
+			}
+		}
+
 		// Seems valid. Store info...
 		reflib_info_t* info = &reflib_infos[num_reflib_infos];
 
 		strcpy_s(info->title, sizeof(info->title), ref_export.title);
-		strncpy_s(info->id, sizeof(info->id), start + 1, end - start - 1); // Strip "ref_" and ".dll" parts...
+		strcpy_s(info->id, sizeof(info->id), id);
 	}
 
 	FreeLibrary(reflib);
@@ -298,20 +311,15 @@ static qboolean VID_StroreReflibInfo(const char* ref_path) //mxd
 	return is_valid;
 }
 
-static void VID_InitReflibInfos(void) //mxd
+static void VID_ScanReflibInfos(const char* mask) //mxd
 {
-	num_reflib_infos = 0;
-
-	// Find all compatible ref_xxx.dll libraries.
-	char mask[MAX_QPATH];
-	Com_sprintf(mask, sizeof(mask), "ref_*.dll");
-
 	const char* ref_path = Sys_FindFirst(mask, 0, 0);
-	
+
 	while (ref_path != NULL && num_reflib_infos < MAX_REFLIBS)
 	{
-		const char* path = strchr(ref_path, '/') + 1; // Skip starting '/'...
-		if (VID_StroreReflibInfo(path != NULL ? path : ref_path))
+		const char* slash = strchr(ref_path, '/');
+		const char* path = (slash != NULL ? slash + 1 : ref_path);
+		if (VID_StroreReflibInfo(path))
 			num_reflib_infos++;
 
 		ref_path = Sys_FindNext(0, 0);
@@ -320,10 +328,29 @@ static void VID_InitReflibInfos(void) //mxd
 	Sys_FindClose();
 }
 
+static void VID_InitReflibInfos(void) //mxd
+{
+	num_reflib_infos = 0;
+
+	// Find all compatible renderer libraries.
+	VID_ScanReflibInfos("ref_*.dll");
+
+#ifndef _WIN32
+	VID_ScanReflibInfos("ref_*.dylib");
+#endif
+}
+
 // This function gets called once just before drawing each frame, and it's sole purpose is to check to see
 // if any of the video mode parameters have changed, and if they have to update the rendering DLL and/or video mode to match.
 void VID_CheckChanges(void) //TODO: check YQ2 logic.
 {
+	// Toggle fullscreen without a full renderer reload.
+	if (vid_fullscreen->modified)
+	{
+		vid_fullscreen->modified = false;
+		GLimp_ToggleFullscreen((int)vid_fullscreen->value);
+	}
+
 	while (vid_restart_required || vid_ref->modified)
 	{
 		// Refresh has changed.
@@ -337,7 +364,7 @@ void VID_CheckChanges(void) //TODO: check YQ2 logic.
 		if (se.StopAllSounds != NULL) //mxd. Sound backend is now initialized after renderer backend, so this will be NULL on the first call...
 			se.StopAllSounds();
 
-		Cvar_ForceSet("vid_ref", "gl3"); //mxd. GL3 is the only supported renderer.
+		Cvar_ForceSet("vid_ref", FALLBACK_REFLIB);
 
 		char ref_name[100];
 		Com_sprintf(ref_name, sizeof(ref_name), "ref_%s.dll", vid_ref->string);
@@ -370,7 +397,7 @@ void VID_Init(void)
 
 	// Create the video variables so we know how to start the graphics drivers.
 	vid_ref = Cvar_Get("vid_ref", "gl3", CVAR_ARCHIVE); // H2: "soft"; H2_1.07: "gl".
-	Cvar_ForceSet("vid_ref", "gl3"); // Always start with the GL3 renderer.
+	Cvar_ForceSet("vid_ref", FALLBACK_REFLIB);
 	vid_gamma = Cvar_Get("vid_gamma", "0.5", CVAR_ARCHIVE);
 	vid_brightness = Cvar_Get("vid_brightness", "0.5", CVAR_ARCHIVE); // H2
 	vid_contrast = Cvar_Get("vid_contrast", "0.5", CVAR_ARCHIVE); // H2

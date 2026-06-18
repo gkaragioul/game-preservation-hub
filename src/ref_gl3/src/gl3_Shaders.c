@@ -70,12 +70,51 @@ static const char* fragmentSource3D =
 	"in vec3 vViewPos;\n"
 	"uniform sampler2D uTexture;\n"
 	"uniform vec4 uColor;\n"
+	"uniform int uParticleSoftMask;\n"
 	"uniform int  uNumDlights;\n"
 	"uniform vec4 uDlightPosRad[8];\n"	// xyz = view-space pos, w = intensity (radius)
 	"uniform vec4 uDlightColor[8];\n"	// xyz = rgb (0..1), w = unused
 	"out vec4 FragColor;\n"
+	"float particleCellMask(vec2 uv, vec4 cell, float inner, float outer) {\n"
+	"    if (uv.x < cell.x || uv.y < cell.y || uv.x > cell.z || uv.y > cell.w) return -1.0;\n"
+	"    vec2 local = (uv - cell.xy) / (cell.zw - cell.xy);\n"
+	"    float dist = length(local * 2.0 - 1.0);\n"
+	"    return 1.0 - smoothstep(inner, outer, dist);\n"
+	"}\n"
+	"float particleSoftMask(vec2 uv) {\n"
+	"    float m = particleCellMask(uv, vec4(0.50390625, 0.00390625, 0.74609375, 0.24609375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.75390625, 0.00390625, 0.99609375, 0.24609375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.50390625, 0.25390625, 0.74609375, 0.49609375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.75390625, 0.25390625, 0.87109375, 0.37109375), 0.05, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.87890625, 0.25390625, 0.99609375, 0.37109375), 0.05, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.75390625, 0.37890625, 0.87109375, 0.49609375), 0.05, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.87890625, 0.37890625, 0.99609375, 0.49609375), 0.05, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.25390625, 0.75390625, 0.49609375, 0.99609375), 0.08, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.50390625, 0.50390625, 0.62109375, 0.62109375), 0.05, 0.72);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.75390625, 0.75390625, 0.87109375, 0.87109375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.87890625, 0.75390625, 0.99609375, 0.87109375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    m = particleCellMask(uv, vec4(0.75390625, 0.87890625, 0.87109375, 0.99609375), 0.08, 0.74);\n"
+	"    if (m >= 0.0) return m;\n"
+	"    return 1.0;\n"
+	"}\n"
 	"void main() {\n"
 	"    vec4 base = texture(uTexture, vTexCoord) * vColor * uColor;\n"
+	"    if (uParticleSoftMask != 0) {\n"
+	"        float mask = particleSoftMask(vTexCoord);\n"
+	"        base.rgb *= mask;\n"
+	"        base.a *= mask;\n"
+	"    }\n"
 	"    if (base.a < 0.01) discard;\n"
 	"    vec3 dlightSum = vec3(0.0);\n"
 	"    for (int i = 0; i < uNumDlights; i++) {\n"
@@ -419,6 +458,44 @@ static GLuint CreateProgram(const char* vert_src, const char* frag_src)
 
 static GLuint currentProgram = 0;
 
+typedef struct gl3_color_cache_s
+{
+	GLuint program;
+	float rgba[4];
+	qboolean valid;
+} gl3_color_cache_t;
+
+static gl3_color_cache_t cached3DColor;
+static gl3_color_cache_t cachedWaterColor;
+static gl3_color_cache_t cachedLMColor;
+
+static void GL3_ResetUniformCaches(void)
+{
+	memset(&cached3DColor, 0, sizeof(cached3DColor));
+	memset(&cachedWaterColor, 0, sizeof(cachedWaterColor));
+	memset(&cachedLMColor, 0, sizeof(cachedLMColor));
+}
+
+static qboolean GL3_ColorCacheMatches(const gl3_color_cache_t* cache, const GLuint program, const float r, const float g, const float b, const float a)
+{
+	return cache->valid
+		&& cache->program == program
+		&& cache->rgba[0] == r
+		&& cache->rgba[1] == g
+		&& cache->rgba[2] == b
+		&& cache->rgba[3] == a;
+}
+
+static void GL3_UpdateColorCache(gl3_color_cache_t* cache, const GLuint program, const float r, const float g, const float b, const float a)
+{
+	cache->program = program;
+	cache->rgba[0] = r;
+	cache->rgba[1] = g;
+	cache->rgba[2] = b;
+	cache->rgba[3] = a;
+	cache->valid = true;
+}
+
 void GL3_UseShader(const GLuint program)
 {
 	if (currentProgram != program)
@@ -428,8 +505,28 @@ void GL3_UseShader(const GLuint program)
 	}
 }
 
+void GL3_BindVertexArray(const GLuint vao)
+{
+	if (gl_state.currentvao != vao)
+	{
+		glBindVertexArray(vao);
+		gl_state.currentvao = vao;
+	}
+}
+
+void GL3_BindArrayBuffer(const GLuint buffer)
+{
+	if (gl_state.currentarraybuffer != buffer)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		gl_state.currentarraybuffer = buffer;
+	}
+}
+
 qboolean GL3_InitShaders(void)
 {
+	GL3_ResetUniformCaches();
+
 	// --- 2D shader ---
 	gl3state.shader2D = CreateProgram(vertexSource2D, fragmentSource2D);
 	if (gl3state.shader2D == 0)
@@ -454,6 +551,7 @@ qboolean GL3_InitShaders(void)
 	gl3state.uni3D_modelview = glGetUniformLocation(gl3state.shader3D, "uModelview");
 	gl3state.uni3D_texture = glGetUniformLocation(gl3state.shader3D, "uTexture");
 	gl3state.uni3D_color = glGetUniformLocation(gl3state.shader3D, "uColor");
+	gl3state.uni3D_particleSoftMask = glGetUniformLocation(gl3state.shader3D, "uParticleSoftMask");
 
 	gl3state.uni3D_numDlights   = glGetUniformLocation(gl3state.shader3D, "uNumDlights");
 	gl3state.uni3D_dlightPosRad = glGetUniformLocation(gl3state.shader3D, "uDlightPosRad");
@@ -493,6 +591,7 @@ qboolean GL3_InitShaders(void)
 	GL3_UseShader(gl3state.shader3D);
 	glUniform1i(gl3state.uni3D_texture, 0);
 	glUniform4f(gl3state.uni3D_color, 1.0f, 1.0f, 1.0f, 1.0f);
+	glUniform1i(gl3state.uni3D_particleSoftMask, 0);
 	glUniform1i(gl3state.uni3D_numDlights, 0);
 
 	GL3_UseShader(gl3state.shader3DLightmap);
@@ -504,8 +603,8 @@ qboolean GL3_InitShaders(void)
 	glGenVertexArrays(1, &gl3state.vao2D);
 	glGenBuffers(1, &gl3state.vbo2D);
 
-	glBindVertexArray(gl3state.vao2D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo2D);
+	GL3_BindVertexArray(gl3state.vao2D);
+	GL3_BindArrayBuffer(gl3state.vbo2D);
 
 	// 2D vertex layout: vec2 pos, vec2 texcoord, vec4 color = 8 floats per vertex.
 	const GLsizei stride2D = 8 * sizeof(float);
@@ -519,14 +618,14 @@ qboolean GL3_InitShaders(void)
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride2D, (void*)(4 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 
 	// --- Create lightmapped world VAO/VBO (VERTEXSIZE=7 floats: pos3+tc2+lmtc2) ---
 	glGenVertexArrays(1, &gl3state.vao3DLM);
 	glGenBuffers(1, &gl3state.vbo3DLM);
 
-	glBindVertexArray(gl3state.vao3DLM);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3DLM);
+	GL3_BindVertexArray(gl3state.vao3DLM);
+	GL3_BindArrayBuffer(gl3state.vbo3DLM);
 
 	const GLsizei strideLM = 7 * sizeof(float);
 
@@ -542,14 +641,14 @@ qboolean GL3_InitShaders(void)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, strideLM, (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 
 	// --- Create generic 3D VAO/VBO (9 floats/vert: pos3+tc2+col4) ---
 	glGenVertexArrays(1, &gl3state.vao3D);
 	glGenBuffers(1, &gl3state.vbo3D);
 
-	glBindVertexArray(gl3state.vao3D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3D);
+	GL3_BindVertexArray(gl3state.vao3D);
+	GL3_BindArrayBuffer(gl3state.vbo3D);
 
 	const GLsizei stride3D = 9 * sizeof(float);
 
@@ -565,7 +664,7 @@ qboolean GL3_InitShaders(void)
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, stride3D, (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 
 	// --- Create full-screen quad VAO/VBO (4 floats/vert: NDC pos2 + tc2) ---
 	{
@@ -579,8 +678,8 @@ qboolean GL3_InitShaders(void)
 		glGenVertexArrays(1, &gl3state.vaoFSQ);
 		glGenBuffers(1, &gl3state.vboFSQ);
 
-		glBindVertexArray(gl3state.vaoFSQ);
-		glBindBuffer(GL_ARRAY_BUFFER, gl3state.vboFSQ);
+		GL3_BindVertexArray(gl3state.vaoFSQ);
+		GL3_BindArrayBuffer(gl3state.vboFSQ);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(fsq_verts), fsq_verts, GL_STATIC_DRAW);
 
 		const GLsizei strideFSQ = 4 * sizeof(float);
@@ -591,7 +690,7 @@ qboolean GL3_InitShaders(void)
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, strideFSQ, (void*)(2 * sizeof(float)));
 		glEnableVertexAttribArray(1);
 
-		glBindVertexArray(0);
+		GL3_BindVertexArray(0);
 	}
 
 	// --- Post-process shader ---
@@ -771,20 +870,38 @@ void GL3_UpdateModelviewLM(const float* matrix4x4)
 
 void GL3_SetLMColor(const float r, const float g, const float b, const float a)
 {
+	if (GL3_ColorCacheMatches(&cachedLMColor, gl3state.shader3DLightmap, r, g, b, a))
+		return;
+
 	GL3_UseShader(gl3state.shader3DLightmap);
 	glUniform4f(gl3state.uni3DLM_color, r, g, b, a);
+	GL3_UpdateColorCache(&cachedLMColor, gl3state.shader3DLightmap, r, g, b, a);
 }
 
 void GL3_Set3DColor(const float r, const float g, const float b, const float a)
 {
-	GL3_UseShader(gl3state.shader3D);
-	glUniform4f(gl3state.uni3D_color, r, g, b, a);
+	if (!GL3_ColorCacheMatches(&cached3DColor, gl3state.shader3D, r, g, b, a))
+	{
+		GL3_UseShader(gl3state.shader3D);
+		glUniform4f(gl3state.uni3D_color, r, g, b, a);
+		GL3_UpdateColorCache(&cached3DColor, gl3state.shader3D, r, g, b, a);
+	}
 
 	if (gl3state.shaderWater != 0)
 	{
-		GL3_UseShader(gl3state.shaderWater);
-		glUniform4f(gl3state.uniWater_color, r, g, b, a);
+		if (!GL3_ColorCacheMatches(&cachedWaterColor, gl3state.shaderWater, r, g, b, a))
+		{
+			GL3_UseShader(gl3state.shaderWater);
+			glUniform4f(gl3state.uniWater_color, r, g, b, a);
+			GL3_UpdateColorCache(&cachedWaterColor, gl3state.shaderWater, r, g, b, a);
+		}
 	}
+}
+
+void GL3_SetParticleSoftMask(const qboolean enabled)
+{
+	GL3_UseShader(gl3state.shader3D);
+	glUniform1i(gl3state.uni3D_particleSoftMask, enabled ? 1 : 0);
 }
 
 // ============================================================
@@ -792,16 +909,26 @@ void GL3_Set3DColor(const float r, const float g, const float b, const float a)
 // ============================================================
 
 // Draw a polygon using shader3DLightmap (VERTEXSIZE=7 floats/vert: pos3+tc2+lmtc2).
-void GL3_DrawLMPoly(const float* verts, const int numverts)
+void GL3_BeginLMPolyBatch(void)
+{
+	GL3_UseShader(gl3state.shader3DLightmap);
+	GL3_BindVertexArray(gl3state.vao3DLM);
+	GL3_BindArrayBuffer(gl3state.vbo3DLM);
+}
+
+void GL3_DrawLMPolyBatched(const float* verts, const int numverts)
 {
 	if (verts == NULL || numverts < 3 || numverts > 1024)
 		return;
 
-	GL3_UseShader(gl3state.shader3DLightmap);
-	glBindVertexArray(gl3state.vao3DLM);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3DLM);
 	glBufferData(GL_ARRAY_BUFFER, numverts * 7 * sizeof(float), verts, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, numverts);
+}
+
+void GL3_DrawLMPoly(const float* verts, const int numverts)
+{
+	GL3_BeginLMPolyBatch();
+	GL3_DrawLMPolyBatched(verts, numverts);
 }
 
 // Draw a polygon using shader3D (9 floats/vert: pos3+tc2+col4).
@@ -811,8 +938,8 @@ void GL3_Draw3DPoly(const GLenum mode, const float* verts, const int numverts)
 		return;
 
 	GL3_UseShader(gl3state.shader3D);
-	glBindVertexArray(gl3state.vao3D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3D);
+	GL3_BindVertexArray(gl3state.vao3D);
+	GL3_BindArrayBuffer(gl3state.vbo3D);
 	glBufferData(GL_ARRAY_BUFFER, numverts * 9 * sizeof(float), verts, GL_STREAM_DRAW);
 	glDrawArrays(mode, 0, numverts);
 }
@@ -834,8 +961,8 @@ void GL3_DrawWaterPoly(const GLenum mode, const float* verts, const int numverts
 	glBindTexture(GL_TEXTURE_2D, gl3state.fboTexReflect);
 	glActiveTexture(GL_TEXTURE0);
 
-	glBindVertexArray(gl3state.vao3D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3D);
+	GL3_BindVertexArray(gl3state.vao3D);
+	GL3_BindArrayBuffer(gl3state.vbo3D);
 	glBufferData(GL_ARRAY_BUFFER, numverts * 9 * sizeof(float), verts, GL_STREAM_DRAW);
 	glDrawArrays(mode, 0, numverts);
 }
@@ -1132,9 +1259,9 @@ void GL3_CompositeHDR(const int w, const int h, const float exposure, const floa
 	// Restore active unit to TMU0 so subsequent engine code isn't surprised.
 	glActiveTexture(GL_TEXTURE0);
 
-	glBindVertexArray(gl3state.vaoFSQ);
+	GL3_BindVertexArray(gl3state.vaoFSQ);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 }
 
 // Number of separable Gaussian blur passes (must be even so the final result lands in pingpong[1]).
@@ -1150,7 +1277,7 @@ void GL3_RenderBloom(const float threshold, const float strength)
 	glDisable(GL_CULL_FACE);
 	glViewport(0, 0, gl3state.bloom_width, gl3state.bloom_height);
 
-	glBindVertexArray(gl3state.vaoFSQ);
+	GL3_BindVertexArray(gl3state.vaoFSQ);
 	glActiveTexture(GL_TEXTURE0);
 
 	// --- Bright-pass extract ---
@@ -1184,7 +1311,7 @@ void GL3_RenderBloom(const float threshold, const float strength)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 	// Final bloom result is now in fboTexBloomPingPong[1].
 }
 
@@ -1230,6 +1357,18 @@ void GL3_UpdateDlights(void)
 
 	glUniform4fv(gl3state.uni3D_dlightPosRad, n, pos_rad);
 	glUniform4fv(gl3state.uni3D_dlightColor,  n, colors);
+}
+
+void GL3_SetDlightsEnabled(const qboolean enabled)
+{
+	if (enabled)
+	{
+		GL3_UpdateDlights();
+		return;
+	}
+
+	GL3_UseShader(gl3state.shader3D);
+	glUniform1i(gl3state.uni3D_numDlights, 0);
 }
 
 // ============================================================
@@ -1402,7 +1541,7 @@ void GL3_RenderSSAO(const float radius, const float bias)
 	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	glViewport(0, 0, gl3state.fbo_width, gl3state.fbo_height);
-	glBindVertexArray(gl3state.vaoFSQ);
+	GL3_BindVertexArray(gl3state.vaoFSQ);
 
 	// --- SSAO pass: sample depth hemisphere → raw occlusion map ---
 	glBindFramebuffer(GL_FRAMEBUFFER, gl3state.fboSSAO);
@@ -1430,7 +1569,7 @@ void GL3_RenderSSAO(const float radius, const float bias)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 
 	// Restore TMU1 to idle so the engine's texture cache stays consistent.
 	glActiveTexture(GL_TEXTURE1);

@@ -167,6 +167,8 @@ typedef struct
 	int lightmap_textures;
 	int currenttextures[MAX_TEXTURE_UNITS];
 	int currenttmu;
+	GLuint currentvao;
+	GLuint currentarraybuffer;
 } glstate_t;
 
 extern glconfig_t gl_config;
@@ -218,6 +220,7 @@ typedef struct
 	GLint uni3D_modelview;
 	GLint uni3D_texture;
 	GLint uni3D_color;
+	GLint uni3D_particleSoftMask;
 
 	// Per-pixel dynamic light uniforms for shader3D.
 	GLint uni3D_numDlights;

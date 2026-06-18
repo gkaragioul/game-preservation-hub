@@ -50,6 +50,17 @@ static qboolean R_IsValidPoly(const glpoly_t* p)
 	return p != NULL && p->numverts >= 3 && p->numverts <= GL3_MAX_SAFE_POLY_VERTS;
 }
 
+static void R_AddLightmappedSurfaceSorted(image_t* image, msurface_t* surf)
+{
+	msurface_t** chain = &image->multitexturechain;
+
+	while (*chain != NULL && (*chain)->lightmaptexturenum <= surf->lightmaptexturenum)
+		chain = &(*chain)->texturechain;
+
+	surf->texturechain = *chain;
+	*chain = surf;
+}
+
 void R_SetReflectionPass(const qboolean on) { r_reflection_pass = on; }
 msurface_t* R_GetAlphaSurfaces(void)                        { return r_alpha_surfaces; }
 void        R_SetAlphaSurfaces(msurface_t* s)               { r_alpha_surfaces = s; }
@@ -372,12 +383,13 @@ static void R_RenderLightmappedPoly(const entity_t* ent, msurface_t* surf)
 
 	// Draw with shader3DLightmap.
 	GL3_SetLMColor(1.0f, 1.0f, 1.0f, 1.0f);
+	GL3_BeginLMPolyBatch();
 	for (glpoly_t* p = surf->polys; p != NULL; p = p->chain)
 	{
 		if (!R_IsValidPoly(p))
 			continue;
 
-		GL3_DrawLMPoly(p->verts[0], p->numverts);
+		GL3_DrawLMPolyBatched(p->verts[0], p->numverts);
 	}
 
 	// Restore TMU0 as the active texture unit so subsequent single-texture
@@ -773,8 +785,7 @@ static void R_RecursiveWorldNode(const entity_t* ent, mnode_t* node)
 		{
 			// GL3: add to multitexture chain for single-pass lightmapped rendering.
 			image_t* image = R_TextureAnimation(ent, surf->texinfo);
-			surf->texturechain = image->multitexturechain;
-			image->multitexturechain = surf;
+			R_AddLightmappedSurfaceSorted(image, surf);
 		}
 		else
 		{

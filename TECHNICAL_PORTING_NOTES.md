@@ -8,9 +8,19 @@ This project was ported and packaged for native macOS Apple Silicon on an M4 Mac
 - Native arm64 executable and dynamic libraries
 - Spacefarer Heretic II Remastered R8_00 assets
 - Original Heretic II retail PAK data
-- OpenGL 4.1 Core Profile through Apple's OpenGL-over-Metal stack
+- Native GL3 renderer on macOS OpenGL 4.1
 - SDL3 Cocoa video/input and CoreAudio sound
-- 60 fps cap with vsync for smooth pacing and better battery life
+- Refresh-aware frame caps with a 120 FPS Full Power profile and a 60 FPS Power Saver profile
+
+This repository is source and porting documentation. Protected retail/remastered game data is required locally for testing, but must not be committed or distributed from this repository.
+
+## Current Renderer Direction
+
+The active Apple Silicon renderer direction is OpenGL-first for now. `ref_gl3.dylib` is built and bundled by `build_macos_arm64.sh`, and `vid_ref` defaults to `gl3`.
+
+The GL3 renderer currently covers the core gameplay path: SDL3/Cocoa OpenGL window creation, OpenGL 4.1 context creation on macOS, 2D UI, cinematics, screenshots, texture loading, HD replacement textures, BSP/lightmap world rendering, dynamic lights, alpha surfaces, particles, sprites, skyboxes, fog, flex models, brush models, planar entity shadows, performance overlay renderer identity, and refresh-aware graphics profile defaults.
+
+On Apple Silicon, the runtime may print `GL_VERSION: 4.1 Metal - 90.5`. That is Apple's OpenGL compatibility layer. The active renderer for this baseline is still `ref_gl3.dylib`; no native Metal renderer is used by default.
 
 ## Source And Asset Investigation
 
@@ -141,12 +151,34 @@ The default Mac launch profile is:
 
 - `vid_ref gl3`
 - `vid_mode 0`
-- `r_vsync 1`
-- `vid_maxfps 60`
+- `vid_fullscreen 0`
+- `vid_display_index 3` for the current 1080p LG UltraGear test display
+- graphics profile defaults decide the frame cap
 
-`vid_mode 0` uses the laptop's current desktop-scaled display mode. On the tested M4 MacBook Air this resolved to `1710x1107`, which is a good balance for the built-in panel: sharp, native-looking, and much lighter than forcing full physical Retina pixels.
+`vid_mode 0` uses the selected display's current desktop-scaled display mode. For the current test setup, the repo-local app launches windowed on the 1920x1080 LG UltraGear display and then lets the selected graphics profile apply the frame cap.
 
 The original POSIX frame loop was busy-spinning between frames. I replaced that with a short `Sys_Nanosleep(500000)` yield. In the same 60-second `ssdocks` map test, CPU use dropped from about 75% of one core to about 32% of one core while the game stayed stable at the same 60 fps/vsync profile. This is important for battery life and thermals on a fanless MacBook Air.
+
+## Spell-Combat FX And Frame Pacing Verification
+
+The M21 OpenGL spell-combat route exercises spell cooking, spell release, hit FX, alpha particles, and normal gameplay movement on `ssdocks`. It was run on the configured 1080p LG UltraGear Display 3 in windowed mode for both profiles.
+
+Final evidence:
+
+- Power Saver runtime: `.porting/runtime_logs/m21_60_finalroute_display3_v2.log`
+- Power Saver frame log: `.porting/performance/m21_60_finalroute_frame_log.csv`
+- Full Power runtime: `.porting/runtime_logs/m21_120_finalroute_display3_v2.log`
+- Full Power frame log: `.porting/performance/m21_120_finalroute_frame_log.csv`
+- Analysis: `.porting/performance/m21_finalroute_filtered_analysis.json`
+
+Filtered route results:
+
+- 60 FPS Power Saver: average `16.773 ms`, p50 `16.726 ms`, p95 `16.786 ms`, p99 `16.796 ms`.
+- 120 FPS Full Power: average `8.427 ms`, p50 `8.391 ms`, p95 `8.445 ms`, p99 `9.225 ms`.
+
+The square/diamond card artifacts seen while cooking spells were traced to old particle and sprite billboard paths. The final OpenGL fix removes the card-prone particle atlas family during render and suppresses the remaining decorative ripple card sprite. The verified screenshots no longer show the reported diamond/square cards in either profile.
+
+Remaining performance focus: the rare 120 FPS route spikes correlate more with entity/alpha phases than with particle count or post-processing. The next renderer pass should focus on entity/alpha draw ordering and presentation pacing, not more particle-card suppression.
 
 ## App Bundle Packaging
 
@@ -165,7 +197,7 @@ The app wrapper lives at:
 It changes directory into the bundled build and launches:
 
 ```sh
-./Heretic2R +set vid_ref gl3 +set vid_mode 0 +set r_vsync 1 +set vid_maxfps 60
+./Heretic2R +set vid_display_index 3 +set vid_ref gl3 +set vid_mode 0 +set vid_fullscreen 0 +set scr_frame_spike_log 0
 ```
 
 The copied dynamic libraries originally had absolute install names pointing back to the build folder and Homebrew. I rewrote them with `install_name_tool` to bundle-relative paths:
@@ -224,6 +256,6 @@ App verification:
 
 ## Known Notes
 
-The game uses Apple's deprecated but still available OpenGL stack. This is native arm64 execution, not Rosetta and not Wine. A future Metal renderer would be a larger renderer rewrite; the current port keeps the Remastered GL renderer and adapts it to macOS OpenGL 4.1.
+The game is native arm64 execution, not Rosetta and not Wine. The active renderer is GL3/OpenGL 4.1.
 
 The app is locally ad-hoc signed, not notarized with an Apple Developer ID. On a different Mac, Gatekeeper may still require the usual right-click Open or privacy approval for locally built unsigned apps.

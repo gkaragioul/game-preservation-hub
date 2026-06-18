@@ -1,0 +1,104 @@
+{
+  "frame": {
+    "all": {
+      "frames": 3165,
+      "duration_s": 57.845,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.172440442338072,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 12.580933842277657,
+      "p50_ms": 16.725,
+      "p95_ms": 16.777,
+      "p99_ms": 17.14188000000003,
+      "fps": 58.23284135751223,
+      "over_17": 33,
+      "over_18": 23,
+      "over_20": 15,
+      "gpu_avg_ms": 2.042691627172196,
+      "gpu_p95_ms": 4.951600000000002,
+      "gpu_max_ms": 62.289,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 28.933965244865718,
+      "alpha_avg": 10.28783570300158,
+      "particles_avg": 6.92954186413902,
+      "alpha_particles_avg": 82.18104265402843
+    },
+    "steady_after_5s": {
+      "frames": 3137,
+      "duration_s": 52.834,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.84761715014345,
+      "min_ms": 16.666,
+      "max_ms": 127.631,
+      "std_ms": 2.989585094037415,
+      "p50_ms": 16.724,
+      "p95_ms": 16.777,
+      "p99_ms": 16.816879999999998,
+      "fps": 59.355574802546215,
+      "over_17": 29,
+      "over_18": 19,
+      "over_20": 11,
+      "gpu_avg_ms": 2.0369480395282116,
+      "gpu_p95_ms": 4.947399999999998,
+      "gpu_max_ms": 20.774,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 29.11284666879184,
+      "alpha_avg": 10.377749442142173,
+      "particles_avg": 6.991393050685368,
+      "alpha_particles_avg": 82.90404845393688
+    }
+  },
+  "process": {
+    "samples": 60,
+    "cpu_avg_pct": 35.416666666666664,
+    "cpu_p95_pct": 70.36999999999998,
+    "cpu_max_pct": 90.7,
+    "rss_avg_mb": 373.79479166666664,
+    "rss_max_mb": 1086.78125
+  }
+}

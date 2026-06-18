@@ -97,10 +97,9 @@ static qboolean ShrineManaUpdate(client_entity_t* self, centity_t* owner) //mxd.
 		VectorNormalize(vel);
 		Vec3ScaleAssign(MANA_RAD, vel);
 
-		const int particle_type = ((i & 1) ? PART_16x16_SPARK_G : PART_16x16_SPARK_B); //mxd. Green or blue particles.
-		client_particle_t* ce = ClientParticle_new(particle_type, color_white, 500);
+		client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, color_white, 500);
 
-		ce->scale = 20.0f;
+		ce->scale = 12.0f;
 		ce->d_scale = -30.0f;
 		ce->color.a = 1;
 		ce->d_alpha = 400.0f;
@@ -272,14 +271,13 @@ static qboolean ShrineStaffUpdate(client_entity_t* self, centity_t* owner) //mxd
 		{
 			for (int c = 0; c < 2; c++)
 			{
-				const int particle_type = ((self->flags & CEF_FLAG6) ? irand(PART_16x16_FIRE1, PART_16x16_FIRE3) : PART_16x16_SPARK_B);
-				client_particle_t* ce = ClientParticle_new(particle_type, self->r.color, self->LifeTime);
+				client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, self->r.color, self->LifeTime);
 
 				const float dir_z = (c == 0 ? 1.0f : -1.0f); //mxd
 				VectorSet(ce->origin, radius * cosf(cur_angle), radius * sinf(cur_angle), self->SpawnData * dir_z);
 				ce->acceleration[2] = 0.0f;
 				ce->color.a = 118;
-				ce->scale = 16.0f;
+				ce->scale = 10.0f;
 
 				AddParticleToList(self, ce);
 			}
@@ -503,11 +501,11 @@ static qboolean ShrineReflectUpdate(client_entity_t* self, centity_t* owner) //m
 			for (int c = 0; c < 2; c++)
 			{
 				const float dir_z = (c == 0 ? 1.0f : -1.0f); //mxd
-				client_particle_t* ce = ClientParticle_new(PART_16x16_SPARK_B, color_white, 450);
+				client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, color_white, 450);
 
 				ce->acceleration[2] = 0.0f;
 				VectorSet(ce->origin, FLIGHT_RAD * cosf(angle), FLIGHT_RAD * sinf(angle), self->SpawnData * dir_z);
-				ce->scale = 16.0f;
+				ce->scale = 10.0f;
 
 				AddParticleToList(self, ce);
 			}
@@ -693,13 +691,13 @@ static qboolean ShrinePowerupUpdate(client_entity_t* self, centity_t* owner) //m
 
 		for (int i = 0; i < count; i++)
 		{
-			client_particle_t* ce = ClientParticle_new(PART_16x16_SPARK_G, color_white, 350);
+			client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, color_white, 350);
 
 			VectorSet(ce->origin, POWERUP_RAD * cosf(angle), POWERUP_RAD * sinf(angle), self->SpawnData);
 			VectorScale(ce->origin, 25.0f, ce->velocity);
 			ce->velocity[2] = 0.0f;
 			ce->acceleration[2] = 0.0f;
-			ce->scale = 12.0f;
+			ce->scale = 8.0f;
 
 			AddParticleToList(self, ce);
 

@@ -5,6 +5,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 BUILD="$ROOT/build/macos-arm64"
 OBJ="$BUILD/obj"
 mkdir -p "$OBJ" "$ROOT/build/base"
+rm -f "$ROOT/build/ref_metal.dylib"
 
 if [[ -d "$ROOT/addons" ]]; then
 	cp -R "$ROOT/addons/." "$ROOT/build/"
@@ -98,6 +99,7 @@ fix_install_names() {
 	install_name_tool -id "@loader_path/base/gamex86.dylib" "$ROOT/build/base/gamex86.dylib"
 
 	for bin in "$ROOT/build/Heretic2R" "$ROOT/build/ref_gl3.dylib" "$ROOT/build/snd_sdl3.dylib"; do
+		[[ -f "$bin" ]] || continue
 		install_name_tool -change "$ROOT/build/H2Common.dylib" "@loader_path/H2Common.dylib" "$bin" || true
 		install_name_tool -change "$SDL_DYLIB" "@loader_path/libSDL3.0.dylib" "$bin" || true
 		install_name_tool -change "$OPENAL_DYLIB" "@loader_path/libopenal.1.dylib" "$bin" || true
@@ -105,6 +107,30 @@ fix_install_names() {
 
 	for bin in "$ROOT/build/base/Player.dylib" "$ROOT/build/base/Client Effects.dylib" "$ROOT/build/base/gamex86.dylib"; do
 		install_name_tool -change "$ROOT/build/H2Common.dylib" "@loader_path/../H2Common.dylib" "$bin" || true
+	done
+}
+
+sync_app_bundle() {
+	local app_build="$ROOT/Heretic II Remastered.app/Contents/Resources/build"
+	[[ -d "$app_build" ]] || return 0
+
+	mkdir -p "$app_build/base"
+	rm -f "$app_build/ref_metal.dylib"
+
+	copy_to_app() {
+		local src="$1"
+		local dst="$2"
+		[[ -f "$src" ]] || return 0
+		[[ -f "$dst" ]] && chmod u+w "$dst" 2>/dev/null || true
+		cp -p "$src" "$dst"
+	}
+
+	for file in Heretic2R H2Common.dylib ref_gl3.dylib snd_sdl3.dylib libSDL3.0.dylib libopenal.1.dylib; do
+		copy_to_app "$ROOT/build/$file" "$app_build/$file"
+	done
+
+	for file in Player.dylib "Client Effects.dylib" gamex86.dylib; do
+		copy_to_app "$ROOT/build/base/$file" "$app_build/base/$file"
 	done
 }
 
@@ -263,5 +289,7 @@ done
 "$CXX" "${LDFLAGS[@]}" -Wl,-export_dynamic "${objects[@]}" "$ROOT/build/H2Common.dylib" "${SDL_LIBS[@]}" -framework OpenGL -framework AppKit -ldl -o "$ROOT/build/Heretic2R"
 
 fix_install_names
+
+sync_app_bundle
 
 echo "Native macOS arm64 build complete: $ROOT/build/Heretic2R"

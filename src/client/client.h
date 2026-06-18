@@ -415,7 +415,17 @@ typedef client_fx_export_t (*GetfxAPI_t)(client_fx_import_t);
 
 #pragma region ========================== SOUND API IO ==========================
 
-#define SND_API_VERSION	1 //mxd
+#define SND_API_VERSION	2 //mxd
+
+typedef struct snd_audio_stats_s
+{
+	int underruns;
+	int callback_count;
+	int last_requested_frames;
+	int last_available_frames;
+	int max_callback_us;
+	int avg_callback_us;
+} snd_audio_stats_t;
 
 //mxd. Functions exported by the sound library module.
 typedef struct
@@ -452,6 +462,7 @@ typedef struct
 	// Cinematics playback.
 	void (*RawSamples)(int samples, uint rate, int width, int num_channels, const byte* data, float volume);
 
+	void (*GetStats)(snd_audio_stats_t* stats);
 	void (*SetEaxEnvironment)(int env_index);
 } snd_export_t;
 

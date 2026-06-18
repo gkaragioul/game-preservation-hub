@@ -11,6 +11,7 @@
 #include "gl3_Shaders.h"
 #include "q_Sprite.h"
 #include "Vector.h"
+#include <string.h>
 
 // Helper: write a 9-float vertex (pos3+tc2+col4).
 static void WriteSpriteVert(float* dest, const vec3_t pos, float s, float t, float r, float g, float b, float a)
@@ -127,6 +128,9 @@ void R_DrawSpriteModel(entity_t* e)
 {
 	const model_t* mdl = *e->model;
 
+	if (strstr(mdl->name, "sprites/fx/ripple_add.sp2") != NULL)
+		return;
+
 	// Don't even bother culling, because it's just a single polygon without a surface cache.
 	const dsprite_t* psprite = mdl->extradata;
 
@@ -141,6 +145,7 @@ void R_DrawSpriteModel(entity_t* e)
 	if (mdl->skins[e->frame] == NULL)
 		return;
 
+	GL3_SetDlightsEnabled(false);
 	R_HandleTransparency(e);
 	R_BindImage(mdl->skins[e->frame]);
 
@@ -192,4 +197,5 @@ void R_DrawSpriteModel(entity_t* e)
 		glEnable(GL_DEPTH_TEST);
 
 	R_CleanupTransparency(e);
+	GL3_SetDlightsEnabled(true);
 }

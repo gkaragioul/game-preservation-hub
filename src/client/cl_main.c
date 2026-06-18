@@ -20,6 +20,7 @@
 #include "FlexModel.h"
 #include "g_playstats.h" //mxd
 #include "Reference.h"
+#include "glimp_sdl3.h"
 
 cvar_t* cl_stereo_separation;
 cvar_t* cl_stereo;
@@ -92,6 +93,8 @@ cvar_t* EAX_default;
 cvar_t* quake_amount;
 cvar_t* cl_fx_dll;
 cvar_t* cl_cinematicfreeze;
+static cvar_t* cl_exec_on_active;
+static cvar_t* cl_exec_on_active_delay_frames;
 static cvar_t* sc_framerate;
 cvar_t* show_splash_movies; //mxd
 cvar_t* screenshot_format; //mxd
@@ -129,6 +132,41 @@ static int precache_tex;
 static int precache_model_skin;
 
 static byte* precache_model; // Used for skin checking in alias models.
+
+static void CL_RunExecOnActive(void)
+{
+	static int delay_frames = -1;
+
+	if (cl_exec_on_active == NULL || cl_exec_on_active->string[0] == '\0')
+	{
+		delay_frames = -1;
+		return;
+	}
+
+	if (cls.state != ca_active || !cl.refresh_prepped || cl.cinematictime > 0)
+		return;
+
+	if (delay_frames < 0)
+	{
+		delay_frames = (int)cl_exec_on_active_delay_frames->value;
+
+		if (delay_frames < 0)
+			delay_frames = 0;
+		else if (delay_frames > 300)
+			delay_frames = 300;
+	}
+
+	if (delay_frames > 0)
+	{
+		delay_frames--;
+		return;
+	}
+
+	Com_Printf("Exec-on-active: exec %s\n", cl_exec_on_active->string);
+	Cbuf_AddText(va("exec %s\n", cl_exec_on_active->string));
+	Cvar_Set("cl_exec_on_active", "");
+	delay_frames = -1;
+}
 
 // Dumps the current net message, prefixed by the length.
 void CL_WriteDemoMessage(void)
@@ -1296,6 +1334,8 @@ static void CL_InitLocal(void)
 	quake_amount = Cvar_Get("quake_amount", "0.0", 0);
 	cl_fx_dll = Cvar_Get("cl_fx_dll", "Client Effects", 0);
 	cl_cinematicfreeze = Cvar_Get("cl_cinematicfreeze", "0", 0);
+	cl_exec_on_active = Cvar_Get("cl_exec_on_active", "", 0);
+	cl_exec_on_active_delay_frames = Cvar_Get("cl_exec_on_active_delay_frames", "24", 0);
 	sc_framerate = Cvar_Get("sc_framerate", "20", CVAR_ARCHIVE); // H2_1.07: "20" -> "60".
 	show_splash_movies = Cvar_Get("show_splash_movies", "1", CVAR_ARCHIVE); //mxd
 	screenshot_format = Cvar_Get("screenshot_format", "jpg", CVAR_ARCHIVE); //mxd
@@ -1568,6 +1608,8 @@ void CL_Frame(const int packetdelta, const int renderdelta, const int timedelta,
 		if (!cl.refresh_prepped && cls.state == ca_active)
 			CL_PrepRefresh();
 
+		CL_RunExecOnActive();
+
 		// Update the screen.
 		SCR_RunConsole();
 		SCR_UpdateScreen();
@@ -1679,6 +1721,10 @@ void CL_Init(void)
 	// All archived variables will now be loaded.
 	Con_Init();
 	VID_Init();
+	SCR_Init();
+	GLimp_CheckWindowSize();
+	SCR_WindowResized();
+	SCR_DrawStartupLoading();
 
 	IN_PumpEvents(); // Keep window responsive during initialization.
 
@@ -1705,7 +1751,6 @@ void CL_Init(void)
 	net_message.maxsize = sizeof(net_message_buffer);
 
 	M_Init();
-	SCR_Init();
 
 	// Missing: cls.disable_screen = true;
 	CL_InitLocal();

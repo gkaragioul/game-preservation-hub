@@ -67,7 +67,6 @@ static void IN_ToggleFullscreenShortcut(void)
 		Cvar_SetValue("vid_windowed_mode", vid_mode->value);
 
 	Cvar_SetValue("vid_fullscreen", (vid_fullscreen->value == 0.0f ? 1.0f : 0.0f));
-	vid_restart_required = true;
 }
 
 static qboolean IN_IsForceQuitShortcut(const SDL_KeyboardEvent* key)

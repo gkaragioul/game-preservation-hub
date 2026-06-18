@@ -24,6 +24,7 @@
 #include "vid.h"
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -150,6 +151,17 @@ cvar_t* cl_camera_under_surface;
 cvar_t* quake_amount;
 static cvar_t* r_gpu_frame_ms;
 static cvar_t* r_gpu_renderer;
+static cvar_t* r_phase_total_ms;
+static cvar_t* r_phase_setup_ms;
+static cvar_t* r_phase_reflection_ms;
+static cvar_t* r_phase_world_ms;
+static cvar_t* r_phase_shadows_ms;
+static cvar_t* r_phase_entities_ms;
+static cvar_t* r_phase_dlights_ms;
+static cvar_t* r_phase_alpha_ms;
+static cvar_t* r_phase_particles_ms;
+static cvar_t* r_phase_post_ms;
+static cvar_t* r_phase_flash_ms;
 
 #define GPU_TIMER_QUERY_COUNT 4
 static GLuint gpu_timer_queries[GPU_TIMER_QUERY_COUNT];
@@ -157,6 +169,13 @@ static qboolean gpu_timer_submitted[GPU_TIMER_QUERY_COUNT];
 static int gpu_timer_index;
 static qboolean gpu_timer_initialized;
 static qboolean gpu_timer_active;
+
+static double R_CPUTimeMS(void)
+{
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (double)ts.tv_sec * 1000.0 + (double)ts.tv_nsec / 1000000.0;
+}
 
 #pragma endregion
 
@@ -334,6 +353,17 @@ static void R_Register(void)
 	quake_amount = ri.Cvar_Get("quake_amount", "0", 0);
 	r_gpu_frame_ms = ri.Cvar_Get("r_gpu_frame_ms", "0", 0);
 	r_gpu_renderer = ri.Cvar_Get("r_gpu_renderer", "unknown", 0);
+	r_phase_total_ms = ri.Cvar_Get("r_phase_total_ms", "0", 0);
+	r_phase_setup_ms = ri.Cvar_Get("r_phase_setup_ms", "0", 0);
+	r_phase_reflection_ms = ri.Cvar_Get("r_phase_reflection_ms", "0", 0);
+	r_phase_world_ms = ri.Cvar_Get("r_phase_world_ms", "0", 0);
+	r_phase_shadows_ms = ri.Cvar_Get("r_phase_shadows_ms", "0", 0);
+	r_phase_entities_ms = ri.Cvar_Get("r_phase_entities_ms", "0", 0);
+	r_phase_dlights_ms = ri.Cvar_Get("r_phase_dlights_ms", "0", 0);
+	r_phase_alpha_ms = ri.Cvar_Get("r_phase_alpha_ms", "0", 0);
+	r_phase_particles_ms = ri.Cvar_Get("r_phase_particles_ms", "0", 0);
+	r_phase_post_ms = ri.Cvar_Get("r_phase_post_ms", "0", 0);
+	r_phase_flash_ms = ri.Cvar_Get("r_phase_flash_ms", "0", 0);
 
 	ri.Cmd_AddCommand("imagelist", R_ImageList_f);
 	ri.Cmd_AddCommand("screenshot", R_ScreenShot_f);
@@ -354,9 +384,28 @@ static rserr_t SetMode_impl(int* pwidth, int* pheight, const int mode)
 		return RSERR_INVALID_MODE;
 	}
 
-	ri.Con_Printf(PRINT_ALL, " %dx%d\n", *pwidth, *pheight);
+	const int requested_width = *pwidth;
+	const int requested_height = *pheight;
 
-	return (ri.GLimp_InitGraphics(*pwidth, *pheight) ? RSERR_OK : RSERR_INVALID_MODE);
+	ri.Con_Printf(PRINT_ALL, " %dx%d\n", requested_width, requested_height);
+
+	if (!ri.GLimp_InitGraphics(requested_width, requested_height))
+		return RSERR_INVALID_MODE;
+
+	if (ri.GLimp_GetDrawableSize != NULL)
+	{
+		int drawable_width = 0;
+		int drawable_height = 0;
+
+		if (ri.GLimp_GetDrawableSize(&drawable_width, &drawable_height))
+		{
+			*pwidth = drawable_width;
+			*pheight = drawable_height;
+			ri.Con_Printf(PRINT_ALL, "Actual drawable mode: %dx%d\n", *pwidth, *pheight);
+		}
+	}
+
+	return RSERR_OK;
 }
 
 static qboolean R_SetMode(void)
@@ -627,6 +676,13 @@ static void RI_ResizeWindow(int width, int height)
 {
 	width = max(width, 1);
 	height = max(height, 1);
+
+	if (width == viddef.width && height == viddef.height)
+	{
+		glViewport(0, 0, viddef.width, viddef.height);
+		GL3_UpdateProjection2D((float)viddef.width, (float)viddef.height);
+		return;
+	}
 
 	viddef.width = width;
 	viddef.height = height;
@@ -953,6 +1009,181 @@ static const GLfloat particle_st_coords[NUM_PARTICLE_TYPES][4] =
 	{ 0.87890625f, 0.87890625f, 0.99609375f, 0.99609375f }
 };
 
+#define PARTICLE_ATLAS_TEXEL (1.0f / 256.0f)
+
+enum
+{
+	GL3_PART_4x4_WHITE = 0,
+	GL3_PART_4x4_BLUE = 1,
+	GL3_PART_4x4_RED = 2,
+	GL3_PART_4x4_GREEN = 3,
+	GL3_PART_4x4_CYAN = 4,
+	GL3_PART_4x4_YELLOW = 5,
+	GL3_PART_4x4_MAGENTA = 6,
+	GL3_PART_4x4_ORANGE = 7,
+	GL3_PART_4x4_BLUE2 = 8,
+	GL3_PART_4x4_BLUE3 = 9,
+	GL3_PART_16x16_STAR = 22,
+	GL3_PART_32x32_STEAM = 26,
+	GL3_PART_32x32_FIRE0 = 28,
+	GL3_PART_32x32_FIRE1 = 29,
+	GL3_PART_32x32_FIRE2 = 30,
+	GL3_PART_16x16_SPARK_B = 31,
+	GL3_PART_16x16_SPARK_R = 32,
+	GL3_PART_16x16_SPARK_G = 33,
+	GL3_PART_16x16_SPARK_Y = 34,
+	GL3_PART_32x32_FIREBALL = 35,
+	GL3_PART_32x32_BLACKSMOKE = 36,
+	GL3_PART_16x16_SPARK_C = 37,
+	GL3_PART_8x8_RED_X = 38,
+	GL3_PART_8x8_RED_CIRCLE = 39,
+	GL3_PART_8x8_GREEN_X = 40,
+	GL3_PART_8x8_GREEN_CIRCLE = 41,
+	GL3_PART_8x8_BLUE_X = 42,
+	GL3_PART_8x8_BLUE_CIRCLE = 43,
+	GL3_PART_8x8_CYAN_X = 44,
+	GL3_PART_8x8_CYAN_CIRCLE = 45,
+	GL3_PART_8x8_RED_DIAMOND = 46,
+	GL3_PART_8x8_GREEN_DIAMOND = 47,
+	GL3_PART_8x8_BLUE_DIAMOND = 48,
+	GL3_PART_8x8_CYAN_DIAMOND = 49,
+	GL3_PART_32x32_ALPHA_GLOBE = 51,
+	GL3_PART_16x16_SPARK_I = 52,
+	GL3_PART_16x16_FIRE1 = 58,
+	GL3_PART_16x16_FIRE2 = 59,
+	GL3_PART_16x16_FIRE3 = 60
+};
+
+static qboolean R_ParticleNeedsAtlasGuard(const byte p_type)
+{
+	switch (p_type)
+	{
+		case GL3_PART_32x32_STEAM:
+		case GL3_PART_32x32_FIRE0:
+		case GL3_PART_32x32_FIRE1:
+		case GL3_PART_32x32_FIRE2:
+		case GL3_PART_16x16_SPARK_B:
+		case GL3_PART_16x16_SPARK_R:
+		case GL3_PART_16x16_SPARK_G:
+		case GL3_PART_16x16_SPARK_Y:
+		case GL3_PART_32x32_FIREBALL:
+		case GL3_PART_32x32_BLACKSMOKE:
+		case GL3_PART_16x16_SPARK_C:
+		case GL3_PART_32x32_ALPHA_GLOBE:
+		case GL3_PART_16x16_SPARK_I:
+		case GL3_PART_16x16_FIRE1:
+		case GL3_PART_16x16_FIRE2:
+		case GL3_PART_16x16_FIRE3:
+			return true;
+
+		default:
+			return false;
+	}
+}
+
+static byte R_GetParticleDrawType(const byte p_type)
+{
+	switch (p_type)
+	{
+		case GL3_PART_16x16_STAR:
+			return GL3_PART_4x4_WHITE;
+
+		case GL3_PART_8x8_RED_X:
+		case GL3_PART_8x8_RED_CIRCLE:
+		case GL3_PART_8x8_RED_DIAMOND:
+			return GL3_PART_4x4_RED;
+
+		case GL3_PART_8x8_GREEN_X:
+		case GL3_PART_8x8_GREEN_CIRCLE:
+		case GL3_PART_8x8_GREEN_DIAMOND:
+			return GL3_PART_4x4_GREEN;
+
+		case GL3_PART_8x8_BLUE_X:
+		case GL3_PART_8x8_BLUE_CIRCLE:
+		case GL3_PART_8x8_BLUE_DIAMOND:
+			return GL3_PART_4x4_BLUE;
+
+		case GL3_PART_8x8_CYAN_X:
+		case GL3_PART_8x8_CYAN_CIRCLE:
+		case GL3_PART_8x8_CYAN_DIAMOND:
+			return GL3_PART_4x4_CYAN;
+
+		default:
+			return p_type;
+	}
+}
+
+static qboolean R_HideGeometricParticleGlyph(const byte p_type)
+{
+	switch (p_type)
+	{
+		case GL3_PART_4x4_WHITE:
+		case GL3_PART_4x4_BLUE:
+		case GL3_PART_4x4_RED:
+		case GL3_PART_4x4_GREEN:
+		case GL3_PART_4x4_CYAN:
+		case GL3_PART_4x4_YELLOW:
+		case GL3_PART_4x4_MAGENTA:
+		case GL3_PART_4x4_ORANGE:
+		case GL3_PART_4x4_BLUE2:
+		case GL3_PART_4x4_BLUE3:
+		case GL3_PART_32x32_FIRE0:
+		case GL3_PART_32x32_FIRE1:
+		case GL3_PART_32x32_FIRE2:
+		case GL3_PART_16x16_SPARK_B:
+		case GL3_PART_16x16_SPARK_R:
+		case GL3_PART_16x16_SPARK_G:
+		case GL3_PART_16x16_SPARK_Y:
+		case GL3_PART_32x32_FIREBALL:
+		case GL3_PART_16x16_SPARK_C:
+		case GL3_PART_16x16_STAR:
+		case GL3_PART_8x8_RED_X:
+		case GL3_PART_8x8_RED_CIRCLE:
+		case GL3_PART_8x8_GREEN_X:
+		case GL3_PART_8x8_GREEN_CIRCLE:
+		case GL3_PART_8x8_BLUE_X:
+		case GL3_PART_8x8_BLUE_CIRCLE:
+		case GL3_PART_8x8_CYAN_X:
+		case GL3_PART_8x8_CYAN_CIRCLE:
+		case GL3_PART_8x8_RED_DIAMOND:
+		case GL3_PART_8x8_GREEN_DIAMOND:
+		case GL3_PART_8x8_BLUE_DIAMOND:
+		case GL3_PART_8x8_CYAN_DIAMOND:
+		case GL3_PART_32x32_ALPHA_GLOBE:
+		case GL3_PART_16x16_SPARK_I:
+		case GL3_PART_16x16_FIRE1:
+		case GL3_PART_16x16_FIRE2:
+		case GL3_PART_16x16_FIRE3:
+			return true;
+
+		default:
+			return false;
+	}
+}
+
+static void R_GetParticleST(const byte p_type, float* s0, float* t0, float* s1, float* t1)
+{
+	*s0 = particle_st_coords[p_type][0];
+	*t0 = particle_st_coords[p_type][1];
+	*s1 = particle_st_coords[p_type][2];
+	*t1 = particle_st_coords[p_type][3];
+
+	if (!R_ParticleNeedsAtlasGuard(p_type))
+		return;
+
+	const float span_s = *s1 - *s0;
+	const float span_t = *t1 - *t0;
+	const float extra_inset = (span_s >= 0.20f || span_t >= 0.20f ? 2.0f : 1.0f) * PARTICLE_ATLAS_TEXEL;
+
+	if (span_s > extra_inset * 3.0f && span_t > extra_inset * 3.0f)
+	{
+		*s0 += extra_inset;
+		*t0 += extra_inset;
+		*s1 -= extra_inset;
+		*t1 -= extra_inset;
+	}
+}
+
 // Job data for parallel particle vertex generation.
 typedef struct particle_job_data_s
 {
@@ -984,15 +1215,25 @@ static void R_GenerateParticleVerticesJob(void* data)
 		else
 			c = p->color;
 
-		const byte p_type = (p->type & PFL_FLAG_MASK);
+		if (job->alpha_particle)
+		{
+			c.r = c.r * c.a / 255;
+			c.g = c.g * c.a / 255;
+			c.b = c.b * c.a / 255;
+		}
+
+		const byte raw_type = (p->type & PFL_FLAG_MASK);
+		const byte p_type = R_GetParticleDrawType(raw_type);
+
+		if (R_HideGeometricParticleGlyph(raw_type))
+			c.a = 0;
+
 		const float cr = (float)c.r / 255.0f;
 		const float cg = (float)c.g / 255.0f;
 		const float cb = (float)c.b / 255.0f;
 		const float ca = (float)c.a / 255.0f;
-		const float s0 = particle_st_coords[p_type][0];
-		const float t0 = particle_st_coords[p_type][1];
-		const float s1 = particle_st_coords[p_type][2];
-		const float t1 = particle_st_coords[p_type][3];
+		float s0, t0, s1, t1;
+		R_GetParticleST(p_type, &s0, &t0, &s1, &t1);
 
 		// Generate 2 triangles (6 vertices) for this particle.
 		// Triangle 1: top-left, top-right, bottom-right
@@ -1031,7 +1272,11 @@ static void R_DrawParticles(const int num_particles, const particle_t* particles
 	if (alpha_particle)
 	{
 		R_BindImage(r_aparticletexture);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		// Additive particles are premultiplied at both texture upload and vertex
+		// tint time, then added directly. Do not switch this to SRC_ALPHA: that
+		// changes the original additive look and makes spell-cooking cards easier
+		// to see at atlas edges.
+		glBlendFunc(GL_ONE, GL_ONE);
 	}
 	else
 	{
@@ -1059,7 +1304,7 @@ static void R_DrawParticles(const int num_particles, const particle_t* particles
 
 	// Use multithreading for large particle batches.
 	const int num_threads = GL3_GetNumWorkerThreads();
-	const int threading_threshold = 128; // Only multithread if enough particles.
+	const int threading_threshold = MAX_STACK_PARTICLES; // Avoid worker overhead for small/medium particle bursts.
 
 	if (num_particles >= threading_threshold && num_threads > 1)
 	{
@@ -1115,15 +1360,25 @@ static void R_DrawParticles(const int num_particles, const particle_t* particles
 			else
 				c = p->color;
 
-			const byte p_type = (p->type & PFL_FLAG_MASK);
+			if (alpha_particle)
+			{
+				c.r = c.r * c.a / 255;
+				c.g = c.g * c.a / 255;
+				c.b = c.b * c.a / 255;
+			}
+
+			const byte raw_type = (p->type & PFL_FLAG_MASK);
+			const byte p_type = R_GetParticleDrawType(raw_type);
+
+			if (R_HideGeometricParticleGlyph(raw_type))
+				c.a = 0;
+
 			const float cr = (float)c.r / 255.0f;
 			const float cg = (float)c.g / 255.0f;
 			const float cb = (float)c.b / 255.0f;
 			const float ca = (float)c.a / 255.0f;
-			const float s0 = particle_st_coords[p_type][0];
-			const float t0 = particle_st_coords[p_type][1];
-			const float s1 = particle_st_coords[p_type][2];
-			const float t1 = particle_st_coords[p_type][3];
+			float s0, t0, s1, t1;
+			R_GetParticleST(p_type, &s0, &t0, &s1, &t1);
 
 			// Generate 2 triangles (6 vertices) for this particle.
 			// Triangle 1: top-left, top-right, bottom-right
@@ -1154,12 +1409,19 @@ static void R_DrawParticles(const int num_particles, const particle_t* particles
 		}
 	}
 
+	// Particles are already authored/tinted as camera-facing FX. Dynamic lights make
+	// atlas border texels visible as square cards, unlike the original GL1 path.
+	GL3_SetDlightsEnabled(false);
+
 	// Draw all particles in a single batched call.
 	GL3_UseShader(gl3state.shader3D);
-	glBindVertexArray(gl3state.vao3D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo3D);
+	GL3_SetParticleSoftMask(true);
+	GL3_BindVertexArray(gl3state.vao3D);
+	GL3_BindArrayBuffer(gl3state.vbo3D);
 	glBufferData(GL_ARRAY_BUFFER, num_particles * PARTICLE_VERTEX_COUNT * PARTICLE_FLOATS_PER_VERTEX * sizeof(float), batch_verts, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, num_particles * PARTICLE_VERTEX_COUNT);
+	GL3_SetParticleSoftMask(false);
+	GL3_SetDlightsEnabled(true);
 
 	if (heap_buffer != NULL)
 		free(heap_buffer);
@@ -1173,6 +1435,13 @@ static void R_RenderView(const refdef_t* fd)
 	if ((int)r_norefresh->value)
 		return;
 
+	const double phase_start = R_CPUTimeMS();
+	double t0 = phase_start;
+	double reflection_ms = 0.0;
+	double shadows_ms = 0.0;
+	double alpha_ms = 0.0;
+	double particles_ms = 0.0;
+
 	r_newrefdef = *fd;
 
 	if (r_worldmodel == NULL && !(r_newrefdef.rdflags & RDF_NOWORLDMODEL))
@@ -1185,25 +1454,56 @@ static void R_RenderView(const refdef_t* fd)
 	R_SetupGL3D();
 	GL3_UpdateDlights();
 	R_MarkLeaves();
+	const double setup_ms = R_CPUTimeMS() - t0;
 
 	{
 		float water_z;
+		t0 = R_CPUTimeMS();
 		if (R_GetLastWaterPlaneZ(&water_z))
 			R_RenderReflection(water_z);
+		reflection_ms = R_CPUTimeMS() - t0;
 	}
 
+	t0 = R_CPUTimeMS();
 	R_ResetBmodelTransforms();
 	R_DrawWorld();
+	const double world_ms = R_CPUTimeMS() - t0;
+
 	if ((int)r_shadows->value && (int)r_drawentities->value)
+	{
+		t0 = R_CPUTimeMS();
 		R_DrawEntityShadows();
+		shadows_ms = R_CPUTimeMS() - t0;
+	}
+
+	t0 = R_CPUTimeMS();
 	R_DrawEntitiesOnList();
+	const double entities_ms = R_CPUTimeMS() - t0;
+
+	t0 = R_CPUTimeMS();
 	R_RenderDlights();
+	const double dlights_ms = R_CPUTimeMS() - t0;
 
 	glDepthMask(GL_FALSE);
+	t0 = R_CPUTimeMS();
 	R_SortAndDrawAlphaSurfaces();
+	alpha_ms = R_CPUTimeMS() - t0;
+
+	t0 = R_CPUTimeMS();
 	R_DrawParticles(r_newrefdef.num_particles, r_newrefdef.particles, false);
 	R_DrawParticles(r_newrefdef.anum_particles, r_newrefdef.aparticles, true);
+	particles_ms = R_CPUTimeMS() - t0;
 	glDepthMask(GL_TRUE);
+
+	ri.Cvar_SetValue("r_phase_setup_ms", (float)setup_ms);
+	ri.Cvar_SetValue("r_phase_reflection_ms", (float)reflection_ms);
+	ri.Cvar_SetValue("r_phase_world_ms", (float)world_ms);
+	ri.Cvar_SetValue("r_phase_shadows_ms", (float)shadows_ms);
+	ri.Cvar_SetValue("r_phase_entities_ms", (float)entities_ms);
+	ri.Cvar_SetValue("r_phase_dlights_ms", (float)dlights_ms);
+	ri.Cvar_SetValue("r_phase_alpha_ms", (float)alpha_ms);
+	ri.Cvar_SetValue("r_phase_particles_ms", (float)particles_ms);
+	ri.Cvar_SetValue("r_phase_total_ms", (float)(R_CPUTimeMS() - phase_start));
 
 	if ((int)r_speeds->value)
 		ri.Con_Printf(PRINT_ALL, "%4i wpoly %4i epoly %i tex %i lmaps\n", c_brush_polys, c_alias_polys, c_visible_textures, c_visible_lightmaps);
@@ -1222,6 +1522,8 @@ static void R_SetLightLevel(void)
 static int RI_RenderFrame(const refdef_t* fd)
 {
 	paletteRGBA_t color;
+	double post_ms = 0.0;
+	double flash_ms = 0.0;
 
 	R_BeginGPUTimer();
 
@@ -1244,27 +1546,35 @@ static int RI_RenderFrame(const refdef_t* fd)
 
 		if (gl3state.fbo3D != 0)
 		{
+			const double post_start = R_CPUTimeMS();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			const float bloom_strength = ((int)r_bloom->value != 0 && gl3state.fboBloomPingPong[1] != 0)
 				? r_bloom_strength->value : 0.0f;
 			const float ao_strength = ((int)r_ssao->value != 0 && gl3state.fboTexSSAOBlur != 0)
 				? r_ssao_strength->value : 0.0f;
 			if (ao_strength > 0.0f)
-				GL3_RenderSSAO(r_ssao_radius->value, r_ssao_bias->value);
+			GL3_RenderSSAO(r_ssao_radius->value, r_ssao_bias->value);
 			GL3_RenderBloom(r_bloom_threshold->value, bloom_strength);
 			GL3_CompositeHDR(viddef.width, viddef.height, r_hdr_exposure->value, bloom_strength, ao_strength);
+			post_ms = R_CPUTimeMS() - post_start;
 		}
 
 		R_SetupGL2D();
 
 		if (color.a == 0)
 		{
+			ri.Cvar_SetValue("r_phase_post_ms", (float)post_ms);
+			ri.Cvar_SetValue("r_phase_flash_ms", 0.0f);
 			R_EndGPUTimer();
 			return 0;
 		}
 	}
 
+	const double flash_start = R_CPUTimeMS();
 	R_ScreenFlash(color);
+	flash_ms = R_CPUTimeMS() - flash_start;
+	ri.Cvar_SetValue("r_phase_post_ms", (float)post_ms);
+	ri.Cvar_SetValue("r_phase_flash_ms", (float)flash_ms);
 	R_EndGPUTimer();
 
 	return 0;

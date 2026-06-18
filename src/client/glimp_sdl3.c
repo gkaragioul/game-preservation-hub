@@ -15,9 +15,65 @@
 static int last_flags = 0;
 static SDL_Window* window = NULL;
 static cvar_t* vid_hidpi;
+static cvar_t* vid_display_index;
 static int last_window_width;
 static int last_window_height;
 static int startup_resize_sync_frames;
+
+static SDL_DisplayID GLimp_GetTargetDisplay(void)
+{
+	SDL_DisplayID display = SDL_GetPrimaryDisplay();
+	int display_count = 0;
+	SDL_DisplayID* displays = SDL_GetDisplays(&display_count);
+
+	if (displays != NULL && display_count > 0)
+	{
+		const int requested_display = (vid_display_index != NULL ? (int)vid_display_index->value : 0);
+
+		if (requested_display > 0 && requested_display <= display_count)
+			display = displays[requested_display - 1];
+		else if (display == 0)
+			display = displays[0];
+
+		SDL_free(displays);
+	}
+
+	return display;
+}
+
+static void GLimp_PrintDisplays(void)
+{
+	int display_count = 0;
+	SDL_DisplayID* displays = SDL_GetDisplays(&display_count);
+
+	if (displays == NULL)
+	{
+		Com_Printf("WARNING: failed to enumerate displays: %s\n", SDL_GetError());
+		return;
+	}
+
+	Com_Printf("SDL displays:\n");
+
+	for (int i = 0; i < display_count; i++)
+	{
+		SDL_Rect bounds;
+		const char* name = SDL_GetDisplayName(displays[i]);
+
+		if (!SDL_GetDisplayBounds(displays[i], &bounds))
+			memset(&bounds, 0, sizeof(bounds));
+
+		Com_Printf(" - Display %i: %s (%ix%i at %i,%i)%s\n",
+			i + 1,
+			(name != NULL ? name : "unknown"),
+			bounds.w,
+			bounds.h,
+			bounds.x,
+			bounds.y,
+			(displays[i] == SDL_GetPrimaryDisplay() ? " [primary]" : ""));
+	}
+
+	SDL_free(displays);
+}
 
 static void FitWindowToUsableBounds(void)
 {
@@ -28,7 +84,9 @@ static void FitWindowToUsableBounds(void)
 	if (flags & SDL_WINDOW_FULLSCREEN)
 		return;
 
-	SDL_DisplayID display = SDL_GetDisplayForWindow(window);
+	SDL_DisplayID display = GLimp_GetTargetDisplay();
+	if (display == 0)
+		display = SDL_GetDisplayForWindow(window);
 	if (display == 0)
 		display = SDL_GetPrimaryDisplay();
 
@@ -88,16 +146,17 @@ static void FitWindowToUsableBounds(void)
 
 static qboolean CreateSDLWindow(const SDL_WindowFlags flags, const int width, const int height)
 {
-	// Force the window to minimize when focus is lost. 
+	// Force the window to minimize when focus is lost.
 	// The windows staying maximized has some odd implications for window ordering under Windows and some X11 window managers like kwin.
 	// See: https://github.com/libsdl-org/SDL/issues/4039 https://github.com/libsdl-org/SDL/issues/3656
 	SDL_SetHint(SDL_HINT_VIDEO_MINIMIZE_ON_FOCUS_LOSS, "1");
 
 	const SDL_PropertiesID props = SDL_CreateProperties();
+	const SDL_DisplayID target_display = GLimp_GetTargetDisplay();
 
 	SDL_SetStringProperty(props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, GAME_NAME);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(target_display));
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(target_display));
 	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, width);
 	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, height);
 	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, (Sint64)flags);
@@ -111,6 +170,7 @@ static qboolean CreateSDLWindow(const SDL_WindowFlags flags, const int width, co
 			Com_Printf("WARNING: failed to set SDL minimum window size: %s\n", SDL_GetError());
 
 		FitWindowToUsableBounds();
+		Com_Printf("Window display target: %i\n", (int)target_display);
 		return true;
 	}
 
@@ -125,9 +185,9 @@ static qboolean InitDisplayModes(void) //mxd
 
 	if (window == NULL)
 	{
-		// Called without a window, list modes from the first display.
-		// This is the primary display and likely the one the game will run on.
-		cur_display = SDL_GetPrimaryDisplay();
+		// Called without a window. Use the configured target display so mode 0
+		// matches the monitor where the window will be created.
+		cur_display = GLimp_GetTargetDisplay();
 	}
 	else
 	{
@@ -258,6 +318,9 @@ qboolean GLimp_Init(void)
 		Com_Printf("SDL video driver is \"%s\".\n", SDL_GetCurrentVideoDriver());
 
 		vid_hidpi = Cvar_Get("vid_hidpi", "0", CVAR_ARCHIVE);
+		vid_display_index = Cvar_Get("vid_display_index", "0", CVAR_ARCHIVE);
+
+		GLimp_PrintDisplays();
 
 		if (!InitDisplayModes()) //mxd
 			return false;
@@ -391,11 +454,51 @@ qboolean GLimp_InitGraphics(const int width, const int height)
 	return true;
 }
 
+qboolean GLimp_GetDrawableSize(int* width, int* height)
+{
+	if (window == NULL || width == NULL || height == NULL)
+		return false;
+
+	SDL_SyncWindow(window);
+
+	if (SDL_GetWindowSizeInPixels(window, width, height) && *width > 0 && *height > 0)
+		return true;
+
+	if (SDL_GetWindowSize(window, width, height) && *width > 0 && *height > 0)
+		return true;
+
+	return false;
+}
+
 // Shuts the window down.
 void GLimp_ShutdownGraphics(void)
 {
 	SDL_GL_ResetAttributes();
 	ShutdownGraphics();
+}
+
+void GLimp_ToggleFullscreen(const qboolean fullscreen)
+{
+	if (window == NULL)
+		return;
+
+	if (fullscreen)
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+	else
+		SDL_SetWindowFullscreen(window, 0);
+
+	SDL_SyncWindow(window);
+
+	int draw_w = 0, draw_h = 0;
+	if (SDL_GetWindowSizeInPixels(window, &draw_w, &draw_h) && draw_w > 0 && draw_h > 0)
+	{
+		viddef.width = draw_w;
+		viddef.height = draw_h;
+		last_window_width = draw_w;
+		last_window_height = draw_h;
+	}
+
+	startup_resize_sync_frames = 0;
 }
 
 // (Un)grab Input.
@@ -430,13 +533,14 @@ static void GLimp_UpdateWindowSize(void)
 		}
 	}
 
-	const qboolean force_startup_sync = (startup_resize_sync_frames > 0);
 	if (startup_resize_sync_frames > 0)
 		startup_resize_sync_frames--;
 
 	if (width > 0 && height > 0 &&
-		(force_startup_sync || width != last_window_width || height != last_window_height || width != viddef.width || height != viddef.height))
+		(width != last_window_width || height != last_window_height || width != viddef.width || height != viddef.height))
 	{
+		viddef.width = width;
+		viddef.height = height;
 		re.ResizeWindow(width, height);
 		last_window_width = width;
 		last_window_height = height;

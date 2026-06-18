@@ -53,6 +53,9 @@ static cvar_t* scr_perf_overlay;
 static cvar_t* scr_perf_overlay_interval;
 static cvar_t* scr_frame_spike_log;
 static cvar_t* scr_frame_spike_threshold;
+static cvar_t* scr_frame_log;
+static cvar_t* scr_adaptive_fps;
+static cvar_t* scr_adaptive_fps_floor;
 
 // H2:
 static cvar_t* scr_statbar;
@@ -83,9 +86,21 @@ static int perf_snapshot_time;
 static int perf_cpu_last_time;
 static double perf_cpu_last_seconds;
 static int perf_last_spike_log_time;
+static FILE* perf_frame_log_file;
+static int perf_frame_log_count;
+static int adaptive_window_start_time;
+static int adaptive_frames;
+static int adaptive_missed_frames;
+static int adaptive_stable_windows;
+static float adaptive_frame_ms_sum;
+static float adaptive_current_cap;
+static float adaptive_last_display_cap;
+static int adaptive_last_profile;
 
 static void SCR_PerfOverlay_f(void);
+static void SCR_LogFrame(void);
 static void SCR_LogFrameSpike(void);
+static void SCR_UpdateAdaptiveFPS(void);
 
 // Level transition fade state.
 typedef enum
@@ -99,9 +114,8 @@ static level_fade_state_t level_fade_state = LEVEL_FADE_NONE;
 static int level_fade_start_time = 0;
 static int level_fade_duration = 0;
 
-//mxd. Loading screen map popup animation state.
-static int loading_map_start_time = 0;
-static float loading_map_scale = 0.0f;
+//mxd. Loading screen map art is only shown after map registration has started.
+static qboolean loading_map_ready = false;
 
 //mxd. Loading screen starfield background.
 #define STARFIELD_NUM_STARS		150
@@ -572,6 +586,7 @@ void SCR_BeginLoadingPlaque(void)
 	cl.sound_prepped = false; // Don't play ambients.
 
 	scr_draw_loading_plaque = true; // H2
+	loading_map_ready = false;
 
 	if (!cls.disable_screen && !(int)developer->value && cls.key_dest != key_console)
 	{
@@ -580,11 +595,14 @@ void SCR_BeginLoadingPlaque(void)
 
 		scr_progressbar_width = 0; // H2
 
-		//mxd. Start fade-out effect before loading.
-		SCR_StartLevelFade(true);
+		const qboolean fade_from_active_frame = (cls.state == ca_active && cl.refresh_prepped);
+
+		//mxd. Fade out only when we have a valid game frame to transition from.
+		if (fade_from_active_frame)
+			SCR_StartLevelFade(true);
 
 		// Render fade-out frames for smooth transition.
-		while (SCR_IsFadingOut() && (cls.realtime - level_fade_start_time) < level_fade_duration)
+		while (fade_from_active_frame && SCR_IsFadingOut() && (cls.realtime - level_fade_start_time) < level_fade_duration)
 		{
 			IN_Update(); // Pump message loop.
 			curtime = (int)(Sys_Microseconds() / 1000ll); // Update curtime.
@@ -595,10 +613,17 @@ void SCR_BeginLoadingPlaque(void)
 		// Clear fade state so loading screen is visible.
 		SCR_ClearLevelFade();
 
+		curtime = (int)(Sys_Microseconds() / 1000ll);
+		cls.realtime = curtime;
 		SCR_UpdateScreen();
 		cls.disable_screen = true; // Q2: Sys_Milliseconds()
 		cls.disable_servercount = cl.servercount;
 	}
+}
+
+void SCR_SetLoadingMapReady(void)
+{
+	loading_map_ready = true;
 }
 
 void SCR_EndLoadingPlaque(void)
@@ -606,7 +631,7 @@ void SCR_EndLoadingPlaque(void)
 	cls.disable_screen = false;
 	scr_draw_loading_plaque = false; // H2
 	scr_draw_loading = false; // H2
-	loading_map_start_time = 0; //mxd. Reset map popup animation state.
+	loading_map_ready = false;
 	Con_ClearNotify();
 
 	//mxd. Start fade-in effect after loading completes.
@@ -679,6 +704,14 @@ void SCR_Init(void)
 	scr_perf_overlay_interval = Cvar_Get("scr_perf_overlay_interval", "0.25", CVAR_ARCHIVE);
 	scr_frame_spike_log = Cvar_Get("scr_frame_spike_log", "0", CVAR_ARCHIVE);
 	scr_frame_spike_threshold = Cvar_Get("scr_frame_spike_threshold", "0.85", CVAR_ARCHIVE);
+	scr_frame_log = Cvar_Get("scr_frame_log", "0", 0);
+	scr_adaptive_fps = Cvar_Get("scr_adaptive_fps", "0", CVAR_ARCHIVE);
+	Cvar_SetValue("scr_adaptive_fps", 0.0f);
+	scr_adaptive_fps_floor = Cvar_Get("scr_adaptive_fps_floor", "60", CVAR_ARCHIVE);
+
+	SCR_UpdateUIScale();
+	SCR_CalcVrect();
+	SCR_DirtyScreen();
 
 	// H2:
 	scr_statbar = Cvar_Get("scr_statbar", "1", 0);
@@ -738,32 +771,33 @@ static void SCR_DrawPause(void)
 
 static void SCR_DrawLoading(void)
 {
-	if (!scr_draw_loading || strcmp(cls.servername, "localhost") != 0 || Cvar_IsSet("coop") || Cvar_IsSet("deathmatch"))
+	if (!scr_draw_loading)
 		return;
 
 	// Draw twinkling starfield background (fills widescreen letterbox areas).
 	SCR_DrawStarfield();
 
-	// Tell Menu_DrawBG to skip black fill since starfield is already drawn.
-	m_skip_bg_fill = true;
+	const qboolean draw_map =
+		loading_map_ready &&
+		strcmp(cls.servername, "localhost") == 0 &&
+		!Cvar_IsSet("coop") &&
+		!Cvar_IsSet("deathmatch");
 
-	// Animate map popup zoom-in effect (similar to pause menu).
-	if (loading_map_start_time == 0)
-		loading_map_start_time = curtime;
+	if (draw_map)
+	{
+		// Tell Menu_DrawBG to skip black fill since starfield is already drawn.
+		m_skip_bg_fill = true;
 
-	const float elapsed = (float)(curtime - loading_map_start_time);
-	const float duration = 250.0f; // Same duration as menu zoom.
-	loading_map_scale = min(elapsed / duration, 1.0f);
+		// Loading uses final geometry immediately; menu zoom scaling makes map art look distorted mid-load.
+		cls.m_menuscale = 1.0f;
+		cls.m_menualpha = 1.0f;
 
-	// Draw map bg with zoom animation.
-	cls.m_menuscale = loading_map_scale;
-	cls.m_menualpha = loading_map_scale;
+		M_WorldMap_MenuDraw();
 
-	M_WorldMap_MenuDraw();
-
-	cls.m_menuscale = 0.0f;
-	cls.m_menualpha = 0.0f;
-	m_skip_bg_fill = false;
+		cls.m_menuscale = 0.0f;
+		cls.m_menualpha = 0.0f;
+		m_skip_bg_fill = false;
+	}
 
 	char label[MAX_QPATH];
 	Com_sprintf(label, sizeof(label), "\x03%s", scr_item_loading->string);
@@ -778,6 +812,35 @@ static void SCR_DrawLoading(void)
 	// Draw progressbar.
 	re.DrawStretchPic(49, 432, 70, 16, "icons/breath2.m8", 1.0f, DSP_SCALE_4x3);
 	re.DrawStretchPic(52, 432, scr_progressbar_width, 16, "icons/breath.m8", 1.0f, DSP_SCALE_4x3);
+}
+
+void SCR_DrawStartupLoading(void)
+{
+	if (!scr_initialized || cls.disable_screen || scr_item_loading == NULL)
+		return;
+
+	curtime = (int)(Sys_Microseconds() / 1000ll);
+	cls.realtime = curtime;
+
+	SCR_UpdateUIScale();
+	SCR_CalcVrect();
+
+	re.BeginFrame(0.0f);
+	SCR_DrawStarfield();
+
+	char label[MAX_QPATH];
+	Com_sprintf(label, sizeof(label), "\x03%s", scr_item_loading->string);
+
+	const int w = re.BF_Strlen(label);
+	const int x = (DEF_WIDTH - w) >> 1;
+
+	re.DrawStretchPic(x - 16, 48, w + 32, 48, "misc/textback.m32", 1.0f, DSP_SCALE_4x3);
+	re.DrawBigFont(x, 80, label, 1.0f);
+
+	re.DrawStretchPic(49, 432, 70, 16, "icons/breath2.m8", 1.0f, DSP_SCALE_4x3);
+	re.DrawStretchPic(52, 432, 1, 16, "icons/breath.m8", 1.0f, DSP_SCALE_4x3);
+
+	re.EndFrame();
 }
 
 // Q2 counterpart
@@ -1517,10 +1580,240 @@ static void SCR_UpdatePerfSnapshot(void)
 	perf_snapshot_time = cls.realtime;
 }
 
+static float SCR_GetAdaptiveDisplayCap(void)
+{
+	float display_cap = Cvar_VariableValue("vid_display_refresh");
+
+	if (display_cap < 30.0f)
+		display_cap = vid_maxfps->value;
+
+	return Clamp(display_cap, 30.0f, 240.0f);
+}
+
+static float SCR_GetNextLowerFPSTier(const float current_cap, const float floor_cap)
+{
+	static const float tiers[] = { 240.0f, 165.0f, 144.0f, 120.0f, 100.0f, 90.0f, 72.0f, 60.0f, 50.0f, 40.0f, 30.0f };
+
+	for (int i = 0; i < (int)ARRAY_SIZE(tiers); i++)
+		if (tiers[i] < current_cap - 0.5f && tiers[i] >= floor_cap)
+			return tiers[i];
+
+	return floor_cap;
+}
+
+static float SCR_GetNextHigherFPSTier(const float current_cap, const float display_cap)
+{
+	static const float tiers[] = { 30.0f, 40.0f, 50.0f, 60.0f, 72.0f, 90.0f, 100.0f, 120.0f, 144.0f, 165.0f, 240.0f };
+
+	for (int i = 0; i < (int)ARRAY_SIZE(tiers); i++)
+		if (tiers[i] > current_cap + 0.5f && tiers[i] <= display_cap + 0.5f)
+			return min(tiers[i], display_cap);
+
+	return display_cap;
+}
+
+static void SCR_ResetAdaptiveFPS(const float display_cap, const int profile)
+{
+	adaptive_window_start_time = cls.realtime;
+	adaptive_frames = 0;
+	adaptive_missed_frames = 0;
+	adaptive_stable_windows = 0;
+	adaptive_frame_ms_sum = 0.0f;
+	adaptive_current_cap = display_cap;
+	adaptive_last_display_cap = display_cap;
+	adaptive_last_profile = profile;
+}
+
+static void SCR_ApplyAdaptiveCap(const float cap, const char* reason)
+{
+	adaptive_current_cap = cap;
+	Cvar_SetValue("vid_maxfps", cap);
+	Cvar_SetValue("cl_maxfps", cap);
+	Com_Printf("Adaptive Full Power: %.0f FPS target (%s)\n", cap, reason);
+}
+
+static void SCR_UpdateAdaptiveFPS(void)
+{
+	if (scr_adaptive_fps == NULL || (int)scr_adaptive_fps->value == 0 || vid_maxfps == NULL)
+		return;
+
+	const int profile = Cvar_VariableInt("r_graphics_profile");
+	const float custom_cap = Cvar_VariableValue("r_custom_maxfps");
+	const float display_cap = SCR_GetAdaptiveDisplayCap();
+	const float floor_cap = Clamp(scr_adaptive_fps_floor->value, 30.0f, display_cap);
+
+	if (profile != 0 || custom_cap >= 30.0f || cls.state != ca_active || cl.cinematictime > 0)
+	{
+		SCR_ResetAdaptiveFPS(display_cap, profile);
+		return;
+	}
+
+	if (adaptive_current_cap < 30.0f || fabsf(adaptive_last_display_cap - display_cap) > 0.5f || adaptive_last_profile != profile)
+	{
+		SCR_ResetAdaptiveFPS(display_cap, profile);
+		SCR_ApplyAdaptiveCap(display_cap, "display refresh");
+		return;
+	}
+
+	const float target_fps = max(vid_maxfps->value, 1.0f);
+	const float frame_budget_ms = 1000.0f / target_fps;
+	const float frame_ms = max(cls.rframetime, 0.0001f) * 1000.0f;
+
+	adaptive_frames++;
+	adaptive_frame_ms_sum += frame_ms;
+	if (frame_ms > frame_budget_ms * 1.08f)
+		adaptive_missed_frames++;
+
+	if (adaptive_window_start_time == 0)
+		adaptive_window_start_time = cls.realtime;
+
+	if (cls.realtime - adaptive_window_start_time < 2000 || adaptive_frames < 60)
+		return;
+
+	const float avg_ms = adaptive_frame_ms_sum / (float)max(adaptive_frames, 1);
+	const float missed_ratio = (float)adaptive_missed_frames / (float)max(adaptive_frames, 1);
+
+	if ((avg_ms > frame_budget_ms * 1.05f || missed_ratio > 0.20f) && vid_maxfps->value > floor_cap + 0.5f)
+	{
+		const float lower_cap = SCR_GetNextLowerFPSTier(vid_maxfps->value, floor_cap);
+		SCR_ApplyAdaptiveCap(lower_cap, "stabilizing frame pacing");
+		adaptive_stable_windows = 0;
+	}
+	else if (avg_ms < frame_budget_ms * 0.88f && missed_ratio < 0.03f && vid_maxfps->value < display_cap - 0.5f)
+	{
+		adaptive_stable_windows++;
+		if (adaptive_stable_windows >= 6)
+		{
+			const float higher_cap = SCR_GetNextHigherFPSTier(vid_maxfps->value, display_cap);
+			SCR_ApplyAdaptiveCap(higher_cap, "headroom recovered");
+			adaptive_stable_windows = 0;
+		}
+	}
+	else
+	{
+		adaptive_stable_windows = 0;
+	}
+
+	adaptive_window_start_time = cls.realtime;
+	adaptive_frames = 0;
+	adaptive_missed_frames = 0;
+	adaptive_frame_ms_sum = 0.0f;
+}
+
 static void SCR_PerfOverlay_f(void)
 {
 	Cvar_SetValue("scr_perf_overlay", (scr_perf_overlay->value == 0.0f ? 1.0f : 0.0f));
 	Com_Printf("Benchmark overlay %s\n", (scr_perf_overlay->value == 0.0f ? "off" : "on"));
+}
+
+static void SCR_CloseFrameLog(void)
+{
+	if (perf_frame_log_file != NULL)
+	{
+		fclose(perf_frame_log_file);
+		perf_frame_log_file = NULL;
+	}
+
+	perf_frame_log_count = 0;
+}
+
+static qboolean SCR_OpenFrameLog(void)
+{
+	if (perf_frame_log_file != NULL)
+		return true;
+
+	char log_path[MAX_OSPATH] = "frame_log.csv";
+
+#ifdef __APPLE__
+	const char* home = getenv("HOME");
+	if (home != NULL && home[0] != '\0')
+	{
+		char log_dir[MAX_OSPATH];
+		Com_sprintf(log_dir, sizeof(log_dir), "%s/Library/Application Support/Heretic2R", home);
+		mkdir(log_dir, 0755);
+		Com_sprintf(log_path, sizeof(log_path), "%s/frame_log.csv", log_dir);
+	}
+#endif
+
+	if (fopen_s(&perf_frame_log_file, log_path, "w") != 0 || perf_frame_log_file == NULL)
+		return false;
+
+	setvbuf(perf_frame_log_file, NULL, _IOLBF, 0);
+	fprintf(perf_frame_log_file, "frame,time_ms,target_fps,frame_ms,gpu_ms,health_pct,entities,alpha_entities,dlights,particles,alpha_particles,bloom,ssao,shadows,reflections,detail,vsync,audio_underruns,audio_callback_count,audio_callback_max_us,audio_callback_avg_us,audio_requested_frames,audio_available_frames,phase_total_ms,phase_setup_ms,phase_reflection_ms,phase_world_ms,phase_shadows_ms,phase_entities_ms,phase_dlights_ms,phase_alpha_ms,phase_particles_ms,phase_post_ms,phase_flash_ms\n");
+	perf_frame_log_count = 0;
+	Com_Printf("Frame pacing log started: %s\n", log_path);
+	return true;
+}
+
+static void SCR_LogFrame(void)
+{
+	if (scr_frame_log == NULL)
+		return;
+
+	if (scr_frame_log->modified)
+	{
+		scr_frame_log->modified = false;
+		SCR_CloseFrameLog();
+	}
+
+	if ((int)scr_frame_log->value == 0)
+	{
+		SCR_CloseFrameLog();
+		return;
+	}
+
+	if (!SCR_OpenFrameLog())
+		return;
+
+	const float frame_ms = max(cls.rframetime, 0.0001f) * 1000.0f;
+	const float target_fps = (vid_maxfps != NULL ? max(vid_maxfps->value, 1.0f) : 0.0f);
+	const float frame_budget_ms = (target_fps > 0.0f ? 1000.0f / target_fps : 0.0f);
+	const int health_pct = (frame_budget_ms > 0.0f ? (int)Clamp((frame_budget_ms / max(frame_ms, 0.001f)) * 100.0f, 0.0f, 100.0f) : 0);
+	snd_audio_stats_t audio_stats = { 0 };
+
+	if (se.GetStats != NULL)
+		se.GetStats(&audio_stats);
+
+	fprintf(
+		perf_frame_log_file,
+		"%i,%i,%.0f,%.3f,%.3f,%i,%i,%i,%i,%i,%i,%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%i,%i,%i,%i,%i,%i,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f\n",
+		perf_frame_log_count++,
+		cls.realtime,
+		target_fps,
+		frame_ms,
+		Cvar_VariableValue("r_gpu_frame_ms"),
+		health_pct,
+		cl.refdef.num_entities,
+		cl.refdef.num_alpha_entities,
+		cl.refdef.num_dlights,
+		cl.refdef.num_particles,
+		cl.refdef.anum_particles,
+		Cvar_VariableValue("r_bloom"),
+		Cvar_VariableValue("r_ssao"),
+		Cvar_VariableValue("r_shadows"),
+		Cvar_VariableValue("r_reflections"),
+		Cvar_VariableValue("r_detail"),
+		Cvar_VariableValue("r_vsync"),
+		audio_stats.underruns,
+		audio_stats.callback_count,
+		audio_stats.max_callback_us,
+		audio_stats.avg_callback_us,
+		audio_stats.last_requested_frames,
+		audio_stats.last_available_frames,
+		Cvar_VariableValue("r_phase_total_ms"),
+		Cvar_VariableValue("r_phase_setup_ms"),
+		Cvar_VariableValue("r_phase_reflection_ms"),
+		Cvar_VariableValue("r_phase_world_ms"),
+		Cvar_VariableValue("r_phase_shadows_ms"),
+		Cvar_VariableValue("r_phase_entities_ms"),
+		Cvar_VariableValue("r_phase_dlights_ms"),
+		Cvar_VariableValue("r_phase_alpha_ms"),
+		Cvar_VariableValue("r_phase_particles_ms"),
+		Cvar_VariableValue("r_phase_post_ms"),
+		Cvar_VariableValue("r_phase_flash_ms"));
+
+	if ((perf_frame_log_count & 63) == 0)
+		fflush(perf_frame_log_file);
 }
 
 static void SCR_LogFrameSpike(void)
@@ -1865,6 +2158,9 @@ static void SCR_DrawLevelFade(void)
 // Start a level fade-out (before loading) or fade-in (after loading).
 void SCR_StartLevelFade(const qboolean fade_out)
 {
+	if (!scr_initialized || scr_level_fade_out == NULL || scr_level_fade_in == NULL)
+		return;
+
 	if (fade_out)
 	{
 		if (scr_level_fade_out->value <= 0.0f)
@@ -1989,9 +2285,10 @@ void SCR_UpdateScreen(void)
 	SCR_DrawInitialFadeIn(); //mxd
 	SCR_DrawLevelFade();     //mxd. Level transition fade effect.
 	DBG_DrawMessages(); //mxd.
-	SCR_DrawFramecounter(); //mxd
-	SCR_DrawPerfOverlay();
+		SCR_DrawFramecounter(); //mxd
+		SCR_DrawPerfOverlay();
 
-	re.EndFrame();
+		re.EndFrame();
+	SCR_LogFrame();
 	SCR_LogFrameSpike();
 }

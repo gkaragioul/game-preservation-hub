@@ -31,12 +31,21 @@ static int samplesize = 0;
 static int soundtime = 0;
 static int callback_soundtime = 0;
 static int audio_underruns = 0;
+static int audio_callback_count = 0;
+static int audio_last_requested_frames = 0;
+static int audio_last_available_frames = 0;
+static int audio_max_callback_us = 0;
+static unsigned long long audio_callback_us_total = 0;
+static qboolean stream_started = false;
 static int snd_scaletable[32][256];
 static int snd_vol;
 
 static LpfContext_t lpf_context;
 
 cvar_t* s_hrtf; //mxd. Toggle HRTF spatialization (OpenAL Soft Aureal 3D mode).
+
+static void SNDSDL3_PaintChannels(int endtime);
+static void SNDSDL3_PaintChannelsHRTF(int endtime);
 
 // Transfers a mixed "paint buffer" to the SDL output buffer and places it at the appropriate position.
 static void SNDSDL3_TransferPaintBuffer(const int endtime)
@@ -460,6 +469,42 @@ static void SNDSDL3_UpdateSoundtime(void)
 	}
 }
 
+static void SNDSDL3_PaintUntil(uint endtime)
+{
+	const uint samps = sound.samples >> (sound.channels - 1);
+
+	if (AL_IsActive() && (int)s_hrtf->value)
+		SNDSDL3_PaintChannelsHRTF(min(endtime, soundtime + samps));
+	else
+		SNDSDL3_PaintChannels(min(endtime, soundtime + samps));
+}
+
+static uint SNDSDL3_GetAlignedMixEndtime(uint base_time)
+{
+	uint endtime = base_time + (int)(s_mixahead->value * (float)sound.speed);
+	endtime = (endtime + sound.submission_chunk - 1) & ~(sound.submission_chunk - 1);
+	return endtime;
+}
+
+void SNDSDL3_SetPlaybackPaused(qboolean paused)
+{
+	if (stream == NULL)
+		return;
+
+	if (paused)
+	{
+		SDL_PauseAudioDevice(SDL_GetAudioStreamDevice(stream));
+		stream_started = false;
+		return;
+	}
+
+	if (!stream_started)
+	{
+		SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(stream));
+		stream_started = true;
+	}
+}
+
 // Updates the volume scale table based on current volume setting.
 static void SNDSDL3_UpdateScaletable(void) // Q2: S_InitScaletable().
 {
@@ -733,6 +778,20 @@ void SNDSDL3_Update(void)
 	// Mix the samples.
 	SNDSDL3_UpdateSoundtime();
 
+	if (!stream_started)
+	{
+		SNDSDL3_PaintUntil(SNDSDL3_GetAlignedMixEndtime(soundtime));
+
+		if (stream != NULL)
+		{
+			SDL_UnlockAudioStream(stream);
+			SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(stream));
+			stream_started = true;
+		}
+
+		return;
+	}
+
 	if (soundtime == 0)
 	{
 		if (stream != NULL)
@@ -748,18 +807,7 @@ void SNDSDL3_Update(void)
 		paintedtime = soundtime;
 	}
 
-	// Mix ahead of current position.
-	uint endtime = soundtime + (int)(s_mixahead->value * (float)sound.speed);
-
-	// Mix to an even submission block size.
-	endtime = (endtime + sound.submission_chunk - 1) & ~(sound.submission_chunk - 1);
-
-	const uint samps = sound.samples >> (sound.channels - 1);
-
-	if (AL_IsActive() && (int)s_hrtf->value)
-		SNDSDL3_PaintChannelsHRTF(min(endtime, soundtime + samps));
-	else
-		SNDSDL3_PaintChannels(min(endtime, soundtime + samps));
+	SNDSDL3_PaintUntil(SNDSDL3_GetAlignedMixEndtime(soundtime));
 
 	if (stream != NULL)
 		SDL_UnlockAudioStream(stream);
@@ -781,7 +829,27 @@ static void SNDSDL3_FillSDL3AudioBuffer(byte* sdl_stream, const int length)
 	const int bytes_per_frame = bytes_per_sample * sound.channels;
 	const int aligned_length = length - (length % bytes_per_frame);
 	const int requested_frames = aligned_length / bytes_per_frame;
-	const int available_frames = max(0, paintedtime - callback_soundtime);
+	if (si.cls != NULL && si.cls->disable_screen)
+	{
+		memset(sdl_stream, 0, length);
+		callback_soundtime += requested_frames;
+		paintedtime = max(paintedtime, callback_soundtime);
+		playpos = (callback_soundtime * sound.channels) & (sound.samples - 1);
+		return;
+	}
+
+	int available_frames = max(0, paintedtime - callback_soundtime);
+	if (available_frames < requested_frames)
+	{
+		// Keep CoreAudio fed even when the main thread is busy loading maps or menus.
+		soundtime = callback_soundtime;
+		SNDSDL3_PaintUntil(SNDSDL3_GetAlignedMixEndtime(callback_soundtime + requested_frames));
+		available_frames = max(0, paintedtime - callback_soundtime);
+	}
+
+	audio_last_requested_frames = requested_frames;
+	audio_last_available_frames = available_frames;
+
 	const int copy_frames = min(requested_frames, available_frames);
 	const int copy_length = copy_frames * bytes_per_frame;
 	const int start_sample = (callback_soundtime * sound.channels) & (sound.samples - 1);
@@ -830,6 +898,8 @@ static void SNDSDL3_AudioStreamCallback(void* userdata, SDL_AudioStream* sdl_str
 	if (additional_amount < 1)
 		return;
 
+	const Uint64 start_counter = SDL_GetPerformanceCounter();
+
 	byte* data = SDL_stack_alloc(byte, additional_amount);
 
 	if (data != NULL)
@@ -838,6 +908,27 @@ static void SNDSDL3_AudioStreamCallback(void* userdata, SDL_AudioStream* sdl_str
 		SDL_PutAudioStreamData(sdl_stream, data, additional_amount);
 		SDL_stack_free(data);
 	}
+
+	const Uint64 end_counter = SDL_GetPerformanceCounter();
+	const Uint64 frequency = SDL_GetPerformanceFrequency();
+	const int callback_us = (frequency > 0 ? (int)(((end_counter - start_counter) * 1000000ULL) / frequency) : 0);
+
+	audio_callback_count++;
+	audio_callback_us_total += (unsigned int)max(callback_us, 0);
+	audio_max_callback_us = max(audio_max_callback_us, callback_us);
+}
+
+void SNDSDL3_GetStats(snd_audio_stats_t* stats)
+{
+	if (stats == NULL)
+		return;
+
+	stats->underruns = audio_underruns;
+	stats->callback_count = audio_callback_count;
+	stats->last_requested_frames = audio_last_requested_frames;
+	stats->last_available_frames = audio_last_available_frames;
+	stats->max_callback_us = audio_max_callback_us;
+	stats->avg_callback_us = (audio_callback_count > 0 ? (int)(audio_callback_us_total / (unsigned int)audio_callback_count) : 0);
 }
 
 // Initializes the SDL sound backend and sets up SDL.
@@ -873,7 +964,7 @@ qboolean SNDSDL3_BackendInit(void)
 	}
 
 	const int samples = (spec.freq == 44100 ? 1024 : 512);
-	int tmp = samples * spec.channels * 10;
+	int tmp = samples * spec.channels * 16;
 
 	if (tmp & (tmp - 1))
 	{
@@ -898,12 +989,17 @@ qboolean SNDSDL3_BackendInit(void)
 	LPF_Initialize(&lpf_context, LPF_DEFAULT_GAIN_HF, sound.speed);
 
 	SNDSDL3_UpdateScaletable();
-	SDL_ResumeAudioDevice(SDL_GetAudioStreamDevice(stream));
 
 	playpos = 0;
 	soundtime = 0;
 	callback_soundtime = 0;
 	audio_underruns = 0;
+	audio_callback_count = 0;
+	audio_last_requested_frames = 0;
+	audio_last_available_frames = 0;
+	audio_max_callback_us = 0;
+	audio_callback_us_total = 0;
+	stream_started = false;
 
 	// Register HRTF toggle cvar (disabled by default until loopback rendering issues are resolved).
 	s_hrtf = si.Cvar_Get("s_hrtf", "0", CVAR_ARCHIVE);
@@ -930,6 +1026,7 @@ void SNDSDL3_BackendShutdown(void)
 
 	playpos = 0;
 	samplesize = 0;
+	stream_started = false;
 
 	si.Com_Printf("SDL audio device shut down.\n");
 }

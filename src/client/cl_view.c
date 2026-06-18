@@ -65,6 +65,7 @@ void CL_PrepRefresh(void)
 	// Register models, pics, and skins.
 	Com_Printf("Map: %s\r", mapname);
 	re.BeginRegistration(mapname);
+	SCR_SetLoadingMapReady();
 
 	Com_Printf("models\r");
 	SCR_UpdateProgressbar(2); // H2

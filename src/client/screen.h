@@ -41,12 +41,14 @@ extern cvar_t* crosshair;
 extern vrect_t scr_vrect; // Position of render window.
 
 extern void SCR_Init(void);
+extern void SCR_DrawStartupLoading(void); //mxd. Draw a loading frame immediately after renderer startup.
 extern void SCR_UpdateScreen(void);
 extern void SCR_WindowResized(void); //mxd. Recompute client-side screen state after manual window resize.
 
 extern void SCR_RunConsole(void);
 extern void SCR_BeginLoadingPlaque(void);
 extern void SCR_EndLoadingPlaque(void);
+extern void SCR_SetLoadingMapReady(void); //mxd. Loading map art can be drawn after renderer registration starts.
 extern void SCR_UpdateProgressbar(int section); //mxd. Removed unused first parameter.
 extern void SCR_UpdateUIScale(void); //mxd
 extern void SCR_DebugGraph(float value, uint color); //mxd. Re-added.

@@ -38,6 +38,16 @@ typedef struct SMKPlaybackInfo_s
 
 static SMKPlaybackInfo_t spi;
 
+static void SCR_EnterCinematicPlayback(void)
+{
+	cl.cinematictime = max(1, cls.realtime);
+	Cvar_SetValue("paused", 0);
+	cls.state = ca_connected;
+	SCR_EndLoadingPlaque();
+	In_FlushQueue();
+	cls.key_dest = key_game;
+}
+
 static qboolean SMK_Open(const char* name)
 {
 	spi.frame = 0; // Reset frame counter.
@@ -109,6 +119,13 @@ static void SCR_DoCinematicFrame(void) // Called when it's time to render next c
 
 	// Grab audio frame (way more involved than you may expect)...
 	const int smk_audio_frame_size = (int)smk_get_audio_size(spi.smk_obj, 0);
+
+	if (spi.snd_channels <= 0 || spi.snd_width <= 0 || spi.snd_rate <= 0)
+	{
+		smk_next(spi.smk_obj);
+		spi.frame++;
+		return;
+	}
 
 	//mxd. The first smk frame contains 16 frames of audio data. This will overflow s_rawsamples[] if used as is, resulting in desynched audio, so use an auxiliary buffer...
 	//mxd. Interestingly, official RAD Video Tools (and SmackW32.dll bundled with vanilla H2) start audio playback from 2-nd frame & end 1 frame too early.
@@ -229,8 +246,54 @@ void SCR_PlayCinematic(const char* name)
 		}
 	}
 
-	// No HD video found; skip this cinematic.
-	Com_Printf("No HD video found for '%s', skipping cinematic.\n", name);
+	char smk_relpath[MAX_OSPATH];
+	sprintf_s(smk_relpath, sizeof(smk_relpath), "video/%s", name);
+
+	const char* smk_basepath = FS_GetPath(smk_relpath);
+	if (smk_basepath != NULL)
+	{
+		char smk_filepath[MAX_OSPATH];
+		sprintf_s(smk_filepath, sizeof(smk_filepath), "%s/video/%s", smk_basepath, name);
+		Com_Printf("Opening SMK cinematic: '%s'...\n", smk_filepath);
+
+		if (SMK_Open(smk_filepath))
+		{
+			SCR_EnterCinematicPlayback();
+			return;
+		}
+	}
+
+	void* smk_data;
+	const int smk_data_len = FS_LoadFile(smk_relpath, &smk_data);
+
+	if (smk_data != NULL && smk_data_len > 0)
+	{
+		sprintf_s(cin_temp_file, sizeof(cin_temp_file), "%s/cin_temp.smk", FS_Gamedir());
+
+		FILE* tmp;
+		if (fopen_s(&tmp, cin_temp_file, "wb") == 0)
+		{
+			fwrite(smk_data, 1, smk_data_len, tmp);
+			fclose(tmp);
+
+			Com_Printf("Opening SMK cinematic from PAK: '%s'...\n", smk_relpath);
+
+			if (SMK_Open(cin_temp_file))
+			{
+				FS_FreeFile(smk_data);
+				SCR_EnterCinematicPlayback();
+				return;
+			}
+
+			remove(cin_temp_file);
+			cin_temp_file[0] = '\0';
+		}
+
+		FS_FreeFile(smk_data);
+	}
+
+	// No HD or SMK video found; skip this cinematic.
+	Com_Printf("No HD or SMK video found for '%s', skipping cinematic.\n", name);
 	SCR_FinishCinematic();
 }
 
@@ -241,6 +304,8 @@ void SCR_DrawCinematic(void) // Called every rendered frame.
 
 	if (MP4_IsOpen())
 		re.DrawCinematic(MP4_GetVideoFrame(), NULL); // NULL palette = BGRA MP4 frame
+	else if (spi.smk_obj != NULL)
+		re.DrawCinematic(spi.video_frame, (const paletteRGB_t*)spi.palette);
 	// While MP4_IsLoading(), we just show whatever the engine draws (black).
 }
 
@@ -248,6 +313,32 @@ void SCR_RunCinematic(void) // Called every rendered frame.
 {
 	if (cl.cinematictime < 1)
 		return;
+
+	if (spi.smk_obj != NULL)
+	{
+		// Pause if menu or console is up.
+		if (cls.key_dest != key_game)
+		{
+			cl.cinematictime = (int)((float)cls.realtime - (float)(spi.frame * 1000) / spi.fps);
+			return;
+		}
+
+		if (spi.frame >= spi.total_frames)
+		{
+			SCR_FinishCinematic();
+			return;
+		}
+
+		const int frame = (int)((float)(cls.realtime - cl.cinematictime) * spi.fps / 1000.0f);
+		if (frame <= spi.frame)
+			return;
+
+		if (frame > spi.frame + 1)
+			cl.cinematictime = (int)((float)cls.realtime - (float)(spi.frame * 1000) / spi.fps);
+
+		SCR_DoCinematicFrame();
+		return;
+	}
 
 	// Background thread still loading — keep the frame loop alive but don't advance.
 	if (MP4_IsLoading())
@@ -300,6 +391,9 @@ void SCR_StopCinematic(void)
 	cl.cinematictime = 0; // Done
 	if (MP4_IsOpen() || MP4_IsLoading())
 		MP4_Shutdown();
+
+	if (spi.smk_obj != NULL)
+		SMK_Shutdown();
 
 	// Clean up temp file extracted from PAK.
 	if (cin_temp_file[0] != '\0')

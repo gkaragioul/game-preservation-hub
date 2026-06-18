@@ -1,0 +1,634 @@
+{
+  "m12_120_vsync_off": {
+    "all": {
+      "frames": 3270,
+      "duration_s": 34.194,
+      "targets": [
+        120
+      ],
+      "avg_ms": 9.406,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 12.41,
+      "p50_ms": 8.424,
+      "p95_ms": 11.44,
+      "p99_ms": 17.754,
+      "fps": 106.31,
+      "over_9ms": 811,
+      "over_10ms": 419,
+      "over_12ms": 140,
+      "over_17ms": 42,
+      "over_18ms": 32,
+      "over_20ms": 17,
+      "gpu_avg_ms": 4.178,
+      "gpu_p95_ms": 7.385,
+      "gpu_p99_ms": 8.692,
+      "gpu_max_ms": 65.327,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 37.93,
+      "alpha_particles_avg": 352.61
+    },
+    "steady_after_5s": {
+      "frames": 3211,
+      "duration_s": 29.189,
+      "targets": [
+        120
+      ],
+      "avg_ms": 9.093,
+      "min_ms": 8.333,
+      "max_ms": 79.096,
+      "std_ms": 2.187,
+      "p50_ms": 8.425,
+      "p95_ms": 11.418,
+      "p99_ms": 17.633,
+      "fps": 109.97,
+      "over_9ms": 805,
+      "over_10ms": 415,
+      "over_12ms": 136,
+      "over_17ms": 39,
+      "over_18ms": 29,
+      "over_20ms": 14,
+      "gpu_avg_ms": 4.198,
+      "gpu_p95_ms": 7.387,
+      "gpu_p99_ms": 8.684,
+      "gpu_max_ms": 28.88,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 38.62,
+      "alpha_particles_avg": 358.37
+    },
+    "core_5s_to_1s_before_end": {
+      "frames": 3111,
+      "duration_s": 28.178,
+      "targets": [
+        120
+      ],
+      "avg_ms": 9.06,
+      "min_ms": 8.333,
+      "max_ms": 79.096,
+      "std_ms": 2.18,
+      "p50_ms": 8.424,
+      "p95_ms": 11.258,
+      "p99_ms": 17.624,
+      "fps": 110.37,
+      "over_9ms": 748,
+      "over_10ms": 378,
+      "over_12ms": 121,
+      "over_17ms": 37,
+      "over_18ms": 27,
+      "over_20ms": 14,
+      "gpu_avg_ms": 4.204,
+      "gpu_p95_ms": 7.338,
+      "gpu_p99_ms": 8.564,
+      "gpu_max_ms": 28.88,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 32.44,
+      "alpha_particles_avg": 357.77
+    },
+    "steady_without_100ms_shutdown_outliers": {
+      "frames": 3211,
+      "duration_s": 29.189,
+      "targets": [
+        120
+      ],
+      "avg_ms": 9.093,
+      "min_ms": 8.333,
+      "max_ms": 79.096,
+      "std_ms": 2.187,
+      "p50_ms": 8.425,
+      "p95_ms": 11.418,
+      "p99_ms": 17.633,
+      "fps": 109.97,
+      "over_9ms": 805,
+      "over_10ms": 415,
+      "over_12ms": 136,
+      "over_17ms": 39,
+      "over_18ms": 29,
+      "over_20ms": 14,
+      "gpu_avg_ms": 4.198,
+      "gpu_p95_ms": 7.387,
+      "gpu_p99_ms": 8.684,
+      "gpu_max_ms": 28.88,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 38.62,
+      "alpha_particles_avg": 358.37
+    },
+    "process": {
+      "samples": 34,
+      "cpu_avg_pct": 66.6,
+      "cpu_p95_pct": 93.55,
+      "cpu_max_pct": 96.9,
+      "rss_avg_mb": 531.7,
+      "rss_max_mb": 938.3
+    }
+  },
+  "m12_120_vsync_on": {
+    "all": {
+      "frames": 2870,
+      "duration_s": 34.356,
+      "targets": [
+        120
+      ],
+      "avg_ms": 10.401,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 13.452,
+      "p50_ms": 8.756,
+      "p95_ms": 14.561,
+      "p99_ms": 19.758,
+      "fps": 96.15,
+      "over_9ms": 1359,
+      "over_10ms": 995,
+      "over_12ms": 436,
+      "over_17ms": 66,
+      "over_18ms": 52,
+      "over_20ms": 28,
+      "gpu_avg_ms": 3.423,
+      "gpu_p95_ms": 4.501,
+      "gpu_p99_ms": 5.063,
+      "gpu_max_ms": 68.224,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 9.99,
+      "alpha_particles_avg": 209.66
+    },
+    "steady_after_5s": {
+      "frames": 2857,
+      "duration_s": 29.041,
+      "targets": [
+        120
+      ],
+      "avg_ms": 10.413,
+      "min_ms": 8.333,
+      "max_ms": 500.0,
+      "std_ms": 13.481,
+      "p50_ms": 8.767,
+      "p95_ms": 14.564,
+      "p99_ms": 19.791,
+      "fps": 96.04,
+      "over_9ms": 1359,
+      "over_10ms": 995,
+      "over_12ms": 436,
+      "over_17ms": 66,
+      "over_18ms": 52,
+      "over_20ms": 28,
+      "gpu_avg_ms": 3.439,
+      "gpu_p95_ms": 4.504,
+      "gpu_p99_ms": 5.065,
+      "gpu_max_ms": 68.224,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 10.03,
+      "alpha_particles_avg": 210.61
+    },
+    "core_5s_to_1s_before_end": {
+      "frames": 2749,
+      "duration_s": 28.037,
+      "targets": [
+        120
+      ],
+      "avg_ms": 10.457,
+      "min_ms": 8.333,
+      "max_ms": 500.0,
+      "std_ms": 13.739,
+      "p50_ms": 8.776,
+      "p95_ms": 14.651,
+      "p99_ms": 19.978,
+      "fps": 95.63,
+      "over_9ms": 1311,
+      "over_10ms": 967,
+      "over_12ms": 432,
+      "over_17ms": 66,
+      "over_18ms": 52,
+      "over_20ms": 28,
+      "gpu_avg_ms": 3.439,
+      "gpu_p95_ms": 4.495,
+      "gpu_p99_ms": 5.094,
+      "gpu_max_ms": 68.224,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 10.43,
+      "alpha_particles_avg": 218.88
+    },
+    "steady_without_100ms_shutdown_outliers": {
+      "frames": 2854,
+      "duration_s": 29.041,
+      "targets": [
+        120
+      ],
+      "avg_ms": 10.028,
+      "min_ms": 8.333,
+      "max_ms": 77.835,
+      "std_ms": 2.965,
+      "p50_ms": 8.764,
+      "p95_ms": 14.518,
+      "p99_ms": 19.627,
+      "fps": 99.72,
+      "over_9ms": 1356,
+      "over_10ms": 992,
+      "over_12ms": 433,
+      "over_17ms": 63,
+      "over_18ms": 49,
+      "over_20ms": 25,
+      "gpu_avg_ms": 3.442,
+      "gpu_p95_ms": 4.504,
+      "gpu_p99_ms": 5.066,
+      "gpu_max_ms": 68.224,
+      "audio_underruns_max": 0,
+      "bloom": [
+        1
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        2
+      ],
+      "particles_avg": 10.04,
+      "alpha_particles_avg": 210.83
+    },
+    "process": {
+      "samples": 34,
+      "cpu_avg_pct": 45.83,
+      "cpu_p95_pct": 82.53,
+      "cpu_max_pct": 87.1,
+      "rss_avg_mb": 273.4,
+      "rss_max_mb": 723.5
+    }
+  },
+  "m12_60_vsync_off": {
+    "all": {
+      "frames": 1859,
+      "duration_s": 35.153,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.359,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 15.999,
+      "p50_ms": 16.724,
+      "p95_ms": 16.779,
+      "p99_ms": 17.274,
+      "fps": 57.61,
+      "over_9ms": 1858,
+      "over_10ms": 1858,
+      "over_12ms": 1858,
+      "over_17ms": 21,
+      "over_18ms": 17,
+      "over_20ms": 12,
+      "gpu_avg_ms": 2.323,
+      "gpu_p95_ms": 4.193,
+      "gpu_p99_ms": 7.414,
+      "gpu_max_ms": 73.463,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 6.19,
+      "alpha_particles_avg": 129.85
+    },
+    "steady_after_5s": {
+      "frames": 1794,
+      "duration_s": 30.137,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.808,
+      "min_ms": 16.666,
+      "max_ms": 43.442,
+      "std_ms": 1.246,
+      "p50_ms": 16.725,
+      "p95_ms": 16.779,
+      "p99_ms": 16.922,
+      "fps": 59.5,
+      "over_9ms": 1794,
+      "over_10ms": 1794,
+      "over_12ms": 1794,
+      "over_17ms": 17,
+      "over_18ms": 14,
+      "over_20ms": 9,
+      "gpu_avg_ms": 2.322,
+      "gpu_p95_ms": 4.204,
+      "gpu_p99_ms": 7.38,
+      "gpu_max_ms": 38.123,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 6.32,
+      "alpha_particles_avg": 132.33
+    },
+    "core_5s_to_1s_before_end": {
+      "frames": 1734,
+      "duration_s": 29.125,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.806,
+      "min_ms": 16.666,
+      "max_ms": 43.442,
+      "std_ms": 1.26,
+      "p50_ms": 16.725,
+      "p95_ms": 16.779,
+      "p99_ms": 16.892,
+      "fps": 59.5,
+      "over_9ms": 1734,
+      "over_10ms": 1734,
+      "over_12ms": 1734,
+      "over_17ms": 15,
+      "over_18ms": 12,
+      "over_20ms": 8,
+      "gpu_avg_ms": 2.305,
+      "gpu_p95_ms": 4.187,
+      "gpu_p99_ms": 7.299,
+      "gpu_max_ms": 38.123,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 6.54,
+      "alpha_particles_avg": 136.91
+    },
+    "steady_without_100ms_shutdown_outliers": {
+      "frames": 1794,
+      "duration_s": 30.137,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.808,
+      "min_ms": 16.666,
+      "max_ms": 43.442,
+      "std_ms": 1.246,
+      "p50_ms": 16.725,
+      "p95_ms": 16.779,
+      "p99_ms": 16.922,
+      "fps": 59.5,
+      "over_9ms": 1794,
+      "over_10ms": 1794,
+      "over_12ms": 1794,
+      "over_17ms": 17,
+      "over_18ms": 14,
+      "over_20ms": 9,
+      "gpu_avg_ms": 2.322,
+      "gpu_p95_ms": 4.204,
+      "gpu_p99_ms": 7.38,
+      "gpu_max_ms": 38.123,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        0
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 6.32,
+      "alpha_particles_avg": 132.33
+    },
+    "process": {
+      "samples": 35,
+      "cpu_avg_pct": 29.98,
+      "cpu_p95_pct": 95.21,
+      "cpu_max_pct": 96.5,
+      "rss_avg_mb": 396.3,
+      "rss_max_mb": 1370.0
+    }
+  },
+  "m12_60_vsync_on": {
+    "all": {
+      "frames": 1727,
+      "duration_s": 33.868,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.353,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 16.652,
+      "p50_ms": 16.721,
+      "p95_ms": 16.777,
+      "p99_ms": 16.783,
+      "fps": 57.63,
+      "over_9ms": 1726,
+      "over_10ms": 1726,
+      "over_12ms": 1726,
+      "over_17ms": 6,
+      "over_18ms": 6,
+      "over_20ms": 5,
+      "gpu_avg_ms": 1.931,
+      "gpu_p95_ms": 2.998,
+      "gpu_p99_ms": 3.561,
+      "gpu_max_ms": 84.606,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 5.69,
+      "alpha_particles_avg": 141.81
+    },
+    "steady_after_5s": {
+      "frames": 1712,
+      "duration_s": 28.846,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.368,
+      "min_ms": 16.666,
+      "max_ms": 500.0,
+      "std_ms": 16.72,
+      "p50_ms": 16.722,
+      "p95_ms": 16.777,
+      "p99_ms": 16.783,
+      "fps": 57.58,
+      "over_9ms": 1712,
+      "over_10ms": 1712,
+      "over_12ms": 1712,
+      "over_17ms": 6,
+      "over_18ms": 6,
+      "over_20ms": 5,
+      "gpu_avg_ms": 1.947,
+      "gpu_p95_ms": 2.998,
+      "gpu_p99_ms": 3.562,
+      "gpu_max_ms": 84.606,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 5.74,
+      "alpha_particles_avg": 143.05
+    },
+    "core_5s_to_1s_before_end": {
+      "frames": 1652,
+      "duration_s": 27.842,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.391,
+      "min_ms": 16.666,
+      "max_ms": 500.0,
+      "std_ms": 17.02,
+      "p50_ms": 16.721,
+      "p95_ms": 16.777,
+      "p99_ms": 16.782,
+      "fps": 57.5,
+      "over_9ms": 1652,
+      "over_10ms": 1652,
+      "over_12ms": 1652,
+      "over_17ms": 6,
+      "over_18ms": 6,
+      "over_20ms": 5,
+      "gpu_avg_ms": 1.953,
+      "gpu_p95_ms": 2.998,
+      "gpu_p99_ms": 3.574,
+      "gpu_max_ms": 84.606,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 5.95,
+      "alpha_particles_avg": 148.25
+    },
+    "steady_without_100ms_shutdown_outliers": {
+      "frames": 1709,
+      "duration_s": 28.846,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.74,
+      "min_ms": 16.666,
+      "max_ms": 39.845,
+      "std_ms": 0.576,
+      "p50_ms": 16.722,
+      "p95_ms": 16.777,
+      "p99_ms": 16.782,
+      "fps": 59.74,
+      "over_9ms": 1709,
+      "over_10ms": 1709,
+      "over_12ms": 1709,
+      "over_17ms": 3,
+      "over_18ms": 3,
+      "over_20ms": 2,
+      "gpu_avg_ms": 1.951,
+      "gpu_p95_ms": 2.999,
+      "gpu_p99_ms": 3.562,
+      "gpu_max_ms": 84.606,
+      "audio_underruns_max": 0,
+      "bloom": [
+        0
+      ],
+      "vsync": [
+        1
+      ],
+      "detail": [
+        1
+      ],
+      "particles_avg": 5.75,
+      "alpha_particles_avg": 143.3
+    },
+    "process": {
+      "samples": 34,
+      "cpu_avg_pct": 26.99,
+      "cpu_p95_pct": 79.92,
+      "cpu_max_pct": 87.2,
+      "rss_avg_mb": 444.8,
+      "rss_max_mb": 770.2
+    }
+  }
+}

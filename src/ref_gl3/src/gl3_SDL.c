@@ -11,6 +11,8 @@
 static SDL_Window* window = NULL;
 static SDL_GLContext context = NULL;
 
+#define FULL_POWER_TARGET_FPS	120.0f
+
 static float RI_GetDisplayRefreshRate(void)
 {
 	SDL_DisplayID display = SDL_GetDisplayForWindow(window);
@@ -55,9 +57,40 @@ static float RI_ResolveFrameCap(const float refresh_rate, const int graphics_pro
 		return min(custom_cap, display_cap);
 
 	if (graphics_profile == 1)
-		return min(72.0f, display_cap);
+		return min(60.0f, display_cap);
 
-	return display_cap;
+	return min(FULL_POWER_TARGET_FPS, display_cap);
+}
+
+static void RI_ApplyGraphicsProfileDefaults(const int graphics_profile)
+{
+	const cvar_t* r_frame_test_vsync = ri.Cvar_Get("r_frame_test_vsync", "-1", 0);
+	const float profile_vsync = Clamp(r_frame_test_vsync->value, -1.0f, 2.0f);
+
+	if (graphics_profile == 1)
+	{
+		ri.Cvar_SetValue("r_hd_textures", 1.0f);
+		ri.Cvar_SetValue("r_antialiasing", 0.0f);
+		ri.Cvar_SetValue("r_bloom", 0.0f);
+		ri.Cvar_SetValue("r_ssao", 0.0f);
+		ri.Cvar_SetValue("r_shadows", 0.0f);
+		ri.Cvar_SetValue("r_reflections", 0.0f);
+		ri.Cvar_SetValue("r_detail", 1.0f);
+		// Keep Power Saver on the engine's fixed 60 FPS cap. Forcing swap-interval
+		// vsync here can stall windowed direct-map startup on macOS/Apple GL and
+		// also muddies frame-pacing analysis by adding a second limiter.
+		ri.Cvar_SetValue("r_vsync", (profile_vsync >= 0.0f ? profile_vsync : 0.0f));
+		return;
+	}
+
+	ri.Cvar_SetValue("r_hd_textures", 1.0f);
+	ri.Cvar_SetValue("r_antialiasing", 0.0f);
+	ri.Cvar_SetValue("r_bloom", 1.0f);
+	ri.Cvar_SetValue("r_ssao", 0.0f);
+	ri.Cvar_SetValue("r_shadows", 0.0f);
+	ri.Cvar_SetValue("r_reflections", 0.0f);
+	ri.Cvar_SetValue("r_detail", 2.0f);
+	ri.Cvar_SetValue("r_vsync", (profile_vsync >= 0.0f ? profile_vsync : 0.0f));
 }
 
 static void RI_SetDisplayRefreshDefaults(void)
@@ -73,6 +106,8 @@ static void RI_SetDisplayRefreshDefaults(void)
 	ri.Cvar_SetValue("vid_display_refresh", refresh_rate);
 	ri.Cvar_SetValue("vid_maxfps", render_fps);
 	ri.Cvar_SetValue("cl_maxfps", client_fps);
+	ri.Cvar_SetValue("scr_adaptive_fps", 0.0f);
+	RI_ApplyGraphicsProfileDefaults(graphics_profile);
 	ri.Con_Printf(PRINT_ALL, "Display refresh %.1f Hz: profile %i, vid_maxfps %.0f, cl_maxfps %.0f\n", refresh_rate, graphics_profile, render_fps, client_fps);
 }
 
@@ -86,6 +121,8 @@ void RI_EndFrame(void)
 // In case of error -1 is returned.
 int RI_PrepareForWindow(void)
 {
+	RI_ApplyGraphicsProfileDefaults(RI_GetGraphicsProfile());
+
 	// Request the highest core profile available on the target platform.
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 #ifdef __MACOS_NATIVE__

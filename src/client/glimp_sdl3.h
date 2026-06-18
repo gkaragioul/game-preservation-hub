@@ -12,8 +12,10 @@ extern qboolean GLimp_Init(void);
 extern void GLimp_Shutdown(void);
 
 extern qboolean GLimp_InitGraphics(int width, int height);
+extern qboolean GLimp_GetDrawableSize(int* width, int* height);
 extern void GLimp_ShutdownGraphics(void);
 
 extern void GLimp_GrabInput(qboolean grab);
 extern void GLimp_CheckWindowSize(void);
 extern void GLimp_HandleWindowEvent(const void* sdl_event);
+extern void GLimp_ToggleFullscreen(qboolean fullscreen);

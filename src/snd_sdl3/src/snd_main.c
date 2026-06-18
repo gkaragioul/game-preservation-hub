@@ -195,7 +195,7 @@ static void S_Init(void)
 		s_khz = si.Cvar_Get("s_khz", "44", CVAR_ARCHIVE);  // Q2: 11 // H2: 22. Kept for menu sound quality option.
 		s_loadas8bit = si.Cvar_Get("s_loadas8bit", "0", CVAR_ARCHIVE); // Q2: 1. Kept for menu sound quality option.
 
-		s_mixahead = si.Cvar_Get("s_mixahead", "0.14", CVAR_ARCHIVE); // Q2: 0.2
+		s_mixahead = si.Cvar_Get("s_mixahead", "0.20", CVAR_ARCHIVE); // Q2: 0.2. Extra headroom avoids CoreAudio underruns during map/menu transitions.
 		s_show = si.Cvar_Get("s_show", "0", 0);
 		s_testsound = si.Cvar_Get("s_testsound", "0", 0);
 
@@ -717,6 +717,7 @@ static void S_Update(const vec3_t origin, const vec3_t forward, const vec3_t rig
 	// If the loading plaque is up, clear everything out to make sure we aren't looping a dirty dma buffer while loading.
 	if (si.cls->disable_screen)
 	{
+		SNDSDL3_SetPlaybackPaused(true);
 		S_ClearBuffer();
 		return;
 	}
@@ -800,6 +801,7 @@ SNDLIB_DECLSPEC snd_export_t GetSoundAPI(const snd_import_t snd_import)
 	// Cinematics playback.
 	snd_export.RawSamples = S_RawSamples;
 
+	snd_export.GetStats = SNDSDL3_GetStats;
 	snd_export.SetEaxEnvironment = S_SetEaxEnvironment;
 
 	return snd_export;

@@ -28,7 +28,9 @@ void PreCacheSphere(void)
 {
 	sphere_models[0] = fxi.RegisterModel("sprites/spells/shboom.sp2");
 	sphere_models[1] = fxi.RegisterModel("sprites/spells/bluball.sp2");
-	sphere_models[2] = fxi.RegisterModel("sprites/spells/glowball.sp2");
+	// The original glowball sprite is diamond-shaped and reads as tiled cards
+	// while the sphere spell cooks. Use the round blue halo sprite instead.
+	sphere_models[2] = fxi.RegisterModel("sprites/fx/haloblue.sp2");
 	sphere_models[3] = fxi.RegisterModel("models/spells/sphere/tris.fm");
 	sphere_models[4] = fxi.RegisterModel("sprites/fx/halo.sp2");
 	sphere_models[5] = fxi.RegisterModel("sprites/spells/glowbeam.sp2");
@@ -137,29 +139,9 @@ static qboolean SphereOfAnnihilationGlowballUpdate(client_entity_t* self, centit
 	if (owner->current.effects & EF_MARCUS_FLAG1)
 		self->color.r++;
 
-	int duration;
-	switch (R_DETAIL)
-	{
-		case DETAIL_LOW:		duration = 300; break;
-		case DETAIL_NORMAL:		duration = 400; break;
-		case DETAIL_UBERHIGH:	duration = 600; break; //mxd. Longer trails for uber detail.
-		default:				duration = 500; break;
-	}
-
-	if (self->color.r > 3)
-	{
-		// Create a trailing spark.
-		client_entity_t* spark = ClientEntity_new(FX_WEAPON_SPHERE, self->flags & ~(CEF_OWNERS_ORIGIN), self->r.origin, NULL, duration);
-
-		spark->radius = 20.0f;
-		spark->r.model = &sphere_models[2]; // glowball sprite.
-		spark->r.flags = (RF_TRANSLUCENT | RF_TRANS_ADD);
-		COLOUR_SET(spark->r.color, irand(128, 180), irand(128, 180), irand(180, 255)); //mxd. Use macro.
-		spark->Scale = flrand(0.8f, 1.0f);
-		spark->d_scale = -1.5f;
-
-		AddEffect(NULL, spark);
-	}
+	// Cooking glowballs used to draw sprite/particle cards here. Those authored
+	// assets read as diamond/faceted billboards at game scale, so the hidden
+	// carrier only preserves timing/physics and emits no visible mote layer.
 
 	if (self->color.r < 16)
 	{
@@ -248,9 +230,10 @@ static qboolean SphereOfAnnihilationGlowballSpawnerUpdate(client_entity_t* self,
 
 	// Fill in the rest of my info.
 	glowball->radius = 20.0f;
-	glowball->r.model = &sphere_models[2]; // glowball sprite.
+	glowball->r.model = &sphere_models[2]; // Kept for legacy radius/PVS bookkeeping; hidden below.
 	glowball->r.flags = (RF_TRANSLUCENT | RF_TRANS_ADD);
 	COLOUR_SET(glowball->r.color, irand(128, 180), irand(128, 180), irand(180, 255)); //mxd. Use macro.
+	glowball->flags = (glowball->flags | CEF_NO_DRAW | CEF_ABSOLUTE_PARTS) & ~CEF_ADDITIVE_PARTS;
 	glowball->color.r = 1;
 	glowball->extra = (void*)owner;
 	glowball->Update = SphereOfAnnihilationGlowballUpdate;
@@ -341,10 +324,10 @@ void FXSphereOfAnnihilationExplode(centity_t* owner, const int type, const int f
 
 	for (int i = 0; i < count; i++)
 	{
-		client_particle_t* ce = ClientParticle_new(PART_16x16_SPARK_B, color_white, 600);
+		client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, color_white, 600);
 
 		VectorCopy(dir, ce->velocity);
-		ce->scale = flrand(16.0f, 32.0f);
+		ce->scale = flrand(10.0f, 20.0f);
 
 		for (int c = 0; c < 3; c++)
 			ce->velocity[c] += flrand(-FX_SPHERE_EXPLOSION_SMOKE_SPEED, FX_SPHERE_EXPLOSION_SMOKE_SPEED);
@@ -421,9 +404,9 @@ void FXSphereOfAnnihilationPower(centity_t* owner, const int type, const int fla
 	// Make the particles.
 	for (int i = 0; i < count; i++)
 	{
-		client_particle_t* ce = ClientParticle_new(PART_16x16_SPARK_B, color_white, 666);
+		client_particle_t* ce = ClientParticle_new(PART_32x32_ALPHA_GLOBE, color_white, 666);
 
-		ce->scale = flrand(8.0f, 24.0f) + size * 2.0f;
+		ce->scale = flrand(6.0f, 16.0f) + size * 1.25f;
 		ce->scale *= 0.4f;
 		ce->acceleration[2] = 0.0f;
 		ce->d_alpha = -768.0f;

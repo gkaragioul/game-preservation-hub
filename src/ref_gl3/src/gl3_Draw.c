@@ -111,11 +111,11 @@ static void GL3_DrawQuad2D(float x, float y, float w, float h,
 	GL3_UseShader(gl3state.shader2D);
 	glUniform4f(gl3state.uni2D_color, 1.0f, 1.0f, 1.0f, 1.0f);
 
-	glBindVertexArray(gl3state.vao2D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo2D);
+	GL3_BindVertexArray(gl3state.vao2D);
+	GL3_BindArrayBuffer(gl3state.vbo2D);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 }
 
 // Draw a colored (untextured) quad for Draw_Fill / Draw_FadeScreen.
@@ -138,11 +138,11 @@ static void GL3_DrawColorQuad2D(float x, float y, float w, float h,
 	GL3_UseShader(gl3state.shader2D);
 	glUniform4f(gl3state.uni2D_color, 1.0f, 1.0f, 1.0f, 1.0f);
 
-	glBindVertexArray(gl3state.vao2D);
-	glBindBuffer(GL_ARRAY_BUFFER, gl3state.vbo2D);
+	GL3_BindVertexArray(gl3state.vao2D);
+	GL3_BindArrayBuffer(gl3state.vbo2D);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STREAM_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-	glBindVertexArray(0);
+	GL3_BindVertexArray(0);
 }
 
 // ============================================================
