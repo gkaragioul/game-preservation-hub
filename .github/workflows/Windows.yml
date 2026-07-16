@@ -1,0 +1,115 @@
+---
+name: Windows
+
+on:
+  push:
+    branches-ignore:
+      - 'gh-pages'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      preset:
+        description: 'Select CMake preset'
+        default: 'win-x64-rel'
+        type: choice
+        options:
+          - win-dev
+          - win-x64-rel
+          - win-x86-rel
+      animview:
+        description: 'Build AnimView?'
+        default: 'false'
+        type: boolean
+      pr:
+        description: 'Build this PR (optional)'
+        type: number
+
+jobs:
+  Windows:
+    runs-on: windows-2022
+    env:
+      PRESET: ${{inputs.preset || 'win-x64-rel'}}
+      ANIMVIEW: ${{inputs.animview && 'ON' || 'OFF'}}
+      NAME: CorsixTH${{inputs.animview && '_and_AnimView' || ''}}${{inputs.preset == 'win-x86-rel' && '_x86' || ''}}
+      VCPKG_ROOT: ${{ github.workspace }}\vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-bincache
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Checkout selected PR
+        env:
+          GH_TOKEN: ${{github.token}}
+        if: inputs.pr
+        run: gh pr checkout --repo CorsixTH/CorsixTH ${{inputs.pr}}
+
+      - name: Extract vcpkg baseline
+        id: vcpkg-baseline
+        shell: pwsh
+        run: |
+          $config = Get-Content vcpkg-configuration.json | ConvertFrom-Json
+          $baseline = $config.'default-registry'.baseline
+          Write-Host "vcpkg baseline: $baseline"
+          echo "baseline=$baseline" >> $env:GITHUB_OUTPUT
+
+      - name: Checkout vcpkg
+        uses: actions/checkout@v6
+        with:
+          repository: 'microsoft/vcpkg'
+          ref: ${{ steps.vcpkg-baseline.outputs.baseline }}
+          fetch-depth: 0
+          path: vcpkg
+
+      - name: Bootstrap vcpkg
+        shell: cmd
+        run: |
+          cd "%VCPKG_ROOT%"
+          bootstrap-vcpkg.bat -disableMetrics
+
+      - name: Setup binary cache
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-bincache-${{env.PRESET}}-${{hashFiles('vcpkg.json','vcpkg-configuration.json')}}
+          restore-keys: vcpkg-bincache-${{env.PRESET}}-
+
+      - name: Ensure directories exist
+        run: |
+          mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+          mkdir -p artifact
+
+      - name: Run CMake configure
+        shell: cmd
+        run: |
+          cmake --preset "%PRESET%" -DVCPKG_INSTALL_OPTIONS="--x-abi-tools-use-exact-versions" -DBUILD_ANIMVIEW=%ANIMVIEW%
+
+      - name: Run CMake build
+        shell: cmd
+        run: |
+          cmake --build --preset "%PRESET%" --verbose
+
+      - name: Run CTest
+        shell: cmd
+        run: |
+          ctest --preset "%PRESET%"
+
+      - name: Run CMake install
+        if: inputs.PRESET != 'win-dev'
+        shell: cmd
+        run: |
+          cmake --install build/%PRESET% --prefix ./artifact --config RelWithDebInfo
+
+      - name: List the artifact files
+        if: inputs.PRESET != 'win-dev'
+        run: |
+          ls -R artifact
+
+      - name: Upload build
+        if: inputs.PRESET != 'win-dev'
+        uses: actions/upload-artifact@v6
+        with:
+          path: ${{ inputs.animview && 'artifact' || 'artifact/CorsixTH' }}
+          name: ${{env.NAME}}
