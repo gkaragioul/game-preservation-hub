@@ -1,0 +1,28 @@
+# Private/local game material and third-party runtime packages
+.runtime/
+OniModern Backups/
+*.iso
+*.zip
+*.7z
+*.rar
+*.exe
+*.dll
+*.bik
+*.raw
+*.dat
+
+# Build output
+[Bb]in/
+[Oo]bj/
+artifacts/
+publish/
+output/
+tmp/
+TestResults/
+.vs/
+*.user
+*.suo
+
+# Local configuration
+.env
+.env.*

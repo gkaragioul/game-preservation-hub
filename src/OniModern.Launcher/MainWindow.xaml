@@ -1,0 +1,47 @@
+<Window x:Class="OniModern.Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Oni Modern" Height="500" Width="760" MinHeight="500" MinWidth="760"
+        Background="{StaticResource CanvasBrush}" Foreground="White" WindowStartupLocation="CenterScreen">
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Text="ONI MODERN" FontSize="14" FontWeight="Bold" Foreground="{StaticResource AccentBrush}" />
+            <TextBlock Text="Windows 11 compatibility launcher" FontSize="30" FontWeight="SemiBold" Margin="0,5,0,6" />
+            <TextBlock Text="Uses your own local game files. Original game media and assets stay private." Foreground="#B8C3D6" />
+        </StackPanel>
+        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" Padding="20" CornerRadius="8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Oni installation folder" FontWeight="SemiBold" />
+                    <TextBox x:Name="InstallationPathTextBox" Margin="0,9,0,0" Padding="9" Background="#0D1524" Foreground="White" BorderBrush="#34445F" />
+                </StackPanel>
+                <Button Grid.Column="1" Content="Browse" Click="Browse_Click" Margin="12,29,0,0" />
+            </Grid>
+        </Border>
+        <Border Grid.Row="3" Background="#111B2B" Margin="0,18,0,18" Padding="20" CornerRadius="8">
+            <StackPanel>
+                <TextBlock Text="Modern runtime and profile" FontSize="17" FontWeight="SemiBold" />
+                <TextBlock Margin="0,7,0,0" Foreground="#B8C3D6" TextWrapping="Wrap"
+                           Text="Install the modern runtime once to enable borderless window mode, a 90&#176; first-person field of view, sprint support, UI/subtitle scaling, sky fixes, physics ragdolls, and checkpoint saves. A timestamped backup is created first." />
+                <TextBlock x:Name="StatusTextBlock" Margin="0,16,0,0" Foreground="#FFD07B" TextWrapping="Wrap" />
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Validate" Click="Validate_Click" />
+            <Button Content="Install modern runtime" Click="InstallRuntime_Click" />
+            <Button Content="Apply modern profile" Click="ApplyProfile_Click" />
+            <Button Content="Launch Oni" Click="Launch_Click" Margin="0" />
+        </StackPanel>
+    </Grid>
+</Window>
