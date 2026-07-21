@@ -58,8 +58,8 @@ Oni Modern is original code, but it acknowledges the Oni community projects whos
 - [OniSplit](https://wiki.oni2.net/OniSplit)
 - [Oni Mod Depot](http://mods.oni2.net/)
 
-These are separate projects with their own authorship and terms. Oni Modern does not claim to be a fork of them, and it does not copy, bundle, redistribute, or grant rights to their code or binaries. Details are in [NOTICE.md](NOTICE.md).
+These are separate projects with their own authorship and terms. Oni Modern does not claim to be a fork of them, and it does not copy, bundle, redistribute, or grant rights to their code or binaries. Details are in [NOTICE.md](NOTICE.md) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-## License
+## License and attribution
 
-The original Oni Modern source code is released under the [MIT License](LICENSE). The license does not cover *Oni*, its assets, trademarks, or any third-party/community component referenced in this documentation.
+The original Oni Modern source code is released under the [MIT License](LICENSE). The license does not cover *Oni*, its assets, trademarks, or any third-party/community component referenced in this documentation. See [NOTICE.md](NOTICE.md) for the content policy and rights boundary, and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for NuGet test-dependency licensing and community-project attribution.

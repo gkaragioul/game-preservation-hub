@@ -1,6 +1,6 @@
 # Notices, provenance, and content policy
 
-This repository contains original launcher, profile-management, backup, and configuration code written for Oni Modern. The MIT license in [`LICENSE`](LICENSE) applies only to that original code and documentation.
+This repository contains original launcher, profile-management, backup, configuration, and test code written for Oni Modern. The MIT license in [`LICENSE`](LICENSE) applies only to that original code and documentation. See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for build/test dependency licensing and the project-attribution record.
 
 ## Not included
 
