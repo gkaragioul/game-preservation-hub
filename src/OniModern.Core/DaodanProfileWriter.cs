@@ -13,7 +13,7 @@ public sealed class DaodanProfileWriter
             firstpersonmode = false
             firstpersonfov = 90
             bindablesprint = true
-            disabledoubletapsprint = true
+            disabledoubletapsprint = false
             fixconkick = true
             weaponstay = true
             reldropammo = true

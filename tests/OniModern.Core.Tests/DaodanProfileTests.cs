@@ -29,6 +29,7 @@ public sealed class DaodanProfileTests
             Assert.Contains("enableODE = true", profile);
             Assert.Contains("border = false", profile);
             Assert.Contains("daodaninput = true", profile);
+            Assert.Contains("disabledoubletapsprint = false", profile);
         }
         finally
         {
