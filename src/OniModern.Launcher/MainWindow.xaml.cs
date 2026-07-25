@@ -17,6 +17,7 @@ public partial class MainWindow : Window
     private readonly PersistSettingsWriter settingsWriter = new();
     private readonly ModernControlsWriter controlsWriter = new();
     private readonly NativeDisplayResolution nativeDisplayResolution = new();
+    private bool busy;
 
     public MainWindow()
     {
@@ -43,29 +44,59 @@ public partial class MainWindow : Window
 
     private async void ApplyProfile_Click(object sender, RoutedEventArgs e)
     {
+        if (busy)
+        {
+            return;
+        }
+
         var installation = ValidateInstallation();
         if (installation is null)
         {
             return;
         }
 
-        var backupRoot = Path.Combine(installation.RootPath, "OniModern Backups");
-        var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
-        var profile = profileWriter.WriteModernProfile(installation.RootPath);
-
-        if (!await EnsurePersistFileExistsAsync(installation))
+        busy = true;
+        SetButtonsEnabled(false);
+        try
         {
-            return;
-        }
+            var backupRoot = Path.Combine(installation.RootPath, "OniModern Backups");
+            var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
+            var profile = profileWriter.WriteModernProfile(installation.RootPath);
+            var controls = controlsWriter.WriteModernControls(installation.RootPath);
 
-        var display = GetNativeDisplayResolution();
-        var preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
-        var controls = controlsWriter.WriteModernControls(installation.RootPath);
-        StatusTextBlock.Text = $"Modern profile, controls, and native {display.Width}x{display.Height} graphics applied. Backup: {backup}; profile: {profile}; controls: {controls}; preferences: {preferences}";
+            if (!await EnsurePersistFileExistsAsync(installation))
+            {
+                return;
+            }
+
+            var display = GetNativeDisplayResolution();
+            string preferences;
+            try
+            {
+                preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
+            }
+            catch (IOException ex)
+            {
+                StatusTextBlock.Text = ex.Message;
+                return;
+            }
+
+            StatusTextBlock.Text = $"Modern profile, controls, and native {display.Width}x{display.Height} graphics applied. Backup: {backup}; profile: {profile}; controls: {controls}; preferences: {preferences}";
+        }
+        finally
+        {
+            busy = false;
+            SetButtonsEnabled(true);
+        }
     }
 
     private async void InstallRuntime_Click(object sender, RoutedEventArgs e)
     {
+        if (busy)
+        {
+            return;
+        }
+
         var installation = ValidateInstallation();
         if (installation is null)
         {
@@ -80,36 +111,78 @@ public partial class MainWindow : Window
             return;
         }
 
-        var backupRoot = Path.Combine(installation.RootPath, "OniModern Backups");
-        var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
-        var deployed = runtimeDeployer.DeployFpsRuntime(package, installation.RootPath);
-        var profile = profileWriter.WriteModernProfile(installation.RootPath);
-
-        if (!await EnsurePersistFileExistsAsync(installation))
+        busy = true;
+        SetButtonsEnabled(false);
+        try
         {
-            return;
-        }
+            var backupRoot = Path.Combine(installation.RootPath, "OniModern Backups");
+            var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
+            var deployed = runtimeDeployer.DeployFpsRuntime(package, installation.RootPath);
+            var profile = profileWriter.WriteModernProfile(installation.RootPath);
+            var controls = controlsWriter.WriteModernControls(installation.RootPath);
 
-        var display = GetNativeDisplayResolution();
-        var preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
-        var controls = controlsWriter.WriteModernControls(installation.RootPath);
-        StatusTextBlock.Text = $"Modern runtime installed ({deployed.Count} files) with modern controls and native {display.Width}x{display.Height} graphics. Backup: {backup}; profile: {profile}; controls: {controls}; preferences: {preferences}";
+            if (!await EnsurePersistFileExistsAsync(installation))
+            {
+                return;
+            }
+
+            var display = GetNativeDisplayResolution();
+            string preferences;
+            try
+            {
+                preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
+            }
+            catch (IOException ex)
+            {
+                StatusTextBlock.Text = ex.Message;
+                return;
+            }
+
+            StatusTextBlock.Text = $"Modern runtime installed ({deployed.Count} files) with modern controls and native {display.Width}x{display.Height} graphics. Backup: {backup}; profile: {profile}; controls: {controls}; preferences: {preferences}";
+        }
+        finally
+        {
+            busy = false;
+            SetButtonsEnabled(true);
+        }
     }
 
     private void Launch_Click(object sender, RoutedEventArgs e)
     {
+        if (busy)
+        {
+            return;
+        }
+
         var installation = ValidateInstallation();
         if (installation is null)
         {
             return;
         }
 
-        Process.Start(new ProcessStartInfo(installation.ExecutablePath)
+        busy = true;
+        SetButtonsEnabled(false);
+        try
         {
-            WorkingDirectory = installation.RootPath,
-            UseShellExecute = true
-        });
-        StatusTextBlock.Text = "Oni launch requested.";
+            Process.Start(new ProcessStartInfo(installation.ExecutablePath)
+            {
+                WorkingDirectory = installation.RootPath,
+                UseShellExecute = true
+            });
+            StatusTextBlock.Text = "Oni launch requested.";
+        }
+        finally
+        {
+            busy = false;
+            SetButtonsEnabled(true);
+        }
+    }
+
+    private void SetButtonsEnabled(bool enabled)
+    {
+        ApplyProfileButton.IsEnabled = enabled;
+        InstallRuntimeButton.IsEnabled = enabled;
+        LaunchButton.IsEnabled = enabled;
     }
 
     private async Task<bool> EnsurePersistFileExistsAsync(InstallationStatus installation)
@@ -123,28 +196,27 @@ public partial class MainWindow : Window
         StatusTextBlock.Text = "Launching Oni once so it can write its own settings file - " +
             "reach the main menu, then Quit, and this step will continue automatically.";
 
-        Process? process;
         try
         {
-            process = Process.Start(new ProcessStartInfo(installation.ExecutablePath)
+            using var process = Process.Start(new ProcessStartInfo(installation.ExecutablePath)
             {
                 WorkingDirectory = installation.RootPath,
                 UseShellExecute = true
             });
+
+            if (process is null)
+            {
+                StatusTextBlock.Text = "Could not launch Oni.exe to initialize persist.dat.";
+                return false;
+            }
+
+            await process.WaitForExitAsync();
         }
-        catch (System.ComponentModel.Win32Exception ex)
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException or IOException)
         {
             StatusTextBlock.Text = $"Could not launch Oni.exe to initialize persist.dat: {ex.Message}";
             return false;
         }
-
-        if (process is null)
-        {
-            StatusTextBlock.Text = "Could not launch Oni.exe to initialize persist.dat.";
-            return false;
-        }
-
-        await Task.Run(() => process.WaitForExit());
 
         if (!File.Exists(persistPath))
         {

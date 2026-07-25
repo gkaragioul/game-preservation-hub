@@ -39,9 +39,9 @@
         </Border>
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Validate" Click="Validate_Click" />
-            <Button Content="Install modern runtime" Click="InstallRuntime_Click" />
-            <Button Content="Apply modern profile" Click="ApplyProfile_Click" />
-            <Button Content="Launch Oni" Click="Launch_Click" Margin="0" />
+            <Button x:Name="InstallRuntimeButton" Content="Install modern runtime" Click="InstallRuntime_Click" />
+            <Button x:Name="ApplyProfileButton" Content="Apply modern profile" Click="ApplyProfile_Click" />
+            <Button x:Name="LaunchButton" Content="Launch Oni" Click="Launch_Click" Margin="0" />
         </StackPanel>
     </Grid>
 </Window>
