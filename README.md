@@ -6,6 +6,41 @@ This repository tracks the source, macOS compatibility work, build scripts, and 
 
 ![Heretic II Remastered](Logo.png)
 
+## Quick start
+
+There is no pre-built download — this repository is source only, so playing means building it yourself. It's four steps: get the original game data, get the free HD asset pack, build, then launch.
+
+### Step 1 — Get the original Heretic II game data
+
+You need `Htic2-0.pak` and `Htic2-1.pak` from a legally owned copy of the original 1998 Heretic II — this repository does not include or distribute them. As of this writing, Heretic II is not reliably available for purchase on Steam or GOG (check their store pages yourself, since that can change) — the original retail CD is the most consistent source. If you already own a digital or CD copy, these two files are in its install folder.
+
+### Step 2 — Get the free Heretic II Remastered HD asset pack
+
+Separately from the original game data, this port uses HD textures, music, and video assets from the [Heretic II Remastered](https://github.com/spacefarergames/Heretic2Remastered) project — an open, freely distributed enhancement pack (not the original commercial game data). Download the latest release directly from their [Releases page](https://github.com/spacefarergames/Heretic2Remastered/releases/latest) and extract `base.pak` (and, if included, the `HDTextures`/video folders) from it. This is a Windows-built release, but `base.pak` and the texture/video files inside it are plain data — you only need to extract them, not run the `.exe`.
+
+### Step 3 — Build the app (see [Building](#building) below)
+
+```sh
+brew install sdl3 openal-soft
+./build_macos_arm64.sh
+```
+
+### Step 4 — Add your game data and launch
+
+Copy everything from Steps 1 and 2 into `build/base/`:
+
+- `Htic2-0.pak`, `Htic2-1.pak` (Step 1)
+- `base.pak`, and `HDTextures/`/video folders if you extracted them separately (Step 2)
+
+Then launch:
+
+```sh
+./build/Heretic2R +set vid_ref gl3 +set vid_mode 0 +set vid_fullscreen 0
+```
+
+> [!NOTE]
+> The bundled `Launch Heretic II Remastered.command` hardcodes `vid_display_index 3` (a specific external-monitor setup from development). If you have fewer than 4 displays connected, edit that file and remove `+set vid_display_index 3`, or change it to `0` for your primary display, before double-clicking it.
+
 ## Current State
 
 Version `1.0` is a playable native arm64 build for Apple Silicon Macs.
@@ -53,16 +88,12 @@ Generated directories such as `build/` and `Heretic II Remastered.app/` are igno
 
 ## Game Data
 
-Heretic II requires original game data. This repository does not include proprietary retail or remastered PAK files.
+Heretic II requires original game data. This repository does not include proprietary retail or remastered PAK files. See [Quick start](#quick-start) above for where each file actually comes from.
 
 Expected runtime data, placed under the app/build `base/` directory:
 
-- `Htic2-0.pak`
-- `Htic2-1.pak`
-- `base.pak` for remastered assets where available
-- Optional `HDTextures/` and HD video folders
-
-Use data from a legally owned copy of Heretic II and the appropriate remastered asset package.
+- `Htic2-0.pak`, `Htic2-1.pak` — from a legally owned copy of the original Heretic II (retail CD; check current Steam/GOG availability yourself).
+- `base.pak`, and optionally `HDTextures/`/video folders — from the free, open [Heretic II Remastered](https://github.com/spacefarergames/Heretic2Remastered/releases/latest) asset pack. This one is not proprietary retail data, so it's freely downloadable from its own project.
 
 ## Building
 
