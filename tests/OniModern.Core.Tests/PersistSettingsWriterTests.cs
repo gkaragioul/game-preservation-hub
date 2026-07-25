@@ -36,7 +36,7 @@ public sealed class PersistSettingsWriterTests
     }
 
     [Fact]
-    public void ConfigureModernDisplay_provisions_a_full_preferences_record_when_the_game_has_not_saved_yet()
+    public void ConfigureModernDisplay_throws_when_persist_dat_does_not_exist_yet()
     {
         var root = Path.Combine(Path.GetTempPath(), $"oni-modern-persist-{Guid.NewGuid():N}");
         Directory.CreateDirectory(root);
@@ -47,12 +47,13 @@ public sealed class PersistSettingsWriterTests
             Assert.NotNull(type);
             var method = type.GetMethod("ConfigureModernDisplay", new[] { typeof(string), typeof(short), typeof(short) });
             Assert.NotNull(method);
-            method.Invoke(Activator.CreateInstance(type), new object[] { root, (short)1920, (short)1080 });
+            var instance = Activator.CreateInstance(type);
 
-            var configured = File.ReadAllBytes(Path.Combine(root, "persist.dat"));
-            Assert.Equal(0x60 + (400 * 0x204), configured.Length);
-            Assert.Equal((short)1920, BitConverter.ToInt16(configured, 0x4C));
-            Assert.Equal((short)1080, BitConverter.ToInt16(configured, 0x4E));
+            var invocation = Assert.Throws<System.Reflection.TargetInvocationException>(
+                () => method.Invoke(instance, new object[] { root, (short)1920, (short)1080 }));
+
+            Assert.IsType<FileNotFoundException>(invocation.InnerException);
+            Assert.False(File.Exists(Path.Combine(root, "persist.dat")));
         }
         finally
         {
