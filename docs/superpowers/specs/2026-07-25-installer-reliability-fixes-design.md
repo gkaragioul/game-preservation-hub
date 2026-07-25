@@ -45,20 +45,20 @@ first-launch crash risk.
 
 ### Root cause (grounded in Daodan source, not speculation)
 
-Read directly from `Patches/GL.c` (Daodan source, rev 1000,
-`bugs.oni2.net/browser/Daodan/src/Patches/GL.c`):
+Note on sourcing: Daodan's source has no published license. This project's
+own policy (`NOTICE.md`) commits to containing no third-party binaries or
+source snapshots, so the finding below is described in our own words with
+a link to the original, not quoted verbatim — anyone who wants to verify
+the exact lines can read them at the source.
 
-```c
-UUtBool ONICALL DD_GLrPlatform_Initialize(void)
-{
-    static const M3tDisplayMode FallbackMode = { 640, 480, 16, 0 };
-    if (!DD_GLrPlatform_SetDisplayMode(&gl->DisplayMode))
-    {
-        gl->DisplayMode = FallbackMode;
-        ...
-```
+Confirmed by reading `Patches/GL.c` directly (Daodan source, rev 1000,
+`bugs.oni2.net/browser/Daodan/src/Patches/GL.c`): the function that
+initializes OpenGL display, `DD_GLrPlatform_Initialize`, attempts to set
+the display mode Oni loaded from `persist.dat`, and only falls back to a
+hardcoded 640×480 default if that attempt reports failure.
 
-`DD_GLrPlatform_SetDisplayMode` (same file) only returns failure in windowed
+Separately, the function it calls to set that mode,
+`DD_GLrPlatform_SetDisplayMode`, only returns failure in windowed
 mode when `mode->Height < 480` — a 1440-tall mode never fails that check, so
 this specific fallback branch isn't what fires either. `gl->DisplayMode` and
 the rest of the graphics-init state are populated from `persist.dat` by

@@ -33,6 +33,21 @@ The launcher can:
 
 It does not extract, convert, upload, or package any game asset.
 
+## Quick start: playing Oni with Oni Modern
+
+There is no pre-built download yet — as of today, running the launcher means building it from source once (see [Build and test](#build-and-test) below; it's three commands and doesn't require any programming knowledge, just the .NET SDK). Once you have `OniModern.Launcher.exe`:
+
+1. **Get your own Oni installation ready.** You need a lawfully obtained copy of *Oni* already installed somewhere on your PC (retail disc, GOG, or similar) — Oni Modern does not provide the game.
+2. **(Optional but recommended) Get a Daodan runtime package.** See [Getting a Daodan runtime package](#getting-a-daodan-runtime-package) below — this is what actually lets 2001-era Oni run smoothly on Windows 11. Skip this step if you only want the control/resolution profile applied to an installation that already has Daodan.
+3. **Run `OniModern.Launcher.exe`.**
+4. **Click "Browse"** and select your Oni installation folder (the one containing `Oni.exe` and `GameDataFolder`).
+5. **Click "Validate"** to confirm the launcher recognizes it as a real Oni installation.
+6. If you have a Daodan package ready at `.runtime/runtime/DaodanDLL.zip` (step 2), **click "Install Runtime"** — this deploys Daodan, backs up your original files first, and applies the modern profile in one step. Otherwise, **click "Apply Profile"** to just apply modern controls, borderless native-resolution display, and graphics preferences to your existing installation.
+7. If this is the very first time `persist.dat` is being configured, the launcher will tell you to reach Oni's main menu and Quit — this lets the game write its own settings file once, which the launcher then patches. Just play until you hit the main menu, then Quit; the launcher continues automatically.
+8. **Click "Launch"** to play.
+
+Everything the launcher changes is backed up under `OniModern Backups` inside your Oni folder, so you can always restore the originals by hand if needed.
+
 ## Getting a Daodan runtime package
 
 Oni Modern does not include or download Daodan. Get `DaodanDLL.zip` yourself from the Oni community's own Mod Depot:
