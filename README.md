@@ -8,6 +8,46 @@ A Windows 11 compatibility launcher for a **user-owned local installation** of *
 > [!WARNING]
 > This is an independent community project. It is not affiliated with or endorsed by Bungie, Take-Two Interactive, Rockstar Games, or the Oni community projects cited below. See [NOTICE.md](NOTICE.md) for content policy, provenance, and attribution.
 
+## Installation guide
+
+Three steps: build the launcher once, get a Daodan package, then set up and play. No pre-built download exists yet, so Step 1 is required even for non-developers — it's copy/paste, not programming.
+
+### Step 1 — Build the launcher (one time)
+
+Requirements: [.NET SDK 9.0](https://dotnet.microsoft.com/download/dotnet/9.0) and Windows.
+
+```powershell
+git clone https://github.com/gkaragioul/OniModern.git
+cd OniModern
+dotnet build src/OniModern.Launcher/OniModern.Launcher.csproj -c Release
+```
+
+This produces `OniModern.Launcher.exe` under `src/OniModern.Launcher/bin/Release/net9.0-windows/`.
+
+### Step 2 — Get a Daodan runtime package (recommended)
+
+Daodan is what actually lets 2001-era Oni run well on Windows 11. Oni Modern does not include or download it — get `DaodanDLL.zip` yourself:
+
+- **http://mods.oni2.net/node/438** (Oni Mod Depot, the community's own site)
+
+Place it at `.runtime/runtime/DaodanDLL.zip`, next to the launcher — no unzipping needed, Oni Modern reads the archive directly and only deploys the `Oni.exe` and `fps/` files it expects.
+
+> [!NOTE]
+> Skip this step only if your Oni installation already has Daodan applied. Don't use the "Anniversary Edition Mod" installer executable as a source — it bundles an unrelated, unscriptable Java tool instead of Daodan itself.
+
+### Step 3 — Set up and play
+
+You need your own lawfully obtained copy of *Oni* already installed (retail disc, GOG, or similar) — Oni Modern does not provide the game.
+
+1. Run `OniModern.Launcher.exe`.
+2. Click **Browse** and select your Oni folder (the one with `Oni.exe` and `GameDataFolder`).
+3. Click **Validate** to confirm it's recognized.
+4. Click **Install Runtime** if you placed a Daodan package in Step 2, or **Apply Profile** to just modernize controls/resolution on an install that already has Daodan.
+5. First time only: the launcher will ask you to reach Oni's main menu and Quit, so the game can write its own settings file — then it continues automatically.
+6. Click **Launch** to play.
+
+Everything changed is backed up under `OniModern Backups` inside your Oni folder — nothing is one-way.
+
 ## Why use Oni Modern?
 
 Oni Modern focuses on the practical gap between a retail game installation and a comfortable, reversible current-PC setup:
@@ -33,51 +73,21 @@ The launcher can:
 
 It does not extract, convert, upload, or package any game asset.
 
-## Quick start: playing Oni with Oni Modern
-
-There is no pre-built download yet — as of today, running the launcher means building it from source once (see [Build and test](#build-and-test) below; it's three commands and doesn't require any programming knowledge, just the .NET SDK). Once you have `OniModern.Launcher.exe`:
-
-1. **Get your own Oni installation ready.** You need a lawfully obtained copy of *Oni* already installed somewhere on your PC (retail disc, GOG, or similar) — Oni Modern does not provide the game.
-2. **(Optional but recommended) Get a Daodan runtime package.** See [Getting a Daodan runtime package](#getting-a-daodan-runtime-package) below — this is what actually lets 2001-era Oni run smoothly on Windows 11. Skip this step if you only want the control/resolution profile applied to an installation that already has Daodan.
-3. **Run `OniModern.Launcher.exe`.**
-4. **Click "Browse"** and select your Oni installation folder (the one containing `Oni.exe` and `GameDataFolder`).
-5. **Click "Validate"** to confirm the launcher recognizes it as a real Oni installation.
-6. If you have a Daodan package ready at `.runtime/runtime/DaodanDLL.zip` (step 2), **click "Install Runtime"** — this deploys Daodan, backs up your original files first, and applies the modern profile in one step. Otherwise, **click "Apply Profile"** to just apply modern controls, borderless native-resolution display, and graphics preferences to your existing installation.
-7. If this is the very first time `persist.dat` is being configured, the launcher will tell you to reach Oni's main menu and Quit — this lets the game write its own settings file once, which the launcher then patches. Just play until you hit the main menu, then Quit; the launcher continues automatically.
-8. **Click "Launch"** to play.
-
-Everything the launcher changes is backed up under `OniModern Backups` inside your Oni folder, so you can always restore the originals by hand if needed.
-
-## Getting a Daodan runtime package
-
-Oni Modern does not include or download Daodan. Get `DaodanDLL.zip` yourself from the Oni community's own Mod Depot:
-
-- **http://mods.oni2.net/node/438**
-
-Place the downloaded file at `.runtime/runtime/DaodanDLL.zip` relative to the launcher, matching the layout the zip already ships in (a root `Oni.exe` plus an `fps/` folder) — Oni Modern deploys exactly those files and nothing else.
-
-Do not use the "Anniversary Edition Mod" installer executable found on some mirrors as a Daodan source: it bundles a separate Java-based package manager ("AEInstaller2") rather than deploying Daodan directly, and that tool requires manual, unscriptable GUI interaction.
-
 ## Frame rate
 
 Daodan has no built-in frame-rate cap — confirmed from its own `-help` output, which lists every configuration option it supports. Oni's game logic (movement speed, jump height, weapon cooldowns, AI timing) is tied to frame rate: above 60 Hz, gameplay speeds up roughly in proportion to your refresh rate, not just visuals.
 
 If your display runs above 60 Hz, cap Oni's frame rate externally before playing — a GPU driver per-application frame limiter (e.g., AMD Radeon Software's Frame Rate Target Control, NVIDIA's per-app FPS cap) or a tool like RTSS (RivaTuner Statistics Server). Oni Modern does not do this for you, since Daodan exposes no setting to control it.
 
-## Build and test
+## Running the tests
 
-### Requirements
-
-- .NET SDK 9.0
-- Windows to run the WPF launcher; the cross-platform core tests can run anywhere supported by .NET 9.
-- A separately and lawfully obtained Oni installation to use the launcher.
+For contributors, or anyone who wants to verify the core logic before trusting it with their install. The cross-platform core tests run anywhere .NET 9 does, no Windows or Oni installation required:
 
 ```powershell
-git clone https://github.com/gkaragioul/OniModern.git
-cd OniModern
 dotnet test tests/OniModern.Core.Tests/OniModern.Core.Tests.csproj
-dotnet build src/OniModern.Launcher/OniModern.Launcher.csproj -c Release
 ```
+
+(The launcher build command is in [Step 1 of the installation guide](#step-1--build-the-launcher-one-time) above.)
 
 ## Community acknowledgement
 
