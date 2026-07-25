@@ -20,18 +20,28 @@ No new features, no bundled binaries, no automatic downloads. Scope is
 strictly: make the existing promise ("point this at your files, get a
 correctly modernized game") actually hold on a first-time install.
 
-## Problem 1: persist.dat resolution silently ignored on first launch
+## Problem 1: a synthesized persist.dat can crash Daodan's OpenGL init
 
-### Symptom (reproduced today)
+### Symptom (reproduced today, isolated with a controlled A/B test)
 
-Fresh install → `PersistSettingsWriter.ConfigureModernDisplay` creates
-`persist.dat` from scratch (a zeroed byte array, header fields set only at
-offsets 0x3C/0x44/0x4C/0x4E/0x50) → first launch of `Oni.exe` renders at
-640×480, not the patched 2560×1440, despite the file on disk holding the
-correct bytes (verified by re-reading the file after launch — still correct,
-unread by the game). Manually going through the in-game Options → Video →
-Resolution → Close flow *once* fixes it permanently; every subsequent launch
-reads `persist.dat` correctly from cold start.
+Important correction from an earlier draft of this spec: **640×480 during
+the intro cutscene is normal, happens on every launch regardless of
+persist.dat state, and is not a bug** — the window correctly resizes to the
+patched resolution the moment the actual main menu loads. That's not what
+Problem 1 is about.
+
+The real, isolated bug: a `persist.dat` created purely by
+`PersistSettingsWriter.ConfigureModernDisplay` from a zeroed byte array
+(header fields set only at offsets 0x3C/0x44/0x4C/0x4E/0x50, everything else
+zero) — with no prior game-written file ever existing — causes Daodan to
+throw a fatal `AUrMessageBox` ("Daodan: Failed to initialize OpenGL
+contexts; Oni will now exit.") and the process exits. Verified with a
+controlled test: same install, same game data, only variable was
+persist.dat provenance — a genuinely game-written file (reached via one
+manual Options → Close, or even just Quit from the main menu) loads
+correctly every time afterward; a from-scratch synthesized file crashed on
+the very next clean test. This is worse than a wrong resolution — it's a
+first-launch crash risk.
 
 ### Root cause (grounded in Daodan source, not speculation)
 
@@ -49,21 +59,22 @@ UUtBool ONICALL DD_GLrPlatform_Initialize(void)
 ```
 
 `DD_GLrPlatform_SetDisplayMode` (same file) only returns failure in windowed
-mode when `mode->Height < 480` — a 1440-tall mode never fails that check. So
-Daodan's own display code is not where this breaks. `gl->DisplayMode` is
-populated from `persist.dat` by Oni's own proprietary startup code (not
-Daodan, not available to us — Oni's source was never released, unlike
-Daodan's). That code almost certainly validates the header before trusting
-stored values; a header we synthesize ourselves (real bytes at 5 known
-offsets, zero everywhere else) is missing whatever else it checks — most
-likely a checksum or version signature elsewhere in the 0x60-byte header —
-so it's silently distrusted and Oni falls back to its own defaults. Once the
-game has written the file itself (a "real" persist.dat), it's trusted from
-then on.
+mode when `mode->Height < 480` — a 1440-tall mode never fails that check, so
+this specific fallback branch isn't what fires either. `gl->DisplayMode` and
+the rest of the graphics-init state are populated from `persist.dat` by
+Oni's own proprietary startup code (not Daodan, not available to us — Oni's
+source was never released, unlike Daodan's). That code almost certainly
+validates the header before trusting it; a header we synthesize ourselves
+(real bytes at 5 known offsets, zero everywhere else — no checksum, no
+version signature, no whatever else a genuine header carries in the
+remaining ~80 bytes) is very likely read as corrupt rather than merely
+"defaultable," which is consistent with a hard fatal error instead of a
+graceful fallback.
 
-This explains every observed data point: fresh-file failure, correct bytes
-on disk being ignored, and permanent success after one genuine game-written
-save.
+We don't have Oni's source to confirm the exact validation logic, so this
+is the best-supported hypothesis from available evidence, not a certainty —
+but the fix below is correct regardless of the precise mechanism, since it
+never lets the tool synthesize an untrusted header in the first place.
 
 ### Fix
 
@@ -156,6 +167,10 @@ setting.
   for: default `disabledoubletapsprint` value, and
   `ConfigureModernDisplay` behavior when `persist.dat` is absent (should
   require/trigger the launch-first step rather than synthesizing a header).
-- Manual end-to-end verification (fresh install → first launch → confirm
-  native resolution without touching Options) is the real acceptance test
-  for Problem 1, since the root cause is in code we don't have access to.
+- Manual end-to-end verification (fresh install, no pre-existing
+  persist.dat → run the launch-first step → confirm no crash and correct
+  resolution once the main menu loads, not during the intro cutscene) is
+  the real acceptance test for Problem 1, since the root cause is in code
+  we don't have access to. Explicitly re-test the crash path this fix
+  removes: a from-scratch persist.dat with no launch-first step should no
+  longer be reachable through the normal install flow.
