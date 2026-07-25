@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using Forms = System.Windows.Forms;
 using OniModern.Core;
@@ -40,7 +41,7 @@ public partial class MainWindow : Window
 
     private void Validate_Click(object sender, RoutedEventArgs e) => ValidateInstallation();
 
-    private void ApplyProfile_Click(object sender, RoutedEventArgs e)
+    private async void ApplyProfile_Click(object sender, RoutedEventArgs e)
     {
         var installation = ValidateInstallation();
         if (installation is null)
@@ -51,13 +52,19 @@ public partial class MainWindow : Window
         var backupRoot = Path.Combine(installation.RootPath, "OniModern Backups");
         var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
         var profile = profileWriter.WriteModernProfile(installation.RootPath);
+
+        if (!await EnsurePersistFileExistsAsync(installation))
+        {
+            return;
+        }
+
         var display = GetNativeDisplayResolution();
         var preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
         var controls = controlsWriter.WriteModernControls(installation.RootPath);
         StatusTextBlock.Text = $"Modern profile, controls, and native {display.Width}x{display.Height} graphics applied. Backup: {backup}; profile: {profile}; controls: {controls}; preferences: {preferences}";
     }
 
-    private void InstallRuntime_Click(object sender, RoutedEventArgs e)
+    private async void InstallRuntime_Click(object sender, RoutedEventArgs e)
     {
         var installation = ValidateInstallation();
         if (installation is null)
@@ -68,7 +75,8 @@ public partial class MainWindow : Window
         var package = FindRuntimePackage();
         if (package is null)
         {
-            StatusTextBlock.Text = "The bundled modern runtime package was not found.";
+            StatusTextBlock.Text = "The runtime package was not found at .runtime/runtime/DaodanDLL.zip. " +
+                "Download it from http://mods.oni2.net/node/438 (Oni Mod Depot) and place it there.";
             return;
         }
 
@@ -76,6 +84,12 @@ public partial class MainWindow : Window
         var backup = backupService.CreateBackup(installation.RootPath, backupRoot);
         var deployed = runtimeDeployer.DeployFpsRuntime(package, installation.RootPath);
         var profile = profileWriter.WriteModernProfile(installation.RootPath);
+
+        if (!await EnsurePersistFileExistsAsync(installation))
+        {
+            return;
+        }
+
         var display = GetNativeDisplayResolution();
         var preferences = settingsWriter.ConfigureModernDisplay(installation.RootPath, display.Width, display.Height);
         var controls = controlsWriter.WriteModernControls(installation.RootPath);
@@ -96,6 +110,50 @@ public partial class MainWindow : Window
             UseShellExecute = true
         });
         StatusTextBlock.Text = "Oni launch requested.";
+    }
+
+    private async Task<bool> EnsurePersistFileExistsAsync(InstallationStatus installation)
+    {
+        var persistPath = Path.Combine(installation.RootPath, "persist.dat");
+        if (File.Exists(persistPath))
+        {
+            return true;
+        }
+
+        StatusTextBlock.Text = "Launching Oni once so it can write its own settings file - " +
+            "reach the main menu, then Quit, and this step will continue automatically.";
+
+        Process? process;
+        try
+        {
+            process = Process.Start(new ProcessStartInfo(installation.ExecutablePath)
+            {
+                WorkingDirectory = installation.RootPath,
+                UseShellExecute = true
+            });
+        }
+        catch (System.ComponentModel.Win32Exception ex)
+        {
+            StatusTextBlock.Text = $"Could not launch Oni.exe to initialize persist.dat: {ex.Message}";
+            return false;
+        }
+
+        if (process is null)
+        {
+            StatusTextBlock.Text = "Could not launch Oni.exe to initialize persist.dat.";
+            return false;
+        }
+
+        await Task.Run(() => process.WaitForExit());
+
+        if (!File.Exists(persistPath))
+        {
+            StatusTextBlock.Text = "Oni exited without creating persist.dat. Launch it again, reach " +
+                "the main menu, and Quit before applying the profile.";
+            return false;
+        }
+
+        return true;
     }
 
     private InstallationStatus? ValidateInstallation()
