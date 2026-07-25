@@ -4,6 +4,31 @@ Native Apple Silicon and Metal renderer work for [CorsixTH](https://github.com/C
 
 This repository contains source code, build configuration, and compatibility work only. It does not include Theme Hospital game data, GOG installers, original assets, music, videos, manuals, or a playable commercial game bundle.
 
+## Quick start
+
+Three steps: get your own game files, build the app, then launch and point it at those files.
+
+### Step 1 — Get your own Theme Hospital game files
+
+You need one of the following, legally obtained — this repository does not provide any of them:
+
+- A download from [GOG.com](https://www.gog.com/game/theme_hospital) or [EA](https://www.ea.com/games/theme/theme-hospital), or
+- The original game CD.
+
+Install it anywhere on your Mac (the default GOG/EA install location works fine — see Step 3, it's found automatically).
+
+### Step 2 — Build the app (see [Apple Silicon Build](#apple-silicon-build) below)
+
+Run the `brew install`, `cmake -S -B`, and `cmake --build`/`--install` commands in that section. This produces `build/apple-silicon-install/CorsixTH.app`.
+
+### Step 3 — Launch and point it at your game files
+
+Open `CorsixTH.app`. On first launch it automatically scans common install locations, including GOG's default folders (`GOG Galaxy/Games/Theme Hospital`, `GOG.com/Theme Hospital`, `GOG Games/Theme Hospital`) and the app's own folder. If it finds a valid copy, you're playing immediately — nothing else to do.
+
+If it can't find one automatically, it opens a folder-browser dialog asking you to select your Theme Hospital installation folder directly. Pick the folder that contains the game's original data files and it starts.
+
+You can change this later from in-game: **Options → Folders**, then browse to a different Theme Hospital installation.
+
 ## What Works
 
 - Native `arm64` build using Apple Clang, CMake, Ninja, and Homebrew dependencies.
@@ -50,7 +75,7 @@ cmake --build build/apple-silicon-release --parallel
 cmake --install build/apple-silicon-release
 ```
 
-The installed app is created at `build/apple-silicon-install/CorsixTH.app`. Configure CorsixTH to use your own legally obtained Theme Hospital data directory.
+The installed app is created at `build/apple-silicon-install/CorsixTH.app`. See [Step 3](#step-3--launch-and-point-it-at-your-game-files) above for pointing it at your own legally obtained Theme Hospital data.
 
 ## Project Boundaries
 
