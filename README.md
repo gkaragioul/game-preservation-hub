@@ -33,6 +33,22 @@ The launcher can:
 
 It does not extract, convert, upload, or package any game asset.
 
+## Getting a Daodan runtime package
+
+Oni Modern does not include or download Daodan. Get `DaodanDLL.zip` yourself from the Oni community's own Mod Depot:
+
+- **http://mods.oni2.net/node/438**
+
+Place the downloaded file at `.runtime/runtime/DaodanDLL.zip` relative to the launcher, matching the layout the zip already ships in (a root `Oni.exe` plus an `fps/` folder) — Oni Modern deploys exactly those files and nothing else.
+
+Do not use the "Anniversary Edition Mod" installer executable found on some mirrors as a Daodan source: it bundles a separate Java-based package manager ("AEInstaller2") rather than deploying Daodan directly, and that tool requires manual, unscriptable GUI interaction.
+
+## Frame rate
+
+Daodan has no built-in frame-rate cap — confirmed from its own `-help` output, which lists every configuration option it supports. Oni's game logic (movement speed, jump height, weapon cooldowns, AI timing) is tied to frame rate: above 60 Hz, gameplay speeds up roughly in proportion to your refresh rate, not just visuals.
+
+If your display runs above 60 Hz, cap Oni's frame rate externally before playing — a GPU driver per-application frame limiter (e.g., AMD Radeon Software's Frame Rate Target Control, NVIDIA's per-app FPS cap) or a tool like RTSS (RivaTuner Statistics Server). Oni Modern does not do this for you, since Daodan exposes no setting to control it.
+
 ## Build and test
 
 ### Requirements
