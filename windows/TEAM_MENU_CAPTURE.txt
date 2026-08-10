@@ -1,0 +1,60 @@
+WW3 — Menu capture for a teammate who CAN log in
+================================================
+George cannot log in right now. If you can reach the main menu, please record
+Leaderboards + Shop (and the other screens below) before 3 August 2026.
+
+WILL THIS MESS UP MY PC?
+------------------------
+This pack is the MENU RECORDER only. It temporarily redirects 3 WW3 server
+names in your hosts file while recording, then removes them when you Stop.
+
+It does NOT:
+  - install a fake Epic / root certificate
+  - redirect api.epicgames.dev
+  - change Steam or other games permanently
+
+(Those Epic problems George hit weeks ago came from a DIFFERENT offline-mock
+tool, not this pack.)
+
+Risk if you forget to Stop: WW3 hosts stay pointed at 127.0.0.1 and WW3
+(or anything sharing those names) won't reach real servers. Fix: double-click
+  windows\WW3-Recorder-Stop.ps1
+or if that fails:
+  windows\WW3-Recorder-Emergency-Cleanup.ps1
+
+Needs on your PC
+----------------
+1. World War 3 on Steam (you must be able to log into the MENU).
+2. Python 3.11 or 3.12 (https://www.python.org/downloads/)
+   - Check "Add python.exe to PATH"
+3. This folder unzipped with BOTH windows\ and mockserver\ together.
+
+Steps (login FIRST — important)
+-------------------------------
+1. Close WW3 if open.
+2. Steam -> Play. Wait until you are IN THE MAIN MENU.
+3. Double-click:  windows\WW3-Recorder-Start.ps1
+   - Yes on admin prompt.
+   - When it says press Enter (after login), press Enter.
+4. Open each screen slowly:
+
+     [ ] Challenges (Daily / Weekly / Season)
+     [ ] Leaderboards / Scores          <-- most important
+     [ ] Notifications
+     [ ] Career / Statistics / Profile
+     [ ] Shop — browse tabs, do NOT buy  <-- most important
+     [ ] Battle Pass / Season
+     [ ] Friends
+     [ ] Loadout (open a few weapons)
+     [ ] Settings
+
+5. Optional: one match to the END (scoreboard + XP) with recorder still on.
+6. Quit the game.
+7. Double-click:  windows\WW3-Recorder-Stop.ps1   <--- ALWAYS
+8. Send George the Desktop WW3_rec_*.log files.
+
+Rules
+-----
+- Login first, THEN start recorder (or login breaks).
+- Always run Stop (or Emergency-Cleanup) when finished.
+- Do not use Wireshark for this job.

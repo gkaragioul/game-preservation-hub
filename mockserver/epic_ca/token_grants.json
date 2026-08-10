@@ -1,0 +1,55 @@
+{
+  "client_credentials": {
+    "access_token": "eyJraWQiOiIyMDIyLTA2LTE0VDA2OjE3OjU3LjA0NzkyODcwMFoiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJvcmdhbml6YXRpb25JZCI6Im8tdmV0enE5ODI4eGR5c25kOHpyaDhid25sZXdwd3l1IiwiZmVhdHVyZXMiOlsiQWNoaWV2ZW1lbnRzIiwiQW50aUNoZWF0IiwiRWNvbSIsIkVvc0Nvbm5lY3QiLCJMZWFkZXJib2FyZHMiLCJNYXRjaG1ha2luZyIsIk1ldHJpY3MiLCJQbGF5ZXJSZXBvcnRzIiwiU2FuY3Rpb25zIiwiU3RhdHMiLCJUaXRsZVN0b3JhZ2UiLCJWb2ljZSJdLCJjbGllbnRJZCI6Inh5emE3ODkxM1BOSkF4THNudzFCNU9HemFBWVI0elBXIiwicHJvZHVjdElkIjoiZmQyNjhhNTk5ZDdlNDlkZGE5OWRkMDAyNDg4ZTlmYTIiLCJkZXBsb3ltZW50SWQiOiIwYmY0N2NkZGVhYjU0YzA4YjAzNThjMTM0ZWM1NDQwOCIsImlzcyI6ImVvcyIsInNhbmRib3hJZCI6IjU0ZGRmNWU4ZDZiMzQ0MWVhMGQ1NjcyNjY3N2RkMjM0IiwidG9rZW5UeXBlIjoiY2xpZW50VG9rZW4iLCJleHAiOjE3ODQ4MjA3MTgsImVudiI6InByb2QiLCJpYXQiOjE3ODQ4MTcxMTgsImp0aSI6IjYxYzcxNWRiNTU5MDRiZTc4MmQyOWQwNmVmNDVmZmJmIn0.mSaorJPNuBMPBt9gc7RuF-ZPX-NxC2khr7x_oaI6rPuGy4G5tf7wjUS5oNqHcZFGPr2PDL3ix17dqfPR89s-MlAfYHF62w57GytwgG6GkAsDiSwvbShDB6m1HYyayB6UlY4oVs7reRlElZIs1qVIQgL6HUWGomOVW6i2Lzuq6IySG24EEECVTEdMNJHuU0gAb2GRxEy-h8lhfudOzMuKh1UBoY2g0DZJoAVfNQlH0Rn0LjNv_ArMjCA89bCkKzBWiVsHy1QmPZ6efPSyxGRSC-N8BQ9R8oOB15Xe1kd2me63w5InkaZob926OPkyWUqI-uM_u3PPnL4aD7FfG2oQgA",
+    "token_type": "bearer",
+    "expires_at": "2026-07-23T15:31:58.313Z",
+    "features": [
+      "Achievements",
+      "AntiCheat",
+      "Ecom",
+      "EosConnect",
+      "Leaderboards",
+      "Matchmaking",
+      "Metrics",
+      "PlayerReports",
+      "Sanctions",
+      "Stats",
+      "TitleStorage",
+      "Voice"
+    ],
+    "organization_id": "o-vetzq9828xdysnd8zrh8bwnlewpwyu",
+    "product_id": "fd268a599d7e49dda99dd002488e9fa2",
+    "sandbox_id": "54ddf5e8d6b3441ea0d56726677dd234",
+    "deployment_id": "0bf47cddeab54c08b0358c134ec54408",
+    "expires_in": 3599
+  },
+  "external_auth": {
+    "access_token": "eyJraWQiOiIyMDIyLTA2LTE0VDA2OjE3OjU3LjA0NzkyODcwMFoiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjbGllbnRJZCI6Inh5emE3ODkxM1BOSkF4THNudzFCNU9HemFBWVI0elBXIiwicHJvZHVjdElkIjoiZmQyNjhhNTk5ZDdlNDlkZGE5OWRkMDAyNDg4ZTlmYTIiLCJpc3MiOiJlb3MiLCJlbnYiOiJwcm9kIiwibm9uY2UiOiJYaHRjSC1Qb3lrbVJZYUZJbjZGQVNRIiwib3JnYW5pemF0aW9uSWQiOiJvLXZldHpxOTgyOHhkeXNuZDh6cmg4YndubGV3cHd5dSIsImZlYXR1cmVzIjpbIkFjaGlldmVtZW50cyIsIkFudGlDaGVhdCIsIkVjb20iLCJFb3NDb25uZWN0IiwiTGVhZGVyYm9hcmRzIiwiTWF0Y2htYWtpbmciLCJNZXRyaWNzIiwiUGxheWVyUmVwb3J0cyIsIlNhbmN0aW9ucyIsIlN0YXRzIiwiVGl0bGVTdG9yYWdlIiwiVm9pY2UiXSwicHJvZHVjdFVzZXJJZCI6IjAwMDJkMWE1YjE1ODQ1M2I4N2Y4MDgzNTg1ZGNmOTExIiwib3JnYW5pemF0aW9uVXNlcklkIjoiMDAwMTZlYzFhYTA4NGUzMmFkZDMyODgzNmMxNjM5NWEiLCJjbGllbnRJcCI6IjQ2LjE3Ni4xNDAuMjEzIiwiZGVwbG95bWVudElkIjoiMGJmNDdjZGRlYWI1NGMwOGIwMzU4YzEzNGVjNTQ0MDgiLCJzYW5kYm94SWQiOiI1NGRkZjVlOGQ2YjM0NDFlYTBkNTY3MjY2NzdkZDIzNCIsInRva2VuVHlwZSI6InVzZXJUb2tlbiIsImV4cCI6MTc4NDgyMDcxOSwiaWF0IjoxNzg0ODE3MTE5LCJhY2NvdW50Ijp7ImlkcCI6Im9wZW5pZCIsImRpc3BsYXlOYW1lIjoiMTY1ODIyIiwiaWQiOiIxNjU4MjIiLCJwbGYiOiJvdGhlciJ9LCJqdGkiOiI0N2IyNjQ3ZTQ1OTU0ZmM1OGRmMTg1YjBlNzA4NzY0ZCJ9.eoXxaf4fwSge8Gz4whgbldTcaxCXNKnSwwzPD407-lrofuKmrVvtLdI8I6mGC6NY3l2BfIEpRHOrd7XyKvaP2vYW5tnGgjveAazDFZKhoHchGyWLh4JD47WqS6gZj3Mwq9agpi4zPqTP1LeASdmmimqaNl-z2sKBeP5CG2d3M_mBzuB_JwahYlIZogBFyDlMWwMqQTS-F4iRi_kScRTACZpYH3DDPgMOK2fiuPgO5RMweTQ7bDwxaPyUFVnHnNkPXFv-NVqAk-aDknduM-x_X8Ah6-VWMiqsOV7FOh-SHBocaiA2-b8-Snh1V0Vg_cz0p-KC0E9adQDkpPyorm3cWg",
+    "token_type": "bearer",
+    "expires_at": "2026-07-23T15:31:59.202Z",
+    "nonce": "XhtcH-PoykmRYaFIn6FASQ",
+    "features": [
+      "Achievements",
+      "AntiCheat",
+      "Ecom",
+      "EosConnect",
+      "Leaderboards",
+      "Matchmaking",
+      "Metrics",
+      "PlayerReports",
+      "Sanctions",
+      "Stats",
+      "TitleStorage",
+      "Voice"
+    ],
+    "organization_id": "o-vetzq9828xdysnd8zrh8bwnlewpwyu",
+    "product_id": "fd268a599d7e49dda99dd002488e9fa2",
+    "sandbox_id": "54ddf5e8d6b3441ea0d56726677dd234",
+    "deployment_id": "0bf47cddeab54c08b0358c134ec54408",
+    "organization_user_id": "eef6431642b295654ba54b3c28da55a5",
+    "product_user_id": "ee1d437c6ae83b6bd134c93a34c64480",
+    "product_user_id_created": false,
+    "id_token": "eyJraWQiOiIyMDIyLTA2LTE0VDA2OjE3OjU3LjA0NzkyODcwMFoiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJ4eXphNzg5MTNQTkpBeExzbncxQjVPR3phQVlSNHpQVyIsInN1YiI6IjAwMDJkMWE1YjE1ODQ1M2I4N2Y4MDgzNTg1ZGNmOTExIiwicGZzaWQiOiI1NGRkZjVlOGQ2YjM0NDFlYTBkNTY3MjY2NzdkZDIzNCIsImFjdCI6eyJwbHRmbSI6Im90aGVyIiwiZWFpZCI6IjE2NTgyMiIsImVhdCI6Im9wZW5pZCJ9LCJwZmRpZCI6IjBiZjQ3Y2RkZWFiNTRjMDhiMDM1OGMxMzRlYzU0NDA4IiwiaXNzIjoiaHR0cHM6Ly9hcGkuZXBpY2dhbWVzLmRldi9hdXRoL3YxL29hdXRoIiwiZXhwIjoxNzg0ODIwNzE5LCJ0b2tlblR5cGUiOiJpZFRva2VuIiwiaWF0IjoxNzg0ODE3MTE5LCJwZnBpZCI6ImZkMjY4YTU5OWQ3ZTQ5ZGRhOTlkZDAwMjQ4OGU5ZmEyIn0.JcAvOzsKdzffGej17iNNfM-nagwZX74zdPBiamwNi1EJYAnjB8JhzfKwkBArO_fX1Hefmd8ODc34hD7mKqTyMK3pZBst6h0KaLylChmF2yuJ5GIjQpsZKnIMvDRZxH-OJ2gkpWHTu_COGO52mgvn_05azFumod21GmP-6lzprp9by6MbJfIB5fcztHaqSR8hkItiSewDnwdWE2cdcLlnymVrKKdjNZINZsQfDbTEM_9T9Yy9V_H0otOOsZuFruehij2Vx_kqAydCrxklisvQBiHMwqsHo59MdW_cjRS1lberfSsaaZRzCV-zxbjDW9oeJcd-o6omacwLtfXMGiQklQ",
+    "expires_in": 3599
+  }
+}

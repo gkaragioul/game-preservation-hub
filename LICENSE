@@ -1,0 +1,39 @@
+MIT License
+
+Copyright (c) 2026 ww3-offline-preservation contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+SCOPE OF THIS LICENCE
+
+This licence covers only the original code and documentation written for this
+project.
+
+It does NOT grant any rights in:
+
+  * World War 3, its client, game assets, artwork, audio, or data files;
+  * any trademark referenced in this repository (see NOTICE);
+  * Unreal Engine or any Epic Games technology;
+  * any third-party tool vendored or referenced here, which remains under its
+    own licence.
+
+This project is an independent interoperability and preservation effort. It
+contains no game binaries or assets, and requires you to own a legitimate copy
+of the game. See NOTICE and the "Legal" section of README.md.

@@ -1,0 +1,109 @@
+# Secrets / live credentials
+**/fxid*.txt
+**/*token*.txt
+**/*.real.bak
+**/real_ips.json
+windows/record_logs/
+windows/mock_logs/
+**/epic_auth_capture.log
+
+# Private keys (regenerate locally if needed)
+**/*_key.pem
+**/key.pem
+**/*.key
+**/aes.key.local
+**/aes.key*
+mockserver/epic_ca/epic_key.pem
+mockserver/epic_ca/forge_rsa_key.pem
+mockserver/epic_ca/rootCA.key
+mockserver/mock_key.pem
+certs/key.pem
+
+# Local pak inspect outputs / build (AES tooling — keep key + dumps off git)
+tools/pak_inspect/out/
+tools/pak_inspect/**/bin/
+tools/pak_inspect/**/obj/
+
+# Vendored UE dump tool clones + build trees (re-clone via setup_clones.ps1)
+tools/ue_netdump/Dumper-7/
+tools/ue_netdump/RepSeedDumper/
+tools/ue_netdump/RepSeedResolver/
+tools/ue_netdump/RE-UE4SS/
+tools/ue_netdump/CUE4Parse/
+tools/ue_netdump/**/build/
+tools/ue_netdump/**/bin/
+tools/ue_netdump/**/obj/
+tools/ue_netdump/*.dll.path.txt
+tools/ue_netdump/**/Release/
+tools/ue_netdump/**/Debug/
+
+content_cache/
+
+
+# Huge / sensitive capture data (keep on disk, not on GitHub)
+captures/**/*.pcap
+captures/**/*.pcapng
+captures/**/*.zip
+captures/**/*.pcapng.*
+archive/
+LOGS/
+
+# Python
+**/__pycache__/
+*.py[cod]
+.Python
+.venv/
+venv/
+
+# OS / editor
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Temp analysis helpers / crash noise
+**/BrowserMetrics*
+analysis/crashes/**/*.dmp
+analysis/crashes/**/*.mdmp
+
+# ---------------------------------------------------------------------------
+# Capture-derived replication data (PRIVACY - do not publish)
+# These are decoded from real match captures and contain other players' data:
+# real_replay_stream.json src 21 carries a third party's SteamID64 and the
+# owner's in-game handle. Same policy as captures/README.md: capture data and
+# anything derived byte-for-byte from it stays out of the public repository.
+# Share out-of-band with collaborators who need to run the match server.
+# ---------------------------------------------------------------------------
+match_server/real_replay_stream.json
+match_server/real_spawn_bunches.json
+match_server/real_pawn_bunches.json
+match_server/replayout_table.json
+match_server/pawn_ch3_stream.json
+match_server/capturepoint_stream.json
+match_server/capturepoint_export_stream.json
+match_server/ownership_bootstrap.json
+match_server/live_log/
+**/session_*.jsonl
+
+# Screenshots may contain game art and third-party usernames in window titles
+docs/screenshots/
+
+# ---------------------------------------------------------------------------
+# Never publish: contains third-party identifiers, game data, or build noise
+# ---------------------------------------------------------------------------
+captures/**/*.log
+captures/**/*.pcap
+captures/**/*.pcapng
+captures/decoded/
+analysis/crashes/
+archive/
+LOGS/
+tmp/
+.claude_operator*
+tools/
+docs/superpowers/
+match_server/match_server/
+**/__pycache__/
+*.pyc

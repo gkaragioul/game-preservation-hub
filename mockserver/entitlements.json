@@ -1,0 +1,15 @@
+{
+  "default_tier": "public",
+  "xp_multipliers": {
+    "public": 1.0,
+    "watcher": 2.0,
+    "helper": 1.0
+  },
+  "notes": "Match Steam IDs and/or FX player IDs. helper = god inventory overlay; watcher = x2 season/match XP; public = normal grind.",
+  "players": {
+    "100001": "helper",
+    "76561198000000000": "helper"
+  },
+  "helpers": [],
+  "watchers": []
+}
