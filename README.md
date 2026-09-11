@@ -1,19 +1,38 @@
-# Game Preservation Hub
+# RLabs — Compatibility, Recovery & Preservation
 
-![Recompile Labs — Game Continuity, Recovery, Modernization](assets/recompile-labs-banner.png)
+![RLabs game preservation projects](assets/recompile-labs-banner.png)
 
-> **RECOMPILE LABS** · Game continuity, recovery, and modernization.
+RLabs is open infrastructure for understanding how older or disrupted game and software environments behave today: what starts, what fails, what depends on an unavailable service or runtime, and what evidence supports a recovery path.
 
-This repository is the single GitHub home for projects that investigate, recover, and modernize game software when its original technical path no longer works.
+This hub brings together public preservation projects, machine-readable compatibility knowledge, and contribution guidance. It does not publish Condemned 2 code, private RLabs research, original game files, proprietary assets, clients, credentials, keys, or circumvention material.
 
-## Projects
+## Compatibility knowledge
 
-| Project | Project |
+The [`compatibility/`](compatibility/) directory is the shared public data layer.
+
+- [`compatibility/schema.json`](compatibility/schema.json) defines an evidence-led JSON Schema for compatibility reports.
+- [`compatibility/records/`](compatibility/records/) contains initial reports grounded in the projects already hosted here.
+- [`RLabs Scan`](https://github.com/gkaragioul/rlabs-scan) is the local, read-only Windows PE inspection CLI that produces compatibility-report data. Its [`v0.1 interface specification`](docs/rlabs-scan-v0.1.md) remains the public contract.
+
+The data format is deliberately separate from `rlabs-scan`: projects can publish findings by hand, through another tool, or through the scanner once its interface is stable.
+
+## Public projects
+
+| Project | Focus |
 | --- | --- |
-| [<img src="projects/world-war-3/assets/project-cover.jpg" alt="World War 3 gameplay" width="360">](projects/world-war-3/) <br> **[World War 3 — Offline Preservation Toolkit](projects/world-war-3/)** | [<img src="projects/spiral-warrior/assets/project-cover.jpg" alt="Spiral Warrior promotional artwork" width="360">](projects/spiral-warrior/) <br> **[Spiral Warrior — Offline Preservation Toolkit](projects/spiral-warrior/)** |
-| [<img src="projects/heretic-ii-apple-silicon/assets/project-cover.png" alt="Heretic II Apple Silicon" width="360">](projects/heretic-ii-apple-silicon/) <br> **[Heretic II Apple Silicon](projects/heretic-ii-apple-silicon/)** | [<img src="projects/theme-hospital-apple-silicon/assets/project-cover.png" alt="Theme Hospital Apple Silicon" width="360">](projects/theme-hospital-apple-silicon/) <br> **[Theme Hospital Apple Silicon](projects/theme-hospital-apple-silicon/)** |
-| [<img src="projects/oni-modern/assets/project-cover.jpg" alt="Oni Modern" width="360">](projects/oni-modern/) <br> **[Oni Modern](projects/oni-modern/)** | [<img src="projects/openjkdf2-modern/assets/project-cover.png" alt="OpenJKDF2 Modern" width="360">](projects/openjkdf2-modern/) <br> **[OpenJKDF2 Modern](projects/openjkdf2-modern/)** |
+| [World War 3 — Offline Preservation Toolkit](projects/world-war-3/) | Local preservation research for a lawfully owned Windows client after service shutdown. |
+| [Spiral Warrior — Offline Preservation Toolkit](projects/spiral-warrior/) | Local-service preservation research for a user-owned mobile client. |
+| [Heretic II Apple Silicon](projects/heretic-ii-apple-silicon/) | Native macOS Apple Silicon port and packaging work. |
+| [Theme Hospital Apple Silicon](projects/theme-hospital-apple-silicon/) | Apple Silicon and Metal compatibility work for CorsixTH with user-provided data. |
+| [Oni Modern](projects/oni-modern/) | Windows compatibility launcher and configuration work for a user-owned installation. |
+| [OpenJKDF2 Modern](projects/openjkdf2-modern/) | Windows 11-oriented modern engine and compatibility work. |
 
-Project-specific documentation, requirements, and updates are kept in each project folder. The original repositories are archived as read-only historical references.
+Project documentation, requirements, and updates live inside each project folder. The previous standalone repositories remain public historical references where applicable.
 
-This hub distributes no original game files, assets, clients, or proprietary content. The original standalone repositories are archived as read-only historical references.
+## Contribute
+
+You can help by testing lawfully obtained software, submitting reproducible compatibility reports, improving fixes, and documenting what you learn. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+## Rights and safety boundary
+
+RLabs publishes research, source code, configuration, and documentation only. It does not host or distribute original games, commercial assets, proprietary clients, decrypted source, credentials, keys, or cracked binaries. Reports should describe observations without including private data or copyrighted game content.

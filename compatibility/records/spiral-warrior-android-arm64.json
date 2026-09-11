@@ -1,0 +1,27 @@
+{
+  "id": "spiral-warrior-android-arm64",
+  "software": {
+    "title": "Spiral Warrior / 螺旋勇士",
+    "kind": "game",
+    "version": "user-owned client",
+    "distribution": "user-owned mobile installation"
+  },
+  "environment": {
+    "operatingSystem": "Android",
+    "architecture": "arm64",
+    "runtime": "Cocos Creator"
+  },
+  "assessment": {
+    "status": "partial",
+    "summary": "The local preservation lab documents boot, authentication, lobby access, and the prologue Adventure chapter through its boss.",
+    "knownIssues": [
+      "The project is paused and seeking collaborators.",
+      "The report covers the documented prologue flow, not the complete game."
+    ]
+  },
+  "evidence": {
+    "source": "projects/spiral-warrior/README.md",
+    "observedOn": "2026-09-12",
+    "notes": "No client, game assets, decrypted source, or keys are stored in the project."
+  }
+}

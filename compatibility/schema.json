@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gkaragioul/game-preservation-hub/blob/main/compatibility/schema.json",
+  "title": "RLabs Compatibility Report",
+  "description": "A portable, evidence-led report of how a lawfully obtained software title behaves in a specified environment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "software", "environment", "assessment", "evidence"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable, lowercase report identifier."
+    },
+    "software": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "kind"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["game", "application", "runtime", "tool"] },
+        "version": { "type": "string" },
+        "distribution": { "type": "string" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operatingSystem", "architecture"],
+      "properties": {
+        "operatingSystem": { "type": "string", "minLength": 1 },
+        "architecture": { "enum": ["x86", "x64", "arm64", "universal", "unknown"] },
+        "runtime": { "type": "string" },
+        "hardware": { "type": "string" }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary"],
+      "properties": {
+        "status": { "enum": ["working", "partial", "blocked", "research", "untested"] },
+        "summary": { "type": "string", "minLength": 1 },
+        "knownIssues": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "workarounds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "observedOn"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "observedOn": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

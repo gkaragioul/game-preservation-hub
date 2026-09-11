@@ -1,0 +1,25 @@
+{
+  "id": "oni-modern-windows-x64",
+  "software": {
+    "title": "Oni Modern",
+    "kind": "tool",
+    "version": "source project",
+    "distribution": "source build for a user-owned Oni installation"
+  },
+  "environment": {
+    "operatingSystem": "Windows 11",
+    "architecture": "x64",
+    "runtime": ".NET 9"
+  },
+  "assessment": {
+    "status": "research",
+    "summary": "The project provides a reversible launcher and configuration path for a local, user-owned Oni installation.",
+    "knownIssues": [
+      "The launcher does not include the game or third-party community runtime packages."
+    ]
+  },
+  "evidence": {
+    "source": "projects/oni-modern/README.md",
+    "observedOn": "2026-09-12"
+  }
+}
