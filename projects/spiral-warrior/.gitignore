@@ -1,0 +1,73 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.venv_win/
+venv/
+
+# External preservation inputs. Their hashes live in CHECKSUMS.sha256; their
+# bytes are never committed.
+*.apk
+*.xapk
+*.apks
+*.idsig
+*.keystore
+
+# Extracted and derived artifact trees
+cn_apk/
+intl_assets/
+intl_base/
+intl_xapk/
+patched/
+build/
+emulator/
+strings/
+.hermes/
+
+# Recovered proprietary source and local Android toolchain
+research/decrypted/
+.android-sdk/
+.superpowers/
+# Bulk dump of client asset text; regenerate with tools/extract_cjk_strings.py
+docs/ENGLISH_LOCALIZATION_NOTES.md
+
+# Research evidence: keep the index, not the captures
+research/*
+!research/runtime/
+research/runtime/*
+!research/runtime/README.md
+!research/endpoint_inventory.md
+
+# Logs and captures
+*.log
+*.mitm
+*.har
+
+# Runtime/build outputs
+server/app/saves/runtime/
+server/app/saves/*.runtime.json
+server/app/saves/local_*.json
+dist/**/*.zip
+dist/**/*.tar.gz
+
+# Android/emulator temp
+*.tmp
+*.bak
+adb-*.txt
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Never commit the client's script-bundle key or anything derived from it.
+# Supply it at runtime through SPIRAL_BUNDLE_KEY instead.
+*.jsc
+research/decrypted/
+research/screenshots/
