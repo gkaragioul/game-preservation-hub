@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>WW3 Private-Server Revival — Project Progress &amp; Concept</title>
+<style>
+  :root{
+    --navy:#111827; --blue:#2563EB; --cyan:#0891B2; --green:#15803D;
+    --amber:#B45309; --red:#B91C1C; --slate:#475569; --line:#CBD5E1; --bg:#F8FAFC;
+  }
+  @page{ size:A4; margin:17mm 18mm 19mm 18mm; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ font-family:Helvetica,Arial,sans-serif; color:var(--navy); font-size:9.6pt; line-height:1.45; }
+  h1{ font-size:19pt; color:var(--navy); margin:0 0 10px; border-bottom:3px solid var(--blue); padding-bottom:5px; }
+  h2{ font-size:12.5pt; color:var(--blue); margin:16px 0 6px; }
+  h3{ font-size:10.5pt; color:var(--navy); margin:12px 0 4px; }
+  p{ margin:0 0 7px; }
+  .small{ font-size:8pt; color:var(--slate); letter-spacing:.5px; }
+  code,.mono{ font-family:"Courier New",monospace; }
+  ul{ margin:0 0 8px; padding-left:18px; }
+  li{ margin:0 0 3px; }
+  .section{ page-break-before:always; }
+  .title-page{ page-break-after:always; }
+  .title-page .kicker{ font-size:8pt; color:var(--slate); letter-spacing:1.5px; text-transform:uppercase; }
+  .title-page h1.big{ font-size:34pt; line-height:1.05; border:0; margin:2px 0; }
+  .rule{ height:3px; background:var(--blue); margin:8px 0 14px; }
+  .callout{ display:grid; grid-template-columns:38mm 1fr; border:0.8px solid var(--blue); margin:8px 0; page-break-inside:avoid; }
+  .callout .lbl{ background:#EFF6FF; font-weight:bold; padding:8px; }
+  .callout .txt{ background:var(--bg); padding:8px; }
+  .callout.green{ border-color:var(--green); } .callout.green .lbl{ color:var(--green); }
+  .callout.blue{ border-color:var(--blue); } .callout.blue .lbl{ color:var(--blue); }
+  .callout.amber{ border-color:var(--amber); } .callout.amber .lbl{ color:var(--amber); }
+  .callout.red{ border-color:var(--red); } .callout.red .lbl{ color:var(--red); }
+  .callout.slate{ border-color:var(--slate); } .callout.slate .lbl{ color:var(--slate); }
+  pre{ font-family:"Courier New",monospace; font-size:7.6pt; line-height:1.35; background:#F8FAFC;
+       border:0.6px solid var(--line); padding:8px; overflow:hidden; white-space:pre-wrap; margin:4px 0 9px;
+       page-break-inside:avoid; }
+  table{ border-collapse:collapse; width:100%; font-size:8pt; margin:6px 0 4px; page-break-inside:avoid; }
+  th,td{ border:0.5px solid var(--line); padding:5px 6px; text-align:left; vertical-align:top; }
+  th{ background:var(--navy); color:#fff; font-weight:bold; }
+  tr:nth-child(even) td{ background:#F8FAFC; }
+  .toc p{ font-size:10.5pt; margin:4px 0 4px 8px; }
+  .meta b{ color:var(--navy); }
+  .foot{ margin-top:10px; border-top:1px solid var(--line); padding-top:6px; font-size:9pt; }
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div class="title-page">
+  <div style="height:14mm"></div>
+  <div class="kicker">Game Preservation / Private Backend</div>
+  <h1 class="big">World War 3</h1>
+  <h1 class="big">Private-Server Revival</h1>
+  <div class="rule"></div>
+  <p style="font-size:13pt;color:var(--slate);margin:0">Project Progress &amp; Concept</p>
+  <p style="font-size:12pt;color:var(--slate)">Updated 22 July 2026</p>
+  <div style="height:8mm"></div>
+
+  <div class="callout green"><div class="lbl">The concept</div><div class="txt">World War 3 is an online-only shooter whose live backend is no longer usable. This project makes the user’s own, legally-installed copy playable again by standing up local replacements for the game’s backend services and steering the client to them — the same idea as a community private server for a retired MMO.</div></div>
+  <div class="callout blue"><div class="lbl">The goal</div><div class="txt">Drive the installed Steam client — through the real Easy Anti-Cheat bootstrap and the user’s own account — all the way to a working Main Menu against local REST, WebSocket Hub and XMPP mocks, with no live game servers involved.</div></div>
+  <div class="callout slate"><div class="lbl">Scope &amp; ownership</div><div class="txt">Everything runs on the owner’s own machine, with the owner’s own game licence and identity. No anti-cheat is defeated (EAC runs normally in offline mode); nothing is redistributed. This is interoperability / preservation work, and the associated Terms-of-Service and legal considerations are the owner’s to weigh.</div></div>
+
+  <div style="height:10mm"></div>
+  <p class="meta"><b>Owner:</b> georgek / OfflinePlayer[STEAM]</p>
+  <p class="meta"><b>Workspace:</b> /media/georgek/Work/Dev_Work/GameDev/WW3</p>
+  <p class="meta"><b>Platform:</b> Linux (workstation “Megatron”) + Proton Experimental</p>
+</div>
+
+<!-- CONTENTS -->
+<div>
+  <h1>Contents</h1>
+  <div class="toc">
+    <p>1. What this project is (concept &amp; goal)</p>
+    <p>2. How the game gets online (recovered architecture)</p>
+    <p>3. The emulation strategy</p>
+    <p>4. What was built before this session</p>
+    <p>5. This session — root-cause breakthroughs</p>
+    <p>6. The DNS / c-ares discovery (why redirects failed)</p>
+    <p>7. Launch mechanics &amp; Easy Anti-Cheat</p>
+    <p>8. Current system state</p>
+    <p>9. Remaining work to reach Main Menu</p>
+    <p>10. Glossary</p>
+  </div>
+</div>
+
+<!-- 1 -->
+<div class="section">
+  <h1>1. What this project is (concept &amp; goal)</h1>
+  <p>World War 3 (Steam app 674020) is a multiplayer-only first-person shooter. Like most online games, the client is only half of the product: on startup it must reach a chain of backend services to authenticate the player, load their profile, and connect them to the lobby “Hub”. When those services are unavailable, the client boots but stalls before the menu — there is no offline mode.</p>
+  <p>This project revives the game for a single owned copy by <b>re-creating those backend services locally</b> and making the client talk to them instead of the (now unusable) real servers. The end result we are driving toward is simple and concrete: the game window reaches its real <b>Main Menu</b>, powered entirely by mock servers on this machine.</p>
+  <div class="callout green"><div class="lbl">Why it is legitimate</div><div class="txt">The client is launched through its normal Easy Anti-Cheat bootstrap and runs unmodified — EAC simply starts in offline / null-client mode when its CDN is unreachable. Nothing is patched, cracked, or redistributed, and there are no other players to cheat against. It is the owner’s copy, account and hardware throughout.</div></div>
+  <h2>Definition of done</h2>
+  <ul>
+    <li>The client, launched via the official launcher + EAC, authenticates with the owner’s FXID token.</li>
+    <li>Its backend traffic (meta, Hub, XMPP) is served by local mocks, not live servers.</li>
+    <li>The client transitions from <code>InitialMenuState</code> to <code>MainMenu</code> and the menu is visible and interactive.</li>
+  </ul>
+</div>
+
+<!-- 2 -->
+<div class="section">
+  <h1>2. How the game gets online (recovered architecture)</h1>
+  <p>The connection order below was reverse-engineered from a complete <b>known-working session log dated 12 June 2026</b> (captured while the real servers were still up), from packet captures, and from hundreds of recovered crash logs. Each layer must succeed for the client to reach the menu.</p>
+  <table>
+    <tr><th>#</th><th>Layer</th><th>Real endpoint</th><th>Transport</th><th>Purpose</th></tr>
+    <tr><td>1</td><td>FXID identity</td><td>id.fx.gl / id-dev.fx.gl</td><td>HTTPS</td><td>Account login; mints the signed FXID JWT.</td></tr>
+    <tr><td>2</td><td>EOS + EAC</td><td>epicgames.dev, ww3.anticheat.my.games</td><td>HTTPS</td><td>Epic Online Services + anti-cheat handshake.</td></tr>
+    <tr><td>3</td><td>Meta / master</td><td>meta.prod.ww3.fxtools.gl:443</td><td>HTTPS</td><td>Authorises the session; returns the WW3 profile id and Hub token.</td></tr>
+    <tr><td>4</td><td>Hub</td><td>213.183.62.234:8705</td><td>WebSocket JSON-RPC</td><td><b>THE</b> menu / lobby brain — all live menu data.</td></tr>
+    <tr><td>5</td><td>Presence</td><td>xmpp.prod.ww3.fxtools.gl:5222</td><td>XMPP</td><td>Friends presence and keepalive.</td></tr>
+    <tr><td>6</td><td>Match</td><td>per-match IP, 7867/7868</td><td>UDP</td><td>Actual in-match gameplay replication.</td></tr>
+  </table>
+  <h2>The authorisation handshake (the crux)</h2>
+  <p>In the working log the client sends its FXID token to the <b>meta / master server</b>, which validates it and replies with the player’s real WW3 profile id and a second, short-lived <b>Hub session token</b>. Only then does the client open the Hub WebSocket, carrying that token in the URL path, and drive the menu over JSON-RPC:</p>
+<pre># master server authorises -> gives profile id + hub token
+[UWW3PlatformManager::SetIsConnectedToMasterServer] InternalPlayerId: [100001]
+
+# client then opens the Hub WebSocket with a second (HS256) token in the path
+ws://213.183.62.234:8705/client/&lt;hub-session-JWT&gt;
+
+# menu-driving JSON-RPC over that socket
+-&gt; {"type":"RpcRequest","id":123,"context":"onlineParameters","method":"getParameters","args":[]}
+&lt;- {"type":"RpcResponse","id":123,"result":{"type":"OnlineParameters","pingPongInterval":4000,...}}
+-&gt; friends.changeStatus / notifications.getNotifications / debug.log ...
+# ... immediately followed by the transition to MainMenu</pre>
+  <p><b>Key implication:</b> because the meta server is the thing that hands out the profile id and Hub token, once <i>we</i> control the meta response we control the whole chain — the client will accept a locally-issued identity and Hub token.</p>
+  <div class="callout blue"><div class="lbl">TLS is wide open</div><div class="txt">The client’s libcurl runs with <code>bVerifyPeer = false</code> — it does not verify server certificates and there is no pinning. A local self-signed certificate is accepted with zero binary patching.</div></div>
+</div>
+
+<!-- 3 -->
+<div class="section">
+  <h1>3. The emulation strategy</h1>
+  <p>Rather than reverse-engineer and reimplement the entire backend, we implement just enough of each service to satisfy the client’s startup path, and reroute the client’s network traffic to those local services.</p>
+  <h2>Local mock services (all on this machine)</h2>
+  <table>
+    <tr><th>Mock</th><th>Port</th><th>Replaces</th><th>Role</th></tr>
+    <tr><td>rest_server.py</td><td>443 / 80</td><td>meta.prod + public API</td><td>Friends, invitations, profile bootstrap, time; self-signed TLS.</td></tr>
+    <tr><td>hub_server.py</td><td>8705</td><td>Hub WebSocket</td><td>JSON-RPC menu brain: onlineParameters, notifications, friends, debug, generic fallback.</td></tr>
+    <tr><td>xmpp_server.py</td><td>5222</td><td>xmpp.prod</td><td>Stream, auth, bind, session, presence, keepalive.</td></tr>
+  </table>
+  <h2>Two ways to reroute traffic — only one works</h2>
+  <p>The original approach used <code>/etc/hosts</code> entries pointing each backend hostname at 127.0.0.1, plus a single iptables DNAT rule for the raw-IP Hub. Section 6 explains why the hosts entries never actually took effect and why <b>iptables DNAT is the only reliable mechanism</b> for this client.</p>
+  <div class="callout green"><div class="lbl">The corrected principle</div><div class="txt">Redirect by destination IP at the firewall (iptables nat OUTPUT → DNAT to 127.0.0.1), not by hostname in /etc/hosts. The game’s resolver bypasses /etc/hosts entirely.</div></div>
+</div>
+
+<!-- 4 -->
+<div class="section">
+  <h1>4. What was built before this session</h1>
+  <ul>
+    <li>A full mock backend: path-aware HTTP/HTTPS server, a WebSocket JSON-RPC Hub, and an XMPP presence server, plus an orchestration script (hosts + DNAT + teardown).</li>
+    <li>A self-signed certificate accepted by the client’s non-verifying libcurl.</li>
+    <li>The FXID JWT schema, recovered from 264 real tokens found in crash archives: HS512, eleven required claims (sub/id, auth_type, soc_ids, email, nbf/exp/iat, iss/aud).</li>
+    <li>A validated understanding of the menu-driving JSON-RPC protocol and the XMPP handshake, both taken from the 12 June working log.</li>
+    <li>Proof that the official launcher, under Proton, can still log the owner in via the live FXID identity service, validate the 58 GB install, mint a real token, and start the EAC-protected game.</li>
+  </ul>
+  <div class="callout amber"><div class="lbl">Where it was stuck</div><div class="txt">The mocks passed standalone tests, but no real client run had ever actually reached them. The remaining question was: what does the live client request first, and why does it never hit the mocks?</div></div>
+</div>
+
+<!-- 5 -->
+<div class="section">
+  <h1>5. This session — root-cause breakthroughs</h1>
+  <p>Diffing the failing runs against the 12 June working log resolved the mystery and corrected several assumptions in the original plan.</p>
+  <h2>Finding 1 — the failing run used the wrong command line and a fake token</h2>
+  <p>The most recent prior launch used only <code>-log --fxid-login-token=&lt;synthetic&gt;</code>. The token was a <b>synthetic</b> one (email <code>ww3-local@example.invalid</code>, parsed id 0.0), and three critical arguments were missing. The working June run used:</p>
+<pre>-pref_language english --fxid-login-token=&lt;REAL token&gt;  -NoMrac  -Region=meta.prod.ww3.fxtools.gl:443  -FXGamesInit=1</pre>
+  <p>So the client never targeted the meta server and never contacted any backend — which is exactly why the mocks stayed silent. (The synthetic token also fails Epic’s EOS Auth with HTTP 401 <code>external.invalid_token</code>, because Epic validates it against the real FXID service.)</p>
+  <h2>Finding 2 — SECRETMS is a dead end</h2>
+  <p>The <code>-Continent=SECRETMS</code> flag selects a different, Steam-ticket master protocol on <code>live.master.worldwar3.com:8443</code> and bypasses the entire REST/Hub/XMPP stack we can emulate. The working June session did <b>not</b> use it. Confirmed: stay on the normal FXID route.</p>
+  <h2>Finding 3 — the master server, not EAC, is the gate</h2>
+  <p>EOS <i>Connect</i> (needed by EAC) succeeds offline; only EOS <i>Auth</i> 401s, and that is non-fatal. The real gate to the menu is the meta/master authorisation that yields the profile id and Hub token — the piece our mocks must serve.</p>
+</div>
+
+<!-- 6 -->
+<div class="section">
+  <h1>6. The DNS / c-ares discovery (why redirects failed)</h1>
+  <p>This is the central technical breakthrough of the session and it corrects the original method.</p>
+  <p>When the correctly-armed client finally ran, it connected to the real backend IP <code>89.167.42.183:443</code> — <b>not</b> to 127.0.0.1 — even though <code>meta.prod.ww3.fxtools.gl</code> was pointed at 127.0.0.1 in <code>/etc/hosts</code>. The reason:</p>
+  <div class="callout red"><div class="lbl">Root cause</div><div class="txt">The game’s libcurl is built with <code>CURL_VERSION_ASYNCHDNS</code> — it resolves names with the <b>c-ares</b> asynchronous resolver, which queries DNS servers directly and <b>ignores /etc/hosts</b>. Every /etc/hosts redirect in the original plan was therefore dead weight; the client always resolved the real public IPs.</div></div>
+  <p>Real DNS shows what the client actually gets:</p>
+<pre>meta.prod.ww3.fxtools.gl  ->  CNAME wlg-gateway.awg.wlg.team
+                          ->  89.167.40.140 , 89.167.35.180 , 89.167.42.183   (Hetzner)
+xmpp.prod.ww3.fxtools.gl  ->  213.183.62.234    (same host as the Hub)</pre>
+  <p>This also explains why the Hub was the only service ever reachable in earlier tests: it was the one endpoint with an iptables <b>DNAT</b> rule (by IP), while everything else relied on the ignored hosts file.</p>
+  <h2>The fix — DNAT every real backend IP to the local mocks</h2>
+<pre># meta / master (all three A-records) -> local HTTPS mock
+iptables -t nat -A OUTPUT -d 89.167.40.140 -p tcp --dport 443 -j DNAT --to 127.0.0.1:443
+iptables -t nat -A OUTPUT -d 89.167.35.180 -p tcp --dport 443 -j DNAT --to 127.0.0.1:443
+iptables -t nat -A OUTPUT -d 89.167.42.183 -p tcp --dport 443 -j DNAT --to 127.0.0.1:443
+# XMPP host -> local XMPP mock  (Hub :8705 rule already existed)
+iptables -t nat -A OUTPUT -d 213.183.62.234 -p tcp --dport 5222 -j DNAT --to 127.0.0.1:5222
+sysctl -w net.ipv4.conf.all.route_localnet=1   # allow DNAT to loopback</pre>
+  <div class="callout green"><div class="lbl">Verified working</div><div class="txt">A direct probe to <code>https://89.167.42.183/friends/getAll</code> now returns the mock’s <code>{"result": []}</code> — proving the real backend IP is transparently redirected to the local server end-to-end.</div></div>
+</div>
+
+<!-- 7 -->
+<div class="section">
+  <h1>7. Launch mechanics &amp; Easy Anti-Cheat</h1>
+  <p>Getting the protected game to actually run took some iteration; the findings matter for repeatability.</p>
+  <h2>What does and does not launch the game</h2>
+  <table>
+    <tr><th>Method</th><th>Result</th></tr>
+    <tr><td>proton run <code>start_protected_game.exe</code> (after a prefix teardown)</td><td>EAC bootstrap exits instantly — does not spawn the game.</td></tr>
+    <tr><td>proton run <code>WW3-Win64-Shipping.exe</code> (direct, bypassing EAC bootstrap)</td><td>Engine starts but EAC aborts it in ~60 s; no usable log.</td></tr>
+    <tr><td>Official launcher via Steam → click <b>LAUNCH</b></td><td>Correct path: EAC bootstraps properly and the game runs with the launcher’s real args.</td></tr>
+  </table>
+  <p>The official launcher (<code>steam://rungameid/674020</code>) logs in via the live FXID service, validates files, and on <b>LAUNCH</b> starts the game through EAC with the correct region arguments. In the last run this reached a live <code>GameThread</code> that dialed the real meta IP — the exact behaviour the DNAT fix now captures.</p>
+  <div class="callout amber"><div class="lbl">Lesson</div><div class="txt">Do not tear the Proton prefix down with <code>wineserver -k</code> between attempts — it breaks the EAC bootstrap. Launch through the official launcher and let it drive EAC.</div></div>
+</div>
+
+<!-- 8 -->
+<div class="section">
+  <h1>8. Current system state</h1>
+  <table>
+    <tr><th>Component</th><th>State</th></tr>
+    <tr><td>HTTPS mock (meta)</td><td>Up on 0.0.0.0:443, live-logging, verified via probe.</td></tr>
+    <tr><td>HTTP mock</td><td>Up on 0.0.0.0:80.</td></tr>
+    <tr><td>Hub mock</td><td>Up on 0.0.0.0:8705.</td></tr>
+    <tr><td>XMPP mock</td><td>Up on 127.0.0.1:5222.</td></tr>
+    <tr><td>DNAT: meta IPs</td><td>89.167.40.140 / .35.180 / .42.183 :443 → 127.0.0.1:443 &nbsp;(<b>NEW</b>, verified).</td></tr>
+    <tr><td>DNAT: Hub</td><td>213.183.62.234:8705 → 127.0.0.1:8705.</td></tr>
+    <tr><td>DNAT: XMPP</td><td>213.183.62.234:5222 → 127.0.0.1:5222 &nbsp;(<b>NEW</b>).</td></tr>
+    <tr><td>route_localnet</td><td>Enabled (DNAT-to-loopback works).</td></tr>
+    <tr><td>Official launcher</td><td>Running, signed in as OfflinePlayer[STEAM], “Ready to Launch”.</td></tr>
+    <tr><td>Live FXID token</td><td>Present locally, mode 600, ~7-day validity. Value never exposed.</td></tr>
+  </table>
+  <div class="callout blue"><div class="lbl">Immediate next action</div><div class="txt">Everything backend-side is armed and verified for the first time. The single remaining step is to press <b>LAUNCH</b> so the game runs with the real backend IPs now routed to the mocks — then observe the first meta → Hub → XMPP requests and fill in any exact response shapes still needed.</div></div>
+</div>
+
+<!-- 9 -->
+<div class="section">
+  <h1>9. Remaining work to reach Main Menu</h1>
+  <ul>
+    <li>Launch the game via the official launcher and confirm the meta request now lands on the HTTPS mock (watch the live logs in <code>/tmp/ww3mock</code>).</li>
+    <li>Serve a correct meta / master authorisation response: a WW3 profile id plus a Hub session token, so the client fires <code>SetIsConnectedToMasterServer</code> and opens the Hub WebSocket.</li>
+    <li>Answer the Hub JSON-RPC opening calls (<code>onlineParameters.getParameters</code>, <code>notifications.getNotifications</code>, <code>friends.changeStatus</code>, <code>debug.log</code>) with the exact shapes from the June working log, keeping request ids correlated.</li>
+    <li>Complete the XMPP stream/auth/bind/session/presence handshake for the mapped player id.</li>
+    <li>Confirm the client log transitions <code>InitialMenuState → MainMenu</code> and the menu is visible.</li>
+    <li>Then run the teardown (remove DNAT rules, stop mocks) to restore the machine to a clean network state.</li>
+  </ul>
+  <div class="foot"><b>Expected end state:</b> a visible, interactive Main Menu driven entirely by local mock services, with logs showing the meta bootstrap, Hub RPC exchange and XMPP session against 127.0.0.1 — the discontinued game running again on the owner’s own machine.</div>
+</div>
+
+<!-- 10 -->
+<div class="section">
+  <h1>10. Glossary</h1>
+  <table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>FXID</td><td>The game’s identity service (id.fx.gl); issues the signed JWT the client logs in with.</td></tr>
+    <tr><td>Meta / master server</td><td>Backend that authorises the session and returns the WW3 profile id + Hub token.</td></tr>
+    <tr><td>Hub</td><td>WebSocket JSON-RPC service that drives the menu and lobby (port 8705).</td></tr>
+    <tr><td>EOS</td><td>Epic Online Services SDK bundled with the game (Connect + Auth interfaces).</td></tr>
+    <tr><td>EAC</td><td>Easy Anti-Cheat; here it runs normally in offline / null-client mode.</td></tr>
+    <tr><td>c-ares</td><td>Async DNS resolver compiled into the game’s libcurl; ignores /etc/hosts.</td></tr>
+    <tr><td>DNAT</td><td>iptables destination rewriting — redirects a real backend IP to 127.0.0.1.</td></tr>
+    <tr><td>SECRETMS</td><td>An alternate Steam-ticket master protocol (port 8443); deliberately NOT used.</td></tr>
+    <tr><td>Proton</td><td>Valve’s Wine-based compatibility layer that runs the Windows client on Linux.</td></tr>
+  </table>
+</div>
+
+</body>
+</html>

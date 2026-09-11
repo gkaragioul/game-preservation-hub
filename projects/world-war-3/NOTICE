@@ -1,0 +1,23 @@
+NOTICE
+======
+
+World War 3 is a trademark of its respective owners (including The 4 Winds
+Entertainment / related publishers and platform partners). Steam is a trademark
+of Valve Corporation. Epic Online Services is a trademark of Epic Games, Inc.
+
+This project is an independent, private preservation effort by the repository
+owner for a copy of the game they purchased. It is not endorsed by, sponsored
+by, or affiliated with the rights holders.
+
+This repository is intended to contain:
+  - original tooling and documentation written for this project
+  - protocol research notes derived from the owner's own network captures
+  - local mock-server code for offline use of that owned copy
+
+This repository is NOT intended to contain:
+  - the World War 3 game client, pak files, or installers
+  - cracked, pirated, or redistributed game assets
+  - instructions for bypassing purchase or playing without a license
+
+Local mock TLS certificates and forged Epic tokens (if present) are for
+localhost interception of the owner's own client traffic only.

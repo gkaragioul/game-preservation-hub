@@ -1,0 +1,91 @@
+2026-07-21 02:24:44,297 - INFO - [*] Fixed Stub XMPP server running on 127.0.0.1:5222
+2026-07-21 02:25:51,748 - INFO - [+] Client connected from ('127.0.0.1', 61361)
+2026-07-21 02:25:51,753 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:25:51,759 - INFO - [<] FULL TEXT RECEIVED:
+<auth mechanism="DIGEST-MD5" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>
+2026-07-21 02:25:51,760 - INFO - [>] Sent SASL success and restarted stream features.
+2026-07-21 02:25:51,766 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:25:51,772 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_bind1" type="set"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>V2:WW3:::A1127225470007A02358CEBAC70994D5</resource></bind></iq>
+2026-07-21 02:25:51,772 - INFO - [>] Sent JID bind success with JID: prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::A1127225470007A02358CEBAC70994D5
+2026-07-21 02:25:51,787 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_session1" type="set"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>
+2026-07-21 02:25:51,787 - INFO - [>] Sent full session initialization pack.
+2026-07-21 02:25:51,800 - INFO - [<] FULL TEXT RECEIVED:
+<presence corr-id="A5A8446B421EC11DB50F46AAE971DF7D"><delay stamp="2026-07-20T17:25:51.795Z" xmlns="urn:xmpp:delay"/></presence>
+2026-07-21 02:25:51,800 - INFO - [>] Acknowledged presence with corr-id=A5A8446B421EC11DB50F46AAE971DF7D
+2026-07-21 02:25:59,818 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="DA7C634148558C3E0CE9D3AB2CF74648" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="015337514B4C95896399289B6426EED3" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::A1127225470007A02358CEBAC70994D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:25:59,818 - INFO - [>] Responded to ping id=DA7C634148558C3E0CE9D3AB2CF74648
+2026-07-21 02:26:01,792 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:26:09,800 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="748FA36F4B9B4E7D36C7A4BBF255723F" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="94C7B44242BF0DD13889749F00B24020" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::A1127225470007A02358CEBAC70994D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:26:09,800 - INFO - [>] Responded to ping id=748FA36F4B9B4E7D36C7A4BBF255723F
+2026-07-21 02:26:11,797 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:26:19,811 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="265DBA9C44C09C9F6BC8FDA019183CBC" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="6EB0B26F48F86245935C61A706391066" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::A1127225470007A02358CEBAC70994D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:26:19,811 - INFO - [>] Responded to ping id=265DBA9C44C09C9F6BC8FDA019183CBC
+2026-07-21 02:26:21,808 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:26:29,825 - INFO - [>] Client requested stream end.
+2026-07-21 02:26:29,826 - INFO - [-] Connection closed.
+2026-07-21 02:26:36,391 - INFO - [+] Client connected from ('127.0.0.1', 64291)
+2026-07-21 02:26:36,397 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:26:36,403 - INFO - [<] FULL TEXT RECEIVED:
+<auth mechanism="DIGEST-MD5" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>
+2026-07-21 02:26:36,403 - INFO - [>] Sent SASL success and restarted stream features.
+2026-07-21 02:26:36,409 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:26:36,415 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_bind1" type="set"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5</resource></bind></iq>
+2026-07-21 02:26:36,415 - INFO - [>] Sent JID bind success with JID: prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5
+2026-07-21 02:26:36,421 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_session1" type="set"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>
+2026-07-21 02:26:36,421 - INFO - [>] Sent full session initialization pack.
+2026-07-21 02:26:36,445 - INFO - [<] FULL TEXT RECEIVED:
+<presence corr-id="2FE812E5411072DEDF014B98EC4F86AA"><delay stamp="2026-07-20T17:26:36.437Z" xmlns="urn:xmpp:delay"/></presence>
+2026-07-21 02:26:36,445 - INFO - [>] Acknowledged presence with corr-id=2FE812E5411072DEDF014B98EC4F86AA
+2026-07-21 02:26:44,479 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="8FC8F3FC4A4F569E856BC2B4A3400346" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="C32671404DBB55A8423DF4A82C4AD0DA" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:26:44,479 - INFO - [>] Responded to ping id=8FC8F3FC4A4F569E856BC2B4A3400346
+2026-07-21 02:26:46,442 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:26:54,456 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="C29373FD4C22B9B7AF08CCBDF9E9000A" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="354C1F294FB4E7499F507E947E048947" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:26:54,456 - INFO - [>] Responded to ping id=C29373FD4C22B9B7AF08CCBDF9E9000A
+2026-07-21 02:26:56,452 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:27:04,479 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="86E1926144815E4AD0896A933B30041B" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="3B2DE1534D92972DCF26F08B69BCBA8B" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:27:04,479 - INFO - [>] Responded to ping id=86E1926144815E4AD0896A933B30041B
+2026-07-21 02:27:06,469 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:27:14,472 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="6A7F61BD42B0A68777986AA8F3DC6443" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="23D22AFC4A02420BDF8F48BB01A6D2E5" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::23863F6D42C80C8D22C5B7B26B11E7D5"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:27:14,472 - INFO - [>] Responded to ping id=6A7F61BD42B0A68777986AA8F3DC6443
+2026-07-21 02:27:14,524 - INFO - [>] Client requested stream end.
+2026-07-21 02:27:14,524 - INFO - [-] Connection closed.
+2026-07-21 02:27:21,397 - INFO - [+] Client connected from ('127.0.0.1', 54123)
+2026-07-21 02:27:21,402 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:27:21,409 - INFO - [<] FULL TEXT RECEIVED:
+<auth mechanism="DIGEST-MD5" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/>
+2026-07-21 02:27:21,409 - INFO - [>] Sent SASL success and restarted stream features.
+2026-07-21 02:27:21,415 - INFO - [<] FULL TEXT RECEIVED:
+<?xml version="1.0"?><stream:stream to="xmpp.prod.ww3.fxtools.gl" xml:lang="en" version="1.0" xmlns="jabber:client" xmlns:stream="http://etherx.jabber.org/streams">
+2026-07-21 02:27:21,421 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_bind1" type="set"><bind xmlns="urn:ietf:params:xml:ns:xmpp-bind"><resource>V2:WW3:::8AC0BC6D40EE02BD6D04029B439005F3</resource></bind></iq>
+2026-07-21 02:27:21,421 - INFO - [>] Sent JID bind success with JID: prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::8AC0BC6D40EE02BD6D04029B439005F3
+2026-07-21 02:27:21,427 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="_xmpp_session1" type="set"><session xmlns="urn:ietf:params:xml:ns:xmpp-session"/></iq>
+2026-07-21 02:27:21,427 - INFO - [>] Sent full session initialization pack.
+2026-07-21 02:27:21,451 - INFO - [<] FULL TEXT RECEIVED:
+<presence corr-id="B56A6E094D3126F6A970EDB5E98C67FE"><delay stamp="2026-07-20T17:27:21.443Z" xmlns="urn:xmpp:delay"/></presence>
+2026-07-21 02:27:21,451 - INFO - [>] Acknowledged presence with corr-id=B56A6E094D3126F6A970EDB5E98C67FE
+2026-07-21 02:27:29,470 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="6EC9669643EA93FF23512AA09EF731AA" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="52C871C44A7A7AD978D522A7B9AB59D8" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::8AC0BC6D40EE02BD6D04029B439005F3"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:27:29,470 - INFO - [>] Responded to ping id=6EC9669643EA93FF23512AA09EF731AA
+2026-07-21 02:27:31,432 - INFO - [>] Sent server presence keepalive
+2026-07-21 02:27:39,451 - INFO - [<] FULL TEXT RECEIVED:
+<iq id="DF28895945F584D6EB305DB87C621C77" type="get" to="xmpp.prod.ww3.fxtools.gl" corr-id="2DE4F7714D373D24FBC840A8391BE07B" from="prod-100001@xmpp.prod.ww3.fxtools.gl/V2:WW3:::8AC0BC6D40EE02BD6D04029B439005F3"><ping xmlns="urn:xmpp:ping"/></iq>
+2026-07-21 02:27:39,451 - INFO - [>] Responded to ping id=DF28895945F584D6EB305DB87C621C77
+2026-07-21 02:27:41,440 - INFO - [>] Sent server presence keepalive

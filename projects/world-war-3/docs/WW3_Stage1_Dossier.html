@@ -1,0 +1,576 @@
+<meta charset="utf-8">
+<title>World War 3 — Operation Preservation · Stage 1 Dossier</title>
+<style>
+  :root{
+    --paper:#EEEDE7; --paper-2:#E6E4DB; --ink:#17191C; --ink-soft:#3B3E43;
+    --ink-faint:#6A6D72; --hair:#D3D1C7; --amber:#B4720F; --amber-bright:#E7A21C;
+    --gun:#111418; --gun-2:#191D22; --gun-line:#2A2F36; --paper-on-gun:#E9E7DF;
+    --faint-on-gun:#9AA0A7; --ok:#2E8B5B; --alert:#C0392B;
+    --display:"Bahnschrift","Segoe UI Variable Display","Segoe UI Semibold",sans-serif;
+    --body:"Segoe UI","Segoe UI Variable Text",system-ui,sans-serif;
+    --mono:"Cascadia Mono","Consolas",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:14mm 13mm}
+  @page:first{margin:0}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+       font-size:10.3pt;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;line-height:1.08;
+       letter-spacing:.2px;text-wrap:balance;margin:0}
+  p{margin:0 0 8pt}
+  a{color:var(--amber);text-decoration:none}
+  strong{font-weight:600;color:var(--ink)}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono);font-size:7.6pt;letter-spacing:2.6px;
+       text-transform:uppercase;color:var(--amber);font-weight:600}
+
+  /* ---- keep-together: nothing splits mid-element ---- */
+  .callout,.term,figure,.stat,.menu-shot,.chart,.cols2,.cols3,table,.pull,
+  ol.steps li,.bar-row,.toc li,.ophead{break-inside:avoid}
+
+  /* ---------------- COVER (full-bleed, page 1) ---------------- */
+  .cover{background:var(--gun);color:var(--paper-on-gun);height:297mm;
+       padding:22mm 20mm;display:flex;flex-direction:column;
+       position:relative;overflow:hidden;break-after:page}
+  .cover .grid-bg{position:absolute;inset:0;opacity:.5;
+       background-image:linear-gradient(var(--gun-line) 1px,transparent 1px),
+       linear-gradient(90deg,var(--gun-line) 1px,transparent 1px);background-size:20mm 20mm}
+  .cover .corner{position:absolute;width:26px;height:26px;border:2px solid var(--amber-bright);z-index:3}
+  .c-tl{top:14mm;left:14mm;border-right:0;border-bottom:0}
+  .c-tr{top:14mm;right:14mm;border-left:0;border-bottom:0}
+  .c-bl{bottom:14mm;left:14mm;border-right:0;border-top:0}
+  .c-br{bottom:14mm;right:14mm;border-left:0;border-top:0}
+  .cover>*{position:relative;z-index:2}
+  .cover-top{display:flex;justify-content:space-between;font-family:var(--mono);
+       font-size:8pt;letter-spacing:2px;text-transform:uppercase;color:var(--faint-on-gun)}
+  .classif{color:var(--gun);background:var(--amber-bright);padding:3pt 9pt;font-weight:700;letter-spacing:2px}
+  .cover-mid{margin-top:auto;margin-bottom:auto}
+  .ww3-mark{font-family:var(--display);font-weight:700;font-size:15pt;letter-spacing:4px;color:var(--amber-bright)}
+  .cover h1{font-size:60pt;font-weight:700;margin:6mm 0 0;color:var(--paper-on-gun);letter-spacing:.5px}
+  .cover h1 .amber{color:var(--amber-bright)}
+  .cover .subtitle{font-family:var(--display);font-weight:400;font-size:17pt;
+       color:var(--faint-on-gun);margin-top:5mm;max-width:150mm;line-height:1.2}
+  .cover .lede{max-width:122mm;margin-top:8mm;color:#C4C8CE;font-size:10.5pt}
+  .stamp{display:inline-block;border:2.5px solid var(--ok);color:var(--ok);
+       font-family:var(--display);font-weight:700;font-size:13pt;letter-spacing:3px;
+       padding:5pt 14pt;transform:rotate(-4deg);margin-top:11mm;text-transform:uppercase}
+  .cover-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm;margin-top:15mm;
+       border-top:1px solid var(--gun-line);padding-top:6mm;font-size:8.5pt}
+  .cover-foot .k{font-family:var(--mono);font-size:7pt;letter-spacing:1.5px;
+       text-transform:uppercase;color:var(--faint-on-gun);margin-bottom:2pt}
+  .cover-foot .v{color:var(--paper-on-gun);font-weight:600}
+
+  /* ---------------- flowing content ---------------- */
+  .op-title{font-size:23pt;margin:0 0 2mm}
+  .lead{font-size:11.5pt;color:var(--ink-soft);line-height:1.5;margin-bottom:5mm;max-width:170mm}
+  h3.sub{font-size:13.5pt;margin:6mm 0 2.5mm;color:var(--ink)}
+  h3.sub::before{content:"▎";color:var(--amber);margin-right:5px}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:8mm;align-items:start}
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;align-items:start}
+
+  /* section header band (compact, inline — not a whole page) */
+  .ophead{background:var(--gun);color:var(--paper-on-gun);padding:9mm 11mm 8mm;
+       border-radius:4px;margin:11mm 0 6mm;position:relative;overflow:hidden}
+  .ophead:first-of-type{margin-top:0}
+  .ophead .op-no{font-family:var(--display);font-weight:700;font-size:78pt;line-height:.8;
+       color:var(--gun-2);position:absolute;right:9mm;top:4mm;z-index:1}
+  .ophead>*{position:relative;z-index:2}
+  .ophead .eyebrow{color:var(--amber-bright)}
+  .ophead h2{font-size:27pt;color:var(--paper-on-gun);margin-top:3mm;max-width:150mm}
+  .ophead .d-lede{color:#C2C6CC;max-width:135mm;margin-top:4mm;font-size:10.5pt}
+
+  /* callouts */
+  .callout{border-radius:2px;padding:8pt 11pt;margin:5mm 0;border-left:3px solid var(--amber)}
+  .plain{background:#F6EFE1}
+  .tech{background:var(--gun);color:var(--paper-on-gun);border-left-color:var(--amber-bright)}
+  .tech strong{color:#fff}.tech .mono{color:#D9C8A6}
+  .callout .tag{font-family:var(--mono);font-size:7.4pt;letter-spacing:2px;text-transform:uppercase;
+       font-weight:700;display:block;margin-bottom:3pt}
+  .plain .tag{color:var(--amber)}.tech .tag{color:var(--amber-bright)}
+  .callout p:last-child{margin-bottom:0}
+
+  /* terminal */
+  .term{background:var(--gun);border:1px solid var(--gun-line);border-radius:4px;margin:5mm 0;overflow:hidden}
+  .term-bar{background:#0B0D10;padding:5pt 10pt;font-family:var(--mono);font-size:7.4pt;letter-spacing:1px;
+       color:var(--faint-on-gun);display:flex;gap:6px;align-items:center;border-bottom:1px solid var(--gun-line)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .term-body{padding:9pt 11pt;font-family:var(--mono);font-size:7.9pt;line-height:1.6;
+       color:#C9CDD2;white-space:pre-wrap;word-break:break-word}
+  .g{color:#5FCf8f}.a{color:var(--amber-bright)}.r{color:#F0776b}.d{color:#6A7079}.c{color:#67B7D8}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:9pt}
+  th{font-family:var(--mono);font-size:7.4pt;letter-spacing:1px;text-transform:uppercase;text-align:left;
+       color:var(--ink-faint);border-bottom:2px solid var(--ink);padding:5pt 7pt}
+  td{padding:5pt 7pt;border-bottom:1px solid var(--hair);vertical-align:top}
+  tr:nth-child(even) td{background:rgba(0,0,0,.02)}
+  .tag-ok{color:var(--ok);font-weight:700;font-family:var(--mono);font-size:8pt}
+  .tag-no{color:var(--alert);font-weight:700;font-family:var(--mono);font-size:8pt}
+
+  .stat{border:1px solid var(--hair);border-top:3px solid var(--amber);padding:7pt 9pt;background:#fff}
+  .stat .n{font-family:var(--display);font-weight:700;font-size:25pt;line-height:1;color:var(--ink)}
+  .stat .l{font-family:var(--mono);font-size:7.2pt;letter-spacing:1px;text-transform:uppercase;
+       color:var(--ink-faint);margin-top:3pt}
+
+  figure{margin:5mm 0}
+  figcaption{font-family:var(--mono);font-size:7.6pt;letter-spacing:.3px;color:var(--ink-faint);
+       margin-top:4pt;border-top:1px solid var(--hair);padding-top:3pt}
+  .fig-title{font-family:var(--mono);font-size:7.4pt;letter-spacing:2px;text-transform:uppercase;
+       color:var(--amber);font-weight:700;margin-bottom:3pt}
+
+  .menu-shot{background:linear-gradient(160deg,#1a1d22,#0c0e11);border:1px solid var(--gun-line);
+       border-radius:5px;overflow:hidden;color:var(--paper-on-gun)}
+  .menu-hud{display:flex;justify-content:space-between;align-items:center;padding:8pt 12pt;
+       border-bottom:1px solid var(--gun-line);font-family:var(--display)}
+  .menu-hud .cur{color:var(--amber-bright);font-weight:700;font-size:15pt;letter-spacing:1px}
+  .menu-hud .lvl{background:var(--amber-bright);color:var(--gun);width:30px;height:30px;border-radius:50%;
+       display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12pt}
+  .menu-hud .who{font-weight:600;font-size:11pt;letter-spacing:.5px}
+  .menu-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gun-line)}
+  .menu-tile{background:#15181c;padding:11pt 10pt;min-height:60pt}
+  .menu-tile .t{font-family:var(--display);font-weight:700;font-size:12pt;letter-spacing:.5px}
+  .menu-tile .s{font-size:7.6pt;color:var(--faint-on-gun);margin-top:2pt}
+  .menu-tile .big{color:var(--amber-bright);font-family:var(--display);font-weight:700;font-size:20pt;margin-top:5pt}
+
+  .chart{margin:5mm 0}
+  .bar-row{display:grid;grid-template-columns:38mm 1fr 14mm;align-items:center;gap:6pt;margin:3pt 0;font-size:8.4pt}
+  .bar-row .lbl{font-family:var(--mono);font-size:7.8pt;color:var(--ink-soft)}
+  .bar-track{background:var(--paper-2);height:15pt;border-radius:2px;overflow:hidden}
+  .bar-fill{height:100%;background:linear-gradient(90deg,#2E8B5B,#3AA76B);border-radius:2px}
+  .bar-row .val{font-family:var(--mono);font-weight:700;text-align:right;color:var(--ok)}
+  .zone-key{display:flex;gap:8mm;font-family:var(--mono);font-size:7.4pt;color:var(--ink-faint);
+       margin-top:5pt;flex-wrap:wrap}
+  .zone-key i{font-style:normal;font-weight:700}
+
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:4mm 0}
+  ol.steps li{counter-increment:s;position:relative;padding:0 0 5pt 13mm;margin-bottom:4pt}
+  ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:-1pt;
+       font-family:var(--display);font-weight:700;font-size:15pt;color:var(--amber);width:11mm}
+  ul.clean{list-style:none;padding:0;margin:3mm 0}
+  ul.clean li{padding-left:8mm;position:relative;margin-bottom:3.5pt}
+  ul.clean li::before{content:"▸";position:absolute;left:2mm;color:var(--amber);font-weight:700}
+
+  .kv{font-family:var(--mono);font-size:8pt}.kv b{color:var(--amber)}
+  .pull{font-family:var(--display);font-weight:600;font-size:16pt;line-height:1.22;color:var(--ink);
+       border-left:4px solid var(--amber);padding-left:6mm;margin:6mm 0;max-width:155mm}
+
+  /* running header on content pages via page margin box */
+  .page-head{font-family:var(--mono);font-size:7.4pt;letter-spacing:1.6px;text-transform:uppercase;
+       color:var(--ink-faint);display:flex;justify-content:space-between;
+       border-bottom:1px solid var(--hair);padding-bottom:5pt;margin-bottom:9mm}
+
+  /* Table of contents */
+  .toc{list-style:none;padding:0;margin:6mm 0 0}
+  .toc li{display:flex;align-items:baseline;gap:8pt;padding:5.5pt 0;border-bottom:1px solid var(--hair)}
+  .toc .no{font-family:var(--mono);font-size:8pt;color:var(--amber);font-weight:700;width:9mm}
+  .toc .ti{font-family:var(--display);font-size:12.5pt;font-weight:600;color:var(--ink)}
+  .sign{margin-top:11mm;border-top:2px solid var(--ink);padding-top:6mm;display:flex;
+       justify-content:space-between;align-items:baseline}
+</style>
+
+<!-- ===================== COVER ===================== -->
+<section class="cover">
+  <div class="grid-bg"></div>
+  <span class="corner c-tl"></span><span class="corner c-tr"></span>
+  <span class="corner c-bl"></span><span class="corner c-br"></span>
+  <div class="cover-top"><span>Dossier № WW3-674020 · Rev. 1.0</span><span class="classif">Field Manual</span></div>
+  <div class="cover-mid">
+    <div class="ww3-mark">▚ WORLD WAR 3 · APP 674020</div>
+    <h1>OPERATION<br><span class="amber">PRESERVATION</span></h1>
+    <div class="subtitle">How we brought a shut-down multiplayer game back to life — and made it run forever from a single owned copy.</div>
+    <p class="lede">The official servers go dark on <strong style="color:#fff">3 August 2026</strong>. This is the complete record of Stage 1: taking a game that only works online, and making it boot, log in, and reach a fully-unlocked menu with no publisher, no Steam login, and no live servers anywhere.</p>
+    <div class="stamp">◆ Stage 1 — Complete</div>
+  </div>
+  <div class="cover-foot">
+    <div><div class="k">Subject</div><div class="v">World War 3 · Unreal Engine 4.21 · Multiplayer FPS</div></div>
+    <div><div class="k">Compiled by</div><div class="v">Repository Owner · “OfflinePlayer”</div></div>
+    <div><div class="k">Date</div><div class="v">23 July 2026</div></div>
+  </div>
+</section>
+
+<!-- ===================== CONTENTS + BRIEFING ===================== -->
+<div class="page-head"><span>Operation Preservation — Stage 1</span><span>Contents &amp; Briefing</span></div>
+
+<span class="eyebrow">Mission Index</span>
+<h2 class="op-title">What's inside this dossier</h2>
+<ol class="toc">
+  <li><span class="no">00</span><span class="ti">Briefing — the mission &amp; what we won</span></li>
+  <li><span class="no">01</span><span class="ti">How an online game actually talks</span></li>
+  <li><span class="no">02</span><span class="ti">Listening in — capturing the protocol</span></li>
+  <li><span class="no">03</span><span class="ti">The body double — building our own backend</span></li>
+  <li><span class="no">04</span><span class="ti">God mode — unlocking everything</span></li>
+  <li><span class="no">05</span><span class="ti">Cutting the cord — forever-offline</span></li>
+  <li><span class="no">06</span><span class="ti">Mission-ready — the stability fixes</span></li>
+  <li><span class="no">07</span><span class="ti">Status board — what works today</span></li>
+  <li><span class="no">08</span><span class="ti">Recon — Stage 2: multiplayer</span></li>
+  <li><span class="no">—</span><span class="ti">Glossary &amp; the toolkit</span></li>
+</ol>
+
+<h3 class="sub">The mission in one breath</h3>
+<p class="lead">World War 3 is a multiplayer-only shooter. Every time you launch it, it phones home to the publisher's servers to log you in, load your profile, and put you in a match. When those servers switch off on 3 August 2026, the game becomes an expensive paperweight — even though it's installed on your own drive. Stage 1's job was to replace every one of those servers with our own, running on the same PC, so the game can't tell the difference.</p>
+<div class="callout plain"><span class="tag">◆ In plain English</span>
+  <p>Think of the game as a phone that only works if it can call five specific numbers. We didn't change the phone — we quietly became all five people it calls, and we answer exactly the way it expects. The game is completely happy, and none of those calls ever leave your computer.</p></div>
+
+<h3 class="sub">What Stage 1 achieved</h3>
+<div class="cols3" style="margin-bottom:5mm">
+  <div class="stat"><div class="n">5 / 5</div><div class="l">Backend services replaced</div></div>
+  <div class="stat"><div class="n">10 yr</div><div class="l">Offline login runway</div></div>
+  <div class="stat"><div class="n">0</div><div class="l">Live servers required</div></div>
+</div>
+<ul class="clean">
+  <li>The game boots from a private copy on a spare drive — no Steam launch, no publisher login.</li>
+  <li>It reaches a fully-loaded main menu with a <strong>maxed-out, everything-unlocked</strong> profile.</li>
+  <li>It survives the hardest wall — Epic's anti-cheat login — using credentials <strong>we forge ourselves</strong>.</li>
+  <li>It runs cleanly and indefinitely, with a login token good until <strong>2036</strong> (and renewable forever).</li>
+</ul>
+
+<!-- ===================== 01 PRIMER ===================== -->
+<div class="ophead">
+  <div class="op-no">01</div>
+  <span class="eyebrow">Primer</span>
+  <h2>How an online game actually talks</h2>
+  <p class="d-lede">Before you can replace a game's servers, you have to know exactly who it calls, in what order, and what it expects back. Here's the chain — in human terms. Each box became one of our fakes.</p>
+</div>
+
+<figure>
+  <div class="fig-title">Figure 1 — The launch relay race</div>
+  <svg viewBox="0 0 760 232" style="width:100%;background:var(--gun);border-radius:5px;display:block" font-family="Consolas,monospace">
+    <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#E7A21C"/></marker></defs>
+    <g><rect x="184" y="26" width="392" height="40" rx="4" fill="#241a12" stroke="#B4720F"/>
+      <text x="380" y="44" text-anchor="middle" fill="#E7A21C" font-size="11" font-weight="bold">EPIC EOS + ANTI-CHEAT</text>
+      <text x="380" y="58" text-anchor="middle" fill="#C4986a" font-size="8.5">the guard that nearly stopped us — see Op 05</text>
+      <path d="M244 108 V68" stroke="#B4720F" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <path d="M404 108 V68" stroke="#B4720F" stroke-width="1.4" stroke-dasharray="4 3"/></g>
+    <g font-size="12" fill="#E9E7DF">
+      <rect x="24" y="108" width="120" height="56" rx="4" fill="#191D22" stroke="#2A2F36"/>
+      <text x="84" y="132" text-anchor="middle" fill="#E7A21C" font-weight="bold">① LOGIN</text><text x="84" y="150" text-anchor="middle" font-size="9" fill="#9AA0A7">Who are you?</text>
+      <rect x="184" y="108" width="120" height="56" rx="4" fill="#191D22" stroke="#2A2F36"/>
+      <text x="244" y="132" text-anchor="middle" fill="#E7A21C" font-weight="bold">② META</text><text x="244" y="150" text-anchor="middle" font-size="9" fill="#9AA0A7">Your profile</text>
+      <rect x="344" y="108" width="120" height="56" rx="4" fill="#191D22" stroke="#2A2F36"/>
+      <text x="404" y="132" text-anchor="middle" fill="#E7A21C" font-weight="bold">③ HUB</text><text x="404" y="150" text-anchor="middle" font-size="9" fill="#9AA0A7">Menu brain</text>
+      <rect x="504" y="108" width="120" height="56" rx="4" fill="#191D22" stroke="#2A2F36"/>
+      <text x="564" y="132" text-anchor="middle" fill="#E7A21C" font-weight="bold">④ PRESENCE</text><text x="564" y="150" text-anchor="middle" font-size="9" fill="#9AA0A7">Friends / chat</text>
+      <rect x="646" y="108" width="94" height="56" rx="4" fill="#191D22" stroke="#2A2F36"/>
+      <text x="693" y="132" text-anchor="middle" fill="#E7A21C" font-weight="bold">⑤ MATCH</text><text x="693" y="150" text-anchor="middle" font-size="9" fill="#9AA0A7">Stage 2</text></g>
+    <g stroke="#E7A21C" stroke-width="2" marker-end="url(#ar)" fill="none">
+      <path d="M146 136 H182"/><path d="M306 136 H342"/><path d="M466 136 H502"/><path d="M626 136 H644"/></g>
+    <g font-size="8.5" fill="#9AA0A7">
+      <text x="84" y="184" text-anchor="middle">id.wishlistgames</text><text x="244" y="184" text-anchor="middle">meta.prod…fxtools.gl</text>
+      <text x="404" y="184" text-anchor="middle">WebSocket :8700</text><text x="564" y="184" text-anchor="middle">XMPP :5222</text><text x="693" y="184" text-anchor="middle">UDP :7868</text></g>
+    <text x="380" y="214" text-anchor="middle" fill="#67B7D8" font-size="10">Stage 1 replaced services ① – ④.  Service ⑤ is Stage 2.</text>
+  </svg>
+  <figcaption>Each service must succeed before the next begins. Replace them in order and the game walks itself to the menu.</figcaption>
+</figure>
+
+<div class="cols2">
+  <div>
+    <h3 class="sub">The cast, in plain terms</h3>
+    <ul class="clean">
+      <li><strong>Login</strong> — proves you're you, hands back an ID card (a “token”).</li>
+      <li><strong>Meta</strong> — the filing cabinet: your level, guns, unlocks, loadouts.</li>
+      <li><strong>Hub</strong> — the live switchboard that runs the menu and lobbies.</li>
+      <li><strong>Presence</strong> — who's online, friends, chat.</li>
+      <li><strong>Match</strong> — the actual battlefield simulation (Stage 2).</li>
+    </ul>
+  </div>
+  <div class="callout tech" style="margin-top:6mm"><span class="tag">▚ Under the hood</span>
+    <p><strong>Tokens are JWTs.</strong> A JWT is a signed slip of text: <span class="mono">header.payload.signature</span>. The game can't check the signature itself — only the servers can — so it just carries the slip between services. <strong>That's the crack we drove a truck through:</strong> since we <em>are</em> every service, we sign our own slips with our own key and set them to expire in ten years.</p></div>
+</div>
+
+<!-- ===================== 02 CAPTURE ===================== -->
+<div class="ophead">
+  <div class="op-no">02</div>
+  <span class="eyebrow">Operation 02 · Reconnaissance</span>
+  <h2>Listening in — capturing the protocol</h2>
+  <p class="d-lede">You can't fake a conversation you've never heard. So while the real servers were still alive, we recorded every word the game and the servers exchanged.</p>
+</div>
+
+<p class="lead">We built a “man-in-the-middle” recorder: it sits between the game and the real servers, quietly writing down every request and reply, then passes them along untouched. The game never notices. When the servers die, that recording becomes our script.</p>
+
+<div class="callout plain"><span class="tag">◆ In plain English</span>
+  <p>Imagine wiretapping your own phone to learn exactly what a customer-service line says — every prompt, every pause — so later you can answer identically without the real line existing. That's the recorder. It even blurs out your personal details (Steam ID, real name, tokens) live, so the footage is safe to stream.</p></div>
+
+<figure>
+  <div class="fig-title">Recording session — real captured endpoints</div>
+  <div class="term">
+    <div class="term-bar"><span class="dot" style="background:#F0776b"></span><span class="dot" style="background:#E7A21C"></span><span class="dot" style="background:#5FCf8f"></span>&nbsp; record_proxy.py — live capture</div>
+    <div class="term-body"><span class="d"># the game's launch conversation, recorded verbatim</span>
+POST /authenticate/fxgames          <span class="g">→ 200</span>  <span class="d">ID card issued</span>
+GET  /events/getClientWebSocketUrl  <span class="g">→ 200</span>  <span class="d">"call the hub at ws://…:8700"</span>
+GET  /progression/getProgressionTree <span class="g">→ 200</span> <span class="a">501 KB</span> <span class="d">the whole unlock tree</span>
+GET  /inventory/get                 <span class="g">→ 200</span>  <span class="a">62 KB</span>  <span class="d">every item you own</span>
+GET  /season/getSeason              <span class="g">→ 200</span>  <span class="a">52 KB</span>  <span class="d">battle pass "Redline"</span>
+<span class="c">HUB  friends.changeStatus · onlineParameters · notifications  (WebSocket)</span>
+<span class="d"># … 25+ endpoints captured with full request + response bodies</span></div>
+  </div>
+  <figcaption>Every line here is real recorded traffic. Together they are the complete “script” the menu needs to hear.</figcaption>
+</figure>
+
+<div class="callout tech"><span class="tag">▚ Under the hood</span>
+  <p>The game's network library (<span class="mono">libcurl</span>) is configured with <span class="mono">bVerifyPeer=false</span> — it accepts <em>any</em> security certificate without checking it. Normally a flaw; for us it's the front door. Our recorder (and later our fake servers) present a home-made certificate and the game trusts it completely. We redirect the server names to <span class="mono">127.0.0.1</span> (your own PC) via the Windows <span class="mono">hosts</span> file.</p></div>
+
+<!-- ===================== 03 MOCK ===================== -->
+<div class="ophead">
+  <div class="op-no">03</div>
+  <span class="eyebrow">Operation 03 · Substitution</span>
+  <h2>The body double — our own backend</h2>
+  <p class="d-lede">With the script in hand, we built stand-in servers that replay it — and forge the ID cards the game carries between them. First boot to a real menu.</p>
+</div>
+
+<p class="lead">Three small programs now impersonate the entire backend: one for the profile / filing-cabinet layer, one for the live menu switchboard, one for presence. They don't guess — they serve back the exact recordings from Op 02, and hand the game freshly-signed ID cards on demand.</p>
+
+<div class="pull">The moment the game accepted our first forged token and loaded its menu from our recordings was the moment “private server” stopped being a theory.</div>
+
+<div class="cols2">
+  <div>
+    <h3 class="sub">The three stand-ins</h3>
+    <table>
+      <tr><th>Fake</th><th>Plays the role of</th></tr>
+      <tr><td class="mono">rest_server</td><td>Login + profile + inventory</td></tr>
+      <tr><td class="mono">hub_server</td><td>Live menu switchboard (WebSocket)</td></tr>
+      <tr><td class="mono">xmpp_server</td><td>Friends &amp; presence</td></tr>
+    </table>
+    <h3 class="sub">The token trick</h3>
+    <p>When the game asks “log me in”, our server invents an ID card on the spot, signs it with a key <em>we</em> own, stamps it valid for years, and hands it over. The game carries it to the next service — which is also us.</p>
+  </div>
+  <div class="callout tech" style="margin-top:6mm"><span class="tag">▚ Under the hood</span>
+    <p>Three tokens flow at boot, all forged by us:</p>
+    <p class="kv"><b>fxToken</b> — the login ID (HS512)<br>
+    <b>PlayerToken</b> — “you are player 100001” (HS256)<br>
+    <b>Hub token</b> — “connect to ws://127.0.0.1:8700”</p>
+    <p>The client never validates these signatures — only servers do, and <strong>we replaced the servers</strong>. So the secret can be anything and the expiry can be years out.</p></div>
+</div>
+
+<div class="callout plain"><span class="tag">◆ In plain English</span>
+  <p>The game is a courier that carries sealed envelopes between offices without ever opening them. We run all the offices <em>and</em> the seal — so we write whatever we like inside, stamp it with our own seal, and the courier faithfully delivers it. Result: it walked all the way to a working main menu.</p></div>
+
+<!-- ===================== 04 GOD MODE ===================== -->
+<div class="ophead">
+  <div class="op-no">04</div>
+  <span class="eyebrow">Operation 04 · Loadout</span>
+  <h2>God mode — unlocking everything</h2>
+  <p class="d-lede">Because the profile now comes from <em>our</em> filing cabinet, we can write anything into it — own every item, max every weapon, top rank — all served as if completely normal.</p>
+</div>
+
+<figure>
+  <div class="fig-title">Recreation — the menu our server serves back</div>
+  <div class="menu-shot">
+    <div class="menu-hud"><span class="cur">◆ 999,999,999</span><span class="who">OfflinePlayer</span><span class="lvl">52</span></div>
+    <div class="menu-tiles">
+      <div class="menu-tile"><div class="t">CUSTOMIZE</div><div class="big">242</div><div class="s">new items available</div></div>
+      <div class="menu-tile"><div class="t">CAREER</div><div class="s">stats &amp; achievements</div></div>
+      <div class="menu-tile"><div class="t">BATTLE PASS</div><div class="s" style="color:#E7A21C">REDLINE · unlocked</div></div>
+      <div class="menu-tile"><div class="t">SHOP</div><div class="s">all blueprints owned</div></div>
+    </div>
+  </div>
+  <figcaption>Recreation of the delivered state: max rank (52), all 12 loadout slots open, 242 items, every weapon leveled. Faithful to the live result.</figcaption>
+</figure>
+
+<div class="cols2">
+  <div class="callout plain" style="margin-top:0"><span class="tag">◆ In plain English</span>
+    <p>Since we're the one telling the game what you own, we simply say “you own all of it, and you're max level.” The game has no way to disagree — it trusts its own filing cabinet, and the filing cabinet is us.</p></div>
+  <div class="callout tech" style="margin-top:0"><span class="tag">▚ Under the hood</span>
+    <p><span class="mono">god_profile.py</span> reads the 1,675 item IDs from the unlock tree, writes them all into inventory, sets currency to 999,999,999, maxes weapon levels, and sets the soldier rank to its cap (52) — which is what unlocks all 12 loadout slots.</p></div>
+</div>
+
+<!-- ===================== 05 FOREVER OFFLINE ===================== -->
+<div class="ophead">
+  <div class="op-no">05</div>
+  <span class="eyebrow">Operation 05 · The hard wall</span>
+  <h2>Cutting the cord — forever-offline</h2>
+  <p class="d-lede">One guard didn't answer to us: Epic's anti-cheat login. It checked our credentials against Epic's own servers and threw us out. This is how we beat it.</p>
+</div>
+
+<p class="lead">Everything so far relied on the game trusting its own courier. But the anti-cheat system (Epic Online Services) is smarter: it sends your login off to <span class="mono">api.epicgames.dev</span> — a real Epic server — to be verified. With a made-up login, Epic said no, and the game crashed. This was the last, hardest wall.</p>
+
+<div class="term">
+  <div class="term-bar"><span class="dot" style="background:#F0776b"></span>&nbsp; WW3.log — the crash</div>
+  <div class="term-body"><span class="r">EOS Auth TokenGrant → HTTP 401  errors.com.epicgames.eos.auth.external.invalid_token</span>
+<span class="d">"UserInfo rejected the token" — real Epic refused our made-up login → game crashes</span></div>
+</div>
+
+<h3 class="sub">The insight that broke it open</h3>
+<p>Epic's verification only works if the game can <em>reach</em> Epic. But the address it calls — <span class="mono">api.epicgames.dev</span> — is just a name, and we control the phone book. So we pointed that name at our own PC too, and became Epic. Two things had to be true, and both were:</p>
+<ol class="steps">
+  <li><strong>The anti-cheat doesn't pin its certificate.</strong> We proved it accepts our home-made certificate for Epic's address — so it talks to our impostor without complaint.</li>
+  <li><strong>The tokens are verified against a key the game fetches — from a place we now control.</strong> So we publish <em>our own</em> key, sign the tokens ourselves, and they check out perfectly.</li>
+</ol>
+
+<figure>
+  <div class="fig-title">Figure 2 — Real Epic vs. our forgery</div>
+  <svg viewBox="0 0 760 200" style="width:100%;background:var(--gun);border-radius:5px;display:block" font-family="Consolas,monospace">
+    <defs><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#E7A21C"/></marker>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#C0392B"/></marker></defs>
+    <text x="24" y="30" fill="#F0776b" font-size="11" font-weight="bold">BEFORE — crashes</text>
+    <rect x="24" y="40" width="150" height="38" rx="4" fill="#191D22" stroke="#2A2F36"/><text x="99" y="63" text-anchor="middle" fill="#E9E7DF" font-size="10">Game anti-cheat</text>
+    <rect x="300" y="40" width="150" height="38" rx="4" fill="#241216" stroke="#C0392B"/><text x="375" y="59" text-anchor="middle" fill="#F0776b" font-size="10">REAL Epic</text><text x="375" y="72" text-anchor="middle" fill="#C0392B" font-size="8">rejects fake login</text>
+    <path d="M176 59 H298" stroke="#C0392B" stroke-width="2" marker-end="url(#arR)"/><text x="237" y="52" text-anchor="middle" fill="#C0392B" font-size="12" font-weight="bold">401 ✕</text>
+    <text x="24" y="118" fill="#5FCf8f" font-size="11" font-weight="bold">AFTER — boots forever</text>
+    <rect x="24" y="128" width="150" height="38" rx="4" fill="#191D22" stroke="#2A2F36"/><text x="99" y="151" text-anchor="middle" fill="#E9E7DF" font-size="10">Game anti-cheat</text>
+    <rect x="300" y="128" width="184" height="38" rx="4" fill="#12241a" stroke="#2E8B5B"/><text x="392" y="146" text-anchor="middle" fill="#5FCf8f" font-size="10">OUR fake Epic (this PC)</text><text x="392" y="159" text-anchor="middle" fill="#3AA76B" font-size="8">signs tokens with our own key</text>
+    <path d="M176 147 H298" stroke="#E7A21C" stroke-width="2" marker-end="url(#ar2)"/><text x="237" y="140" text-anchor="middle" fill="#E7A21C" font-size="11" font-weight="bold">forged ✓</text>
+    <path d="M484 147 H560" stroke="#2E8B5B" stroke-width="2" marker-end="url(#ar2)"/>
+    <rect x="562" y="128" width="176" height="38" rx="4" fill="#12241a" stroke="#2E8B5B"/><text x="650" y="146" text-anchor="middle" fill="#5FCf8f" font-size="10">200 OK · token good</text><text x="650" y="159" text-anchor="middle" fill="#3AA76B" font-size="8">valid until 2036</text>
+  </svg>
+  <figcaption>The game never learns the difference: the real Epic server is simply never contacted.</figcaption>
+</figure>
+
+<div class="callout tech"><span class="tag">▚ Under the hood</span>
+  <p>Epic's tokens are <span class="mono">RS256</span> — signed with Epic's private key, verified with a public key the game fetches by key-id <span class="mono">kid: 2022-06-14…</span>. Since the token's issuer is literally <span class="mono">https://api.epicgames.dev/auth/v1/oauth</span> — a host we now own — we serve our <em>own</em> public key under that same key-id (a “JWKS” endpoint), sign forged access + ID tokens with the matching private key and a 10-year expiry. The game verifies our forgery against our own key and it passes.</p></div>
+
+<p>One crash later — a second Epic component (“Connect”) failed because we handed it an empty config — we captured Epic's real config file directly and served it back. After that, the game sailed through.</p>
+
+<figure>
+  <div class="fig-title">The winning boot — every Epic call answered by us</div>
+  <div class="term">
+    <div class="term-bar"><span class="dot" style="background:#5FCf8f"></span>&nbsp; mock log — synthetic token, zero real Epic</div>
+    <div class="term-body"><span class="a">[EPIC] FORGED</span> token grant=client_credentials   <span class="g">→ 200</span>  <span class="d">our RS256, +10y</span>
+<span class="a">[EPIC] FORGED</span> token grant=external_auth       <span class="g">→ 200</span>  <span class="d">our RS256, +10y</span>
+<span class="c">[EPIC] canned</span> GET /sdk/v1/default             <span class="g">→ 200</span>  <span class="d">real config we captured</span>
+<span class="c">[EPIC] canned</span> POST /user/…/product-users/search <span class="g">→ 200</span>
+<span class="g">→ MAIN MENU REACHED · no crash · no live servers contacted</span></div>
+  </div>
+  <figcaption>Proof: every line of Epic's login was answered locally. The publisher's servers were never touched.</figcaption>
+</figure>
+
+<!-- ===================== 06 STABILITY ===================== -->
+<div class="ophead">
+  <div class="op-no">06</div>
+  <span class="eyebrow">Operation 06 · Hardening</span>
+  <h2>Mission-ready — the stability fixes</h2>
+  <p class="d-lede">The game reached the menu, but a “lost connection with the communication service” pop-up kept returning. Chasing it down meant fixing three separate background connections.</p>
+</div>
+
+<table>
+  <tr><th>Channel</th><th>What was wrong</th><th>Fix</th><th>Result</th></tr>
+  <tr><td>Epic presence socket</td><td>We answered a WebSocket request with plain text, so it failed and retried forever</td><td>Complete the real handshake &amp; hold it open</td><td class="tag-ok">HELD</td></tr>
+  <tr><td>Hub switchboard</td><td>We only replied to heartbeats, never sent our own — the game timed us out</td><td>Send a heartbeat every 4 seconds</td><td class="tag-ok">STEADY</td></tr>
+  <tr><td>Presence (XMPP)</td><td>We told the game its ID was an <em>old</em> player number — it couldn't reconcile that and reset</td><td>Use the correct ID; adopt what the client declares</td><td class="tag-ok">STABLE</td></tr>
+</table>
+
+<div class="cols2">
+  <div class="callout plain" style="margin-top:0"><span class="tag">◆ In plain English</span>
+    <p>The real culprit was mistaken identity. Our presence server kept greeting the player by the wrong name — an ID left over from an earlier capture. The game got confused about who it was, hung up, and reconnected on a loop. Fix the name, and the nagging pop-up vanished for good.</p></div>
+  <div class="callout tech" style="margin-top:0"><span class="tag">▚ Under the hood</span>
+    <p>The XMPP bind returned <span class="mono">prod-100001</span> (a stale ID) while the client identified as <span class="mono">prod-100001</span> — stream torn down every ~40 s. Fixed the bound JID, echoed the client's own <span class="mono">from=</span>, and added a server-initiated <span class="mono">HeartbeatPing</span> every 4,000 ms.</p></div>
+</div>
+
+<!-- ===================== 07 STATUS BOARD ===================== -->
+<div class="ophead">
+  <div class="op-no">07</div>
+  <span class="eyebrow">Situation Report</span>
+  <h2>Status board — what works today</h2>
+  <p class="d-lede">Where Stage 1 stands, and what changes on shutdown day. Everything in the “after” column already works — it's the current state, not a plan.</p>
+</div>
+
+<table>
+  <tr><th>Capability</th><th>With live servers (today)</th><th>After 3 Aug 2026 (our build)</th></tr>
+  <tr><td>Launch the game</td><td>Steam + publisher launcher</td><td class="tag-ok">✓ from private copy on E:</td></tr>
+  <tr><td>Log in</td><td>Publisher login, ~7-day token</td><td class="tag-ok">✓ forged token, valid to 2036</td></tr>
+  <tr><td>Anti-cheat / Epic login</td><td>Real Epic servers</td><td class="tag-ok">✓ forged locally, no Epic</td></tr>
+  <tr><td>Reach main menu</td><td>Yes</td><td class="tag-ok">✓ fully loaded</td></tr>
+  <tr><td>Profile &amp; unlocks</td><td>Your real account</td><td class="tag-ok">✓ everything unlocked</td></tr>
+  <tr><td>Stable connection</td><td>Yes</td><td class="tag-ok">✓ no pop-ups</td></tr>
+  <tr><td>Play actual matches</td><td>Yes</td><td class="tag-no">◷ Stage 2 — in progress</td></tr>
+</table>
+
+<div class="pull">Stage 1 is done: the game is preserved as a bootable, playable-to-the-menu artifact that needs nothing from anyone, forever.</div>
+
+<!-- ===================== 08 STAGE 2 ===================== -->
+<div class="ophead">
+  <div class="op-no">08</div>
+  <span class="eyebrow">Recon · Stage 2</span>
+  <h2>The road to real matches</h2>
+  <p class="d-lede">Stage 1 got you to the menu. Stage 2 is the battlefield itself — and we've already answered the one question that decides whether it's even possible.</p>
+</div>
+
+<p class="lead">A match server is a much bigger build than the menu — a live simulation, not a set of recordings. Before committing, we had to know: is the battlefield traffic <em>readable</em>, or locked behind encryption? We captured gameplay — standing still, walking, running, driving, tank combat — and measured it.</p>
+
+<div class="callout plain"><span class="tag">◆ In plain English</span>
+  <p>Encrypted data looks like pure static — no patterns, nothing to learn from. Readable data has structure you can decode. We measured the “randomness” of the battlefield traffic. If it came back looking like static, Stage 2 would be nearly impossible from recordings alone. It didn't.</p></div>
+
+<figure>
+  <div class="fig-title">Figure 3 — Randomness of match traffic (lower = readable)</div>
+  <div class="chart">
+    <div class="bar-row"><span class="lbl">Standing still</span><div class="bar-track"><div class="bar-fill" style="width:61%"></div></div><span class="val">4.94</span></div>
+    <div class="bar-row"><span class="lbl">Walking</span><div class="bar-track"><div class="bar-fill" style="width:63%"></div></div><span class="val">5.04</span></div>
+    <div class="bar-row"><span class="lbl">Running / dashing</span><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><span class="val">4.77</span></div>
+    <div class="bar-row"><span class="lbl">Driving</span><div class="bar-track"><div class="bar-fill" style="width:70%"></div></div><span class="val">5.63</span></div>
+    <div class="bar-row"><span class="lbl">Tank combat</span><div class="bar-track"><div class="bar-fill" style="width:73%"></div></div><span class="val">5.86</span></div>
+  </div>
+  <div class="zone-key">
+    <span><i style="color:#2E8B5B">■ 4–6 = readable, plain</i> (all WW3 traffic lands here)</span>
+    <span><i style="color:#B07A1A">▍ ~7.5 = compressed</i></span>
+    <span><i style="color:#C0392B">▍ ~8.0 = encrypted (dead end)</i></span>
+  </div>
+  <figcaption>Measured in bits-per-byte. Every activity sits at 4.8–5.9 — firmly “readable, uncompressed”. Encryption (~8.0) would look completely different.</figcaption>
+</figure>
+
+<div class="cols2">
+  <div>
+    <h3 class="sub">Verdict: feasible</h3>
+    <p>The battlefield speaks standard, un-encrypted Unreal Engine 4 “netcode” — and the engine's exact source code is public, so we read the format instead of guessing. Your captures are neatly separated by activity, so we compare “walking” vs “standing” to find exactly which bytes are position, which are aim, and so on.</p>
+  </div>
+  <div class="callout tech" style="margin-top:6mm"><span class="tag">▚ Under the hood</span>
+    <p>Match = UDP <span class="mono">:7868</span>, stock UE4.21 <span class="mono">UNetConnection</span>. Packet sequence numbers visible in byte 0; the <span class="mono">StatelessConnect</span> handshake readable from packet #1. No AES, no Oodle compression. A large effort — but a knowable one.</p></div>
+</div>
+
+<h3 class="sub">Stage 2 milestones</h3>
+<ol class="steps">
+  <li><strong>Handshake</strong> — our server completes the UE4 connection so the client stops retrying.</li>
+  <li><strong>Load into a map</strong> — the client drops into an empty world.</li>
+  <li><strong>Your soldier appears</strong> — the first moment you can move around. The real payoff.</li>
+  <li><strong>Others, vehicles, combat</strong> — the long tail; how far we push is a choice, not a wall.</li>
+</ol>
+
+<!-- ===================== GLOSSARY + TOOLKIT ===================== -->
+<div class="ophead">
+  <div class="op-no">▚</div>
+  <span class="eyebrow">Field Reference</span>
+  <h2>Glossary &amp; the toolkit</h2>
+  <p class="d-lede">The jargon decoded, and every tool we built to pull Stage 1 off.</p>
+</div>
+
+<div class="cols2">
+  <table>
+    <tr><th>Term</th><th>What it means</th></tr>
+    <tr><td><strong>Token / JWT</strong></td><td>A signed digital ID card the game carries between services.</td></tr>
+    <tr><td><strong>MITM</strong></td><td>“Man in the middle” — sitting between game and server to read or answer traffic.</td></tr>
+    <tr><td><strong>Mock / stand-in</strong></td><td>A fake server that answers exactly like the real one.</td></tr>
+    <tr><td><strong>EOS</strong></td><td>Epic Online Services — the login / anti-cheat layer.</td></tr>
+    <tr><td><strong>Certificate</strong></td><td>The ID a server shows to prove it's genuine. WW3 doesn't check it — our opening.</td></tr>
+    <tr><td><strong>hosts file</strong></td><td>Windows' private phone book — points server names at your PC.</td></tr>
+  </table>
+  <table>
+    <tr><th>Term</th><th>What it means</th></tr>
+    <tr><td><strong>RS256 / JWKS</strong></td><td>Epic's stronger signature + the public key used to check it. We serve our own.</td></tr>
+    <tr><td><strong>XMPP</strong></td><td>The chat / presence protocol behind “friends online”.</td></tr>
+    <tr><td><strong>Netcode</strong></td><td>How the game syncs the live battlefield between players (Stage 2).</td></tr>
+    <tr><td><strong>Entropy</strong></td><td>A randomness score. High = encrypted; low = readable.</td></tr>
+    <tr><td><strong>UNetConnection</strong></td><td>Unreal Engine's core network connection — what the match server speaks.</td></tr>
+    <tr><td><strong>Token expiry</strong></td><td>When an ID card stops being valid. Ours: 2036, and renewable.</td></tr>
+  </table>
+</div>
+
+<h3 class="sub">The toolkit we built</h3>
+<table>
+  <tr><th>Tool</th><th>Job</th></tr>
+  <tr><td class="mono">record_proxy.py</td><td>Records the real server conversation, with live privacy redaction.</td></tr>
+  <tr><td class="mono">rest_server.py</td><td>The core fake backend — profile, login, and the forged Epic layer, in one.</td></tr>
+  <tr><td class="mono">hub_server.py / xmpp_server.py</td><td>The live menu switchboard &amp; presence stand-ins.</td></tr>
+  <tr><td class="mono">epic_faker.py</td><td>Forges Epic's login tokens with our own 10-year key.</td></tr>
+  <tr><td class="mono">god_profile.py</td><td>Rewrites the profile to unlock everything.</td></tr>
+  <tr><td class="mono">make_synthetic_token.py</td><td>Mints a fresh 10-year login token on demand.</td></tr>
+  <tr><td class="mono">ww3_mock.ps1 / launch_offline.ps1</td><td>One-command bring-up and offline launch.</td></tr>
+  <tr><td class="mono">pcap_tools.py</td><td>Stage 2 — reads the battlefield captures.</td></tr>
+</table>
+
+<div class="callout tech"><span class="tag">▚ Legality &amp; scope</span>
+  <p>This is preservation of a <strong>single, owned copy</strong> for personal offline use — reviving software you already bought so it survives its publisher's shutdown. No piracy, no circumvention against anyone else, no distribution. Every server runs on one PC and talks only to itself.</p></div>
+
+<div class="sign">
+  <div><span class="ww3-mark" style="color:var(--amber)">▚ OPERATION PRESERVATION</span>
+    <div style="font-family:var(--mono);font-size:8pt;color:var(--ink-faint);margin-top:2pt">Stage 1 complete · Stage 2 underway</div></div>
+  <div style="font-family:var(--mono);font-size:8pt;color:var(--ink-faint);text-align:right">Repository Owner · “OfflinePlayer”<br>23 July 2026 · Dossier Rev 1.0</div>
+</div>
