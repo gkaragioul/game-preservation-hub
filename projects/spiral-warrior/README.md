@@ -12,7 +12,9 @@ no production endpoint contacted after launch.
 **This repository contains no game client, no game assets, no decrypted source
 and no keys.** See [NOTICE](NOTICE).
 
-![Spiral Warrior preservation project cover](assets/project-cover.png)
+![Spiral Warrior promotional artwork](assets/project-cover.jpg)
+
+*Public promotional artwork used only to identify the game. Artwork © its respective rights holders. [Source: Electronic Soul 2023 report](https://static.cninfo.com.cn/finalpage/2023-08-31/1217706743.PDF).*
 
 ---
 

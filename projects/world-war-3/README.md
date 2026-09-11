@@ -9,7 +9,9 @@ The game was multiplayer-only. When the servers went away, every purchased copy 
 > **Not affiliated** with The 4 Winds Entertainment, My.Games, Wishlist Games, Epic Games, or Valve.
 > This repository contains **no game client, no game assets, and no cracked binaries.** You need your own legitimate copy.
 
-![World War 3 preservation project cover](assets/project-cover.png)
+![World War 3 gameplay](assets/project-cover.jpg)
+
+*Public gameplay image used only to identify the game. Artwork © its respective rights holders. [Source: World War 3 on Steam](https://store.steampowered.com/app/674020/World_War_3/).*
 
 ---
 
