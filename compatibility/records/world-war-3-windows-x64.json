@@ -1,0 +1,27 @@
+{
+  "id": "world-war-3-windows-x64",
+  "software": {
+    "title": "World War 3",
+    "kind": "game",
+    "version": "retail client",
+    "distribution": "lawfully owned Steam installation"
+  },
+  "environment": {
+    "operatingSystem": "Windows",
+    "architecture": "x64",
+    "runtime": "Unreal Engine 4.21"
+  },
+  "assessment": {
+    "status": "partial",
+    "summary": "The local preservation toolkit reaches the menu flow and a single observed match flow through the deploy screen.",
+    "knownIssues": [
+      "The current match tier is a capture-backed replay harness, not a general-purpose game server.",
+      "The documented flow is limited to one map and one client perspective."
+    ]
+  },
+  "evidence": {
+    "source": "projects/world-war-3/README.md",
+    "observedOn": "2026-09-12",
+    "notes": "No original client, assets, or cracked binaries are distributed."
+  }
+}

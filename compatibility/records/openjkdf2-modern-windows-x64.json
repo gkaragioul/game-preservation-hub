@@ -1,0 +1,26 @@
+{
+  "id": "openjkdf2-modern-windows-x64",
+  "software": {
+    "title": "OpenJKDF2 Modern",
+    "kind": "game",
+    "version": "1.0",
+    "distribution": "enhanced engine with user-owned game data"
+  },
+  "environment": {
+    "operatingSystem": "Windows 11",
+    "architecture": "x64",
+    "runtime": "OpenGL 3.3"
+  },
+  "assessment": {
+    "status": "research",
+    "summary": "The project documents a Windows 11-oriented modern engine path with modern controls, display handling, frame pacing, and renderer diagnostics.",
+    "knownIssues": [
+      "The documented community binaries are not yet code-signed."
+    ]
+  },
+  "evidence": {
+    "source": "projects/openjkdf2-modern/README.md",
+    "observedOn": "2026-09-12",
+    "notes": "The project distributes no original Jedi Knight game files."
+  }
+}
