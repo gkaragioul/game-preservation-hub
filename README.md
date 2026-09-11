@@ -9,6 +9,7 @@ This repository is the single GitHub home for the projects listed below.
 - [Heretic II Apple Silicon](projects/heretic-ii-apple-silicon/)
 - [Theme Hospital Apple Silicon](projects/theme-hospital-apple-silicon/)
 - [Oni Modern](projects/oni-modern/)
+- [OpenJKDF2 Modern](projects/openjkdf2-modern/)
 
 Project-specific documentation, requirements, and updates are kept in each project folder. The original repositories are archived as read-only historical references.
 
