@@ -1,6 +1,10 @@
 # Game Preservation Hub
 
-This repository is the single GitHub home for the projects listed below.
+![Recompile Labs — Game Continuity, Recovery, Modernization](assets/recompile-labs-banner.png)
+
+> **RECOMPILE LABS** · Game continuity, recovery, and modernization.
+
+This repository is the single GitHub home for projects that investigate, recover, and modernize game software when its original technical path no longer works.
 
 ## Projects
 
