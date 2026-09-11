@@ -12,7 +12,7 @@ A Windows 11 compatibility launcher for a **user-owned local installation** of *
 
 ## Download this project
 
-- **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/oni-modern`.
+- **Simple download:** [Download the Oni Modern source ZIP](https://github.com/gkaragioul/game-preservation-hub/releases/download/project-downloads-v1/oni-modern.zip). This archive contains only this project.
 - **Only this project:** run the commands below to download just the Oni Modern folder.
 
 ```powershell

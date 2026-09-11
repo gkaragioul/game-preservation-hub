@@ -9,7 +9,7 @@ improved frame pacing, and observable OpenGL 3.3 rendering.
 
 ## Download source
 
-- **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/openjkdf2-modern`.
+- **Simple download:** [Download the OpenJKDF2 Modern source ZIP](https://github.com/gkaragioul/game-preservation-hub/releases/download/project-downloads-v1/openjkdf2-modern.zip). This archive contains only this project.
 - **Only this project:** run the commands below to download just the OpenJKDF2 Modern folder.
 
 ```powershell

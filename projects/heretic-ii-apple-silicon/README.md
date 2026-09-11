@@ -10,7 +10,7 @@ This repository tracks the source, macOS compatibility work, build scripts, and 
 
 ## Download this project
 
-- **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/heretic-ii-apple-silicon`.
+- **Simple download:** [Download the Heretic II Apple Silicon source ZIP](https://github.com/gkaragioul/game-preservation-hub/releases/download/project-downloads-v1/heretic-ii-apple-silicon.zip). This archive contains only this project.
 - **Only this project:** run the commands below to download just the Heretic II Apple Silicon folder.
 
 ```bash
