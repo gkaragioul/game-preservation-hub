@@ -1,0 +1,75 @@
+#include "General/RuntimeProbe.h"
+
+#include <assert.h>
+#include <math.h>
+
+int main(void)
+{
+    RuntimeProbe probe = { 0 };
+
+    assert(!runtime_probe_due(&probe, 1000u, 5000u));
+    assert(!runtime_probe_due(&probe, 5999u, 5000u));
+    assert(runtime_probe_due(&probe, 6000u, 5000u));
+    assert(!runtime_probe_due(&probe, 7000u, 5000u));
+
+    probe = (RuntimeProbe){ 0 };
+    assert(!runtime_probe_due(&probe, 0xFFFFFFF0u, 32u));
+    assert(runtime_probe_due(&probe, 0x00000010u, 32u));
+    assert(!runtime_probe_due(NULL, 1000u, 5000u));
+    assert(!runtime_probe_due(&probe, 1000u, 0u));
+    assert(runtime_probe_should_skip_loading_wait(true));
+    assert(!runtime_probe_should_skip_loading_wait(false));
+
+    assert(fabsf(runtime_probe_distance_squared(1.0f, 2.0f, 3.0f,
+                                                4.0f, 6.0f, 3.0f) - 25.0f) < 0.0001f);
+    assert(runtime_probe_moved(0.0f, 0.0f, 0.0f,
+                               0.03f, 0.04f, 0.0f, 0.049f));
+    assert(!runtime_probe_moved(0.0f, 0.0f, 0.0f,
+                                0.03f, 0.04f, 0.0f, 0.051f));
+
+    assert(fabsf(runtime_probe_angle_delta_degrees(350.0f, 10.0f) - 20.0f) < 0.0001f);
+    assert(fabsf(runtime_probe_angle_delta_degrees(10.0f, 350.0f) + 20.0f) < 0.0001f);
+    assert(fabsf(runtime_probe_angle_delta_degrees(-170.0f, 170.0f) + 20.0f) < 0.0001f);
+    assert(runtime_probe_turned(179.0f, -179.0f, 1.5f));
+    assert(!runtime_probe_turned(45.0f, 45.9f, 1.0f));
+
+    {
+        float degrees = 0.0f;
+        assert(runtime_probe_parse_degrees("-90", &degrees));
+        assert(fabsf(degrees + 90.0f) < 0.0001f);
+        assert(runtime_probe_parse_degrees("180.0", &degrees));
+        assert(fabsf(degrees - 180.0f) < 0.0001f);
+        assert(!runtime_probe_parse_degrees(NULL, &degrees));
+        assert(!runtime_probe_parse_degrees("", &degrees));
+        assert(!runtime_probe_parse_degrees("90 degrees", &degrees));
+        assert(!runtime_probe_parse_degrees("181", &degrees));
+        assert(!runtime_probe_parse_degrees("nan", &degrees));
+        assert(!runtime_probe_parse_degrees("0", NULL));
+    }
+    {
+        int rate = 0;
+        assert(runtime_probe_parse_rate("60", &rate) && rate == 60);
+        assert(runtime_probe_parse_rate("120", &rate) && rate == 120);
+        assert(runtime_probe_parse_rate("240", &rate) && rate == 240);
+        assert(!runtime_probe_parse_rate(NULL, &rate));
+        assert(!runtime_probe_parse_rate("", &rate));
+        assert(!runtime_probe_parse_rate("120fps", &rate));
+        assert(!runtime_probe_parse_rate("29", &rate));
+        assert(!runtime_probe_parse_rate("1001", &rate));
+        assert(!runtime_probe_parse_rate("60", NULL));
+    }
+
+    {
+        int mode = 99;
+        assert(runtime_probe_parse_vsync("off", &mode) && mode == 0);
+        assert(runtime_probe_parse_vsync("on", &mode) && mode == 1);
+        assert(runtime_probe_parse_vsync("adaptive", &mode) && mode == -1);
+        assert(runtime_probe_parse_vsync("ADAPTIVE", &mode) && mode == -1);
+        assert(!runtime_probe_parse_vsync(NULL, &mode));
+        assert(!runtime_probe_parse_vsync("", &mode));
+        assert(!runtime_probe_parse_vsync("fast", &mode));
+        assert(!runtime_probe_parse_vsync("on ", &mode));
+        assert(!runtime_probe_parse_vsync("off", NULL));
+    }
+    return 0;
+}
