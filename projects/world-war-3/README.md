@@ -11,6 +11,19 @@ The game was multiplayer-only. When the servers went away, every purchased copy 
 
 ---
 
+## Download this project
+
+- **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/world-war-3`.
+- **Only this project:** run the commands below to download just the World War 3 folder.
+
+```powershell
+git clone --filter=blob:none --sparse https://github.com/gkaragioul/game-preservation-hub.git
+Set-Location game-preservation-hub
+git sparse-checkout set projects/world-war-3
+```
+
+---
+
 ## Where this got to
 
 **The menu tier is finished.** A retail client boots fully offline: login, profile, loadouts, challenges, shop, matchmaking. This part is stable and no longer changes.

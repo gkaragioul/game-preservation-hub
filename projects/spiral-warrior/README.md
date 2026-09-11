@@ -14,6 +14,19 @@ and no keys.** See [NOTICE](NOTICE).
 
 ---
 
+## Download this project
+
+- **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/spiral-warrior`.
+- **Only this project:** run the commands below to download just the Spiral Warrior folder.
+
+```powershell
+git clone --filter=blob:none --sparse https://github.com/gkaragioul/game-preservation-hub.git
+Set-Location game-preservation-hub
+git sparse-checkout set projects/spiral-warrior
+```
+
+---
+
 ## Why this is public
 
 The original author has stopped work here. Everything that is known is written
