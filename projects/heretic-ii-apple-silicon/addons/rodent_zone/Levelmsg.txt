@@ -1,0 +1,61 @@
+I'll have to open this elsewhere.
+This appears to be locked from the other side.
+Damn, I think I`m locked out.
+#Monsters\plagueElf\voices\Gonnadiebp.wav
+#Cinematics\Dranor\30-314.wav
+#Corvus\no_anger1.wav
+#Cinematics\Dranor\27-315.wav
+#Corvus\what_ails.wav 
+#Player\Phew.wav
+#Corvus\whatthe.wav
+It won't open.
+This door is stuck.
+I will never get through that.
+No chance.
+I`m not that small.
+That was close.
+They ought to get that fixed.
+#Monsters\plagueElf\voices\Followmrj.wav
+#Monsters\plagueElf\voices\Comebackj.wav
+#Doors\Objectdrop.wav
+#World\Quakend.wav
+#Misc\Breakstone.wav
+#Doors\Thud2.wav
+#Monsters\plagueElf\Death3.wav
+I`ll try to come back later.
+Test message. Test message. Test message.
+
+
+     1. I'll have to open this elsewhere.
+     2. This appears to be locked from the other side.
+     3. Damn, I think I`m locked out.
+     4. #Monsters\plagueElf\voices\Gonnadiebp.wav
+     5. #Cinematics\Dranor\30-314.wav
+     6. #Corvus\no_anger1.wav
+     7. #Cinematics\Dranor\27-315.wav
+     8. #Corvus\what_ails.wav 
+     9. #Player\Phew.wav
+   10  #Corvus\whatthe.wav
+   11. It won't open.
+   12. This door is stuck.
+   13. I will never get through that.
+   14. No chance.
+   15. I`m not that small.
+   16. That was close.
+   17. They ought to get that fixed.
+   18. #Monsters\plagueElf\voices\Followmrj.wav
+   19. #Monsters\plagueElf\voices\Comebackj.wav
+   20. #Doors\Objectdrop.wav
+   21. #World\Quakend.wav
+   22. #Misc\Breakstone.wav
+   23. #Doors\Thud2.wav
+   24. #Monsters\plagueElf\Death3.wav
+   25. I`ll try to come back later.
+   26. Test message. Test message. Test message.
+
+
+
+
+
+
+

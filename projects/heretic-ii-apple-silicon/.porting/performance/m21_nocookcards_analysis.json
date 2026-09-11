@@ -1,0 +1,28 @@
+{
+  "60_power_saver": {
+    "rows": 2813,
+    "frame_ms_column": "frame_ms",
+    "avg_ms": 17.456099182367577,
+    "min_ms": 0.1,
+    "p95_ms": 16.789,
+    "p99_ms": 16.797,
+    "max_ms": 500.0,
+    "avg_fps": 57.28656726527431,
+    "over_16_67ms": 2676,
+    "over_20ms": 14,
+    "over_33_33ms": 10
+  },
+  "120_full_power": {
+    "rows": 5886,
+    "frame_ms_column": "frame_ms",
+    "avg_ms": 8.800435440027183,
+    "min_ms": 0.1,
+    "p95_ms": 8.456,
+    "p99_ms": 8.672,
+    "max_ms": 500.0,
+    "avg_fps": 113.63074098034758,
+    "over_16_67ms": 16,
+    "over_20ms": 13,
+    "over_33_33ms": 11
+  }
+}

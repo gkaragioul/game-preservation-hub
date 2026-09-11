@@ -1,0 +1,202 @@
+{
+  "60": {
+    "file": ".porting/performance/m20_60_frame_log.csv",
+    "samples_after_10s": 1995,
+    "target_fps_median": 60.0,
+    "budget_ms": 16.666666666666668,
+    "budget_plus_2pct_ms": 17.0,
+    "frame_ms": {
+      "avg": 16.749211528822055,
+      "p50": 16.73,
+      "p95": 16.787,
+      "p99": 16.793,
+      "max": 41.208,
+      "effective_fps": 59.7043029923647,
+      "over_budget_exact": 1978,
+      "over_budget_plus_2pct": 6,
+      "over_20ms": 3,
+      "over_33_34ms": 1
+    },
+    "gpu_ms": {
+      "avg": 1.6846746867167919,
+      "p95": 2.4386,
+      "p99": 2.641,
+      "max": 37.235
+    },
+    "entities": {
+      "max": 41,
+      "alpha_max": 6,
+      "particles_max": 35,
+      "alpha_particles_max": 596
+    },
+    "audio": {
+      "underruns_max": 0,
+      "callback_max_us_max": 31.0
+    },
+    "feature_flags": {
+      "bloom": 0.0,
+      "ssao": 0.0,
+      "shadows": 0.0,
+      "reflections": 0.0,
+      "detail": 1.0,
+      "vsync": 0.0
+    },
+    "phases_p95": {
+      "phase_total_ms": 1.7412999999999998,
+      "phase_setup_ms": 0.008,
+      "phase_reflection_ms": 0.0,
+      "phase_world_ms": 0.7763,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.8312999999999999,
+      "phase_dlights_ms": 0.001,
+      "phase_alpha_ms": 0.241,
+      "phase_particles_ms": 0.044,
+      "phase_post_ms": 0.034,
+      "phase_flash_ms": 0.0
+    },
+    "phases_p99": {
+      "phase_total_ms": 2.193339999999998,
+      "phase_setup_ms": 0.012059999999999946,
+      "phase_reflection_ms": 0.001,
+      "phase_world_ms": 0.995,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.9272999999999998,
+      "phase_dlights_ms": 0.001,
+      "phase_alpha_ms": 0.2951199999999999,
+      "phase_particles_ms": 0.06805999999999994,
+      "phase_post_ms": 0.057059999999999944,
+      "phase_flash_ms": 0.0
+    },
+    "phases_max": {
+      "phase_total_ms": 7.25,
+      "phase_setup_ms": 0.06,
+      "phase_reflection_ms": 0.002,
+      "phase_world_ms": 2.07,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 4.296,
+      "phase_dlights_ms": 0.002,
+      "phase_alpha_ms": 5.773,
+      "phase_particles_ms": 0.383,
+      "phase_post_ms": 0.384,
+      "phase_flash_ms": 0.0
+    },
+    "frame_correlations": {
+      "phase_total_ms": 0.04814872503041953,
+      "phase_setup_ms": 0.22005938537026287,
+      "phase_reflection_ms": 0.04313651865163527,
+      "phase_world_ms": 0.04713470180905782,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.04755136192818645,
+      "phase_dlights_ms": 0.01887889876352558,
+      "phase_alpha_ms": 0.0069475064188479485,
+      "phase_particles_ms": -0.013701632721806547,
+      "phase_post_ms": 0.18557122083585348,
+      "phase_flash_ms": 0.0,
+      "gpu_ms": 0.014194215655780669,
+      "alpha_entities": -0.017605547126046856,
+      "particles": -0.020000364722655817,
+      "alpha_particles": -0.01945065617387662,
+      "entities": 0.16184496578787522
+    }
+  },
+  "120": {
+    "file": ".porting/performance/m20_120_frame_log.csv",
+    "samples_after_10s": 4107,
+    "target_fps_median": 120.0,
+    "budget_ms": 8.333333333333334,
+    "budget_plus_2pct_ms": 8.5,
+    "frame_ms": {
+      "avg": 8.422281714146578,
+      "p50": 8.397,
+      "p95": 8.455,
+      "p99": 8.461,
+      "max": 37.422,
+      "effective_fps": 118.7326705446505,
+      "over_budget_exact": 4086,
+      "over_budget_plus_2pct": 32,
+      "over_20ms": 2,
+      "over_33_34ms": 2
+    },
+    "gpu_ms": {
+      "avg": 2.185224981738495,
+      "p95": 2.492,
+      "p99": 2.8109399999999996,
+      "max": 33.945
+    },
+    "entities": {
+      "max": 41,
+      "alpha_max": 139,
+      "particles_max": 45,
+      "alpha_particles_max": 832
+    },
+    "audio": {
+      "underruns_max": 0,
+      "callback_max_us_max": 12.0
+    },
+    "feature_flags": {
+      "bloom": 1.0,
+      "ssao": 0.0,
+      "shadows": 0.0,
+      "reflections": 0.0,
+      "detail": 2.0,
+      "vsync": 0.0
+    },
+    "phases_p95": {
+      "phase_total_ms": 1.4020999999999995,
+      "phase_setup_ms": 0.006,
+      "phase_reflection_ms": 0.0,
+      "phase_world_ms": 0.622,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.6896999999999998,
+      "phase_dlights_ms": 0.0,
+      "phase_alpha_ms": 0.3530999999999994,
+      "phase_particles_ms": 0.024,
+      "phase_post_ms": 0.093,
+      "phase_flash_ms": 0.0
+    },
+    "phases_p99": {
+      "phase_total_ms": 2.15064,
+      "phase_setup_ms": 0.009999999999999998,
+      "phase_reflection_ms": 0.001,
+      "phase_world_ms": 1.0077000000000003,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.8768200000000002,
+      "phase_dlights_ms": 0.001,
+      "phase_alpha_ms": 0.40794,
+      "phase_particles_ms": 0.04694000000000005,
+      "phase_post_ms": 0.14194000000000004,
+      "phase_flash_ms": 0.0
+    },
+    "phases_max": {
+      "phase_total_ms": 29.826,
+      "phase_setup_ms": 0.71,
+      "phase_reflection_ms": 0.001,
+      "phase_world_ms": 2.97,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 28.616,
+      "phase_dlights_ms": 0.002,
+      "phase_alpha_ms": 3.422,
+      "phase_particles_ms": 0.141,
+      "phase_post_ms": 32.324,
+      "phase_flash_ms": 0.0
+    },
+    "frame_correlations": {
+      "phase_total_ms": 0.1006123610661106,
+      "phase_setup_ms": 0.0684321428599177,
+      "phase_reflection_ms": 0.011072233637209232,
+      "phase_world_ms": 0.14921267760730858,
+      "phase_shadows_ms": 0.0,
+      "phase_entities_ms": 0.05429502280402337,
+      "phase_dlights_ms": 0.004038464494052133,
+      "phase_alpha_ms": 0.05309798072921235,
+      "phase_particles_ms": 0.014344078137995288,
+      "phase_post_ms": 0.008090635744623367,
+      "phase_flash_ms": 0.0,
+      "gpu_ms": 0.003986077551255782,
+      "alpha_entities": 0.004308985172090052,
+      "particles": 0.0026204772545715387,
+      "alpha_particles": 0.002899724807652583,
+      "entities": 0.12136564430493867
+    }
+  }
+}

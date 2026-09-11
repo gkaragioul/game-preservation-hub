@@ -1,0 +1,320 @@
+{
+  "primary_long_frame": {
+    "path": ".porting/performance/m10_power_saver_60fps_frame_log.csv",
+    "all": {
+      "frames": 2388,
+      "duration_s": 44.779,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.32836474036851,
+      "min_ms": 16.666,
+      "max_ms": 500.0,
+      "std_ms": 14.18602850312602,
+      "p50_ms": 16.726,
+      "p95_ms": 16.78,
+      "p99_ms": 21.076260000000023,
+      "effective_fps": 57.70884991071198,
+      "over_17ms": 67,
+      "over_18ms": 51,
+      "over_20ms": 29,
+      "under_15ms": 0,
+      "gpu_avg_ms": 2.321569514237856,
+      "gpu_p95_ms": 3.6168500000000012,
+      "gpu_max_ms": 57.568,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 26.796901172529314,
+      "alpha_avg": 4.8291457286432165,
+      "particles_avg": 9.974455611390285,
+      "alpha_particles_avg": 101.37395309882747
+    },
+    "steady": {
+      "frames": 2358,
+      "duration_s": 39.772,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.873980491942323,
+      "min_ms": 16.666,
+      "max_ms": 78.786,
+      "std_ms": 1.7324019957180454,
+      "p50_ms": 16.726,
+      "p95_ms": 16.78,
+      "p99_ms": 20.51589999999998,
+      "effective_fps": 59.2628396410391,
+      "over_17ms": 61,
+      "over_18ms": 45,
+      "over_20ms": 25,
+      "under_15ms": 0,
+      "gpu_avg_ms": 2.312777777777778,
+      "gpu_p95_ms": 3.6053,
+      "gpu_max_ms": 24.227,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 26.943172179813402,
+      "alpha_avg": 4.885072094995759,
+      "particles_avg": 10.094571670907548,
+      "alpha_particles_avg": 102.6145038167939
+    }
+  },
+  "primary_long_proc": {
+    "path": ".porting/performance/m10_power_saver_60fps_process.csv",
+    "samples": 45,
+    "cpu_avg_pct": 40.94222222222222,
+    "cpu_p95_pct": 80.19999999999997,
+    "cpu_max_pct": 93.7,
+    "rss_avg_mb": 352.9190972222222,
+    "rss_max_mb": 863.046875
+  },
+  "ultragear2_short_frame": {
+    "path": ".porting/performance/m10_power_saver_60fps_ultragear2_nomove_frame_log.csv",
+    "all": {
+      "frames": 544,
+      "duration_s": 13.335,
+      "targets": [
+        60
+      ],
+      "avg_ms": 19.01675367647059,
+      "min_ms": 16.666,
+      "max_ms": 500.0,
+      "std_ms": 29.994586126051953,
+      "p50_ms": 16.725,
+      "p95_ms": 16.780849999999997,
+      "p99_ms": 35.8781500000008,
+      "effective_fps": 52.58521075746483,
+      "over_17ms": 22,
+      "over_18ms": 14,
+      "over_20ms": 10,
+      "under_15ms": 0,
+      "gpu_avg_ms": 3.375735294117647,
+      "gpu_p95_ms": 4.2238500000000005,
+      "gpu_max_ms": 136.015,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 29.158088235294116,
+      "alpha_avg": 4.244485294117647,
+      "particles_avg": 28.33823529411765,
+      "alpha_particles_avg": 437.1875
+    },
+    "steady": {
+      "frames": 496,
+      "duration_s": 8.329,
+      "targets": [
+        60
+      ],
+      "avg_ms": 16.877532258064516,
+      "min_ms": 16.666,
+      "max_ms": 45.669,
+      "std_ms": 1.8061288855944837,
+      "p50_ms": 16.722,
+      "p95_ms": 16.779,
+      "p99_ms": 18.154650000000046,
+      "effective_fps": 59.25036816458606,
+      "over_17ms": 8,
+      "over_18ms": 5,
+      "over_20ms": 5,
+      "under_15ms": 0,
+      "gpu_avg_ms": 3.2135060483870967,
+      "gpu_p95_ms": 4.17625,
+      "gpu_max_ms": 31.5,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 29.965725806451612,
+      "alpha_avg": 4.57258064516129,
+      "particles_avg": 30.800403225806452,
+      "alpha_particles_avg": 476.69959677419354
+    }
+  },
+  "ultragear2_short_proc": {
+    "path": ".porting/performance/m10_power_saver_60fps_ultragear2_nomove_process.csv",
+    "samples": 10,
+    "cpu_avg_pct": 45.89,
+    "cpu_p95_pct": 83.43000000000002,
+    "cpu_max_pct": 94.5,
+    "rss_avg_mb": 442.7140625,
+    "rss_max_mb": 730.703125
+  },
+  "ultragear2_first_frame": {
+    "path": ".porting/performance/m10_power_saver_60fps_ultragear2_frame_log.csv",
+    "all": {
+      "frames": 575,
+      "duration_s": 14.023,
+      "targets": [
+        60
+      ],
+      "avg_ms": 18.965205217391304,
+      "min_ms": 16.666,
+      "max_ms": 500.0,
+      "std_ms": 28.8597470771943,
+      "p50_ms": 16.727,
+      "p95_ms": 17.171899999999997,
+      "p99_ms": 34.80079999999989,
+      "effective_fps": 52.72814021980574,
+      "over_17ms": 31,
+      "over_18ms": 25,
+      "over_20ms": 19,
+      "under_15ms": 0,
+      "gpu_avg_ms": 2.8623652173913046,
+      "gpu_p95_ms": 3.6875999999999998,
+      "gpu_max_ms": 39.487,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 28.972173913043477,
+      "alpha_avg": 4.144347826086957,
+      "particles_avg": 19.499130434782607,
+      "alpha_particles_avg": 415.48
+    },
+    "steady": {
+      "frames": 527,
+      "duration_s": 9.023,
+      "targets": [
+        60
+      ],
+      "avg_ms": 17.15246110056926,
+      "min_ms": 16.666,
+      "max_ms": 108.603,
+      "std_ms": 4.342240104939182,
+      "p50_ms": 16.726,
+      "p95_ms": 17.0197,
+      "p99_ms": 25.753840000000018,
+      "effective_fps": 58.30067149762035,
+      "over_17ms": 27,
+      "over_18ms": 21,
+      "over_20ms": 15,
+      "under_15ms": 0,
+      "gpu_avg_ms": 2.9104117647058825,
+      "gpu_p95_ms": 3.6884,
+      "gpu_max_ms": 35.287,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          0
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          1
+        ],
+        "vsync": [
+          1
+        ]
+      },
+      "entities_avg": 29.71537001897533,
+      "alpha_avg": 4.44022770398482,
+      "particles_avg": 21.199240986717268,
+      "alpha_particles_avg": 450.5351043643264
+    }
+  },
+  "ultragear2_first_proc": {
+    "path": ".porting/performance/m10_power_saver_60fps_ultragear2_process.csv",
+    "samples": 9,
+    "cpu_avg_pct": 39.05555555555556,
+    "cpu_p95_pct": 45.940000000000005,
+    "cpu_max_pct": 46.1,
+    "rss_avg_mb": 366.2552083333333,
+    "rss_max_mb": 497.859375
+  }
+}

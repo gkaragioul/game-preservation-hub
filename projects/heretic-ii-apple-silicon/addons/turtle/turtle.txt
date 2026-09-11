@@ -1,0 +1,77 @@
+================================================================
+Title                   : Turtle Village
+Filename                : turtle.bsp
+Authors                 : Dewo & Eugene(U.R.C.) 
+
+Misc. Author Info       : Dewo - I'm just another Heretic 2 mapper. Beside this map, I have released 2 SP Addons (Sacred Idol
+                                 and Treasure Hunter) and 3 Gauntlet maps.
+
+                          Eugene(U.R.C.) - I'm the same dude who imported textures from DOOM, WOLFENSTEIN 3D and from
+                                           the orginal HEXEN game. I'm also the author of the "Colony Of Turbulence" levels.
+                                           If you want to know more then just visit my website.   
+
+Email Addresses         : Dewo - dewodpnx@yahoo.com
+
+                          Eugene(U.R.C.) - darkjedi188@yahoo.com
+			  
+
+Homepages		: Dewo - Not Available
+                          
+                          Eugene(U.R.C.) - http://www.geocities.com/darkjedi188/
+
+Description             : This mod is the Heretic2 interpretation of an action stage called "Turtle Village" from an old   
+                          arcade-style, side-scrolling fantasy game called "Golden Axe". As the name implies, the whole map
+                          consists of a village settlement erected on the shell of a gigantic turtle which lives in an ocean.
+                          Don't believe us and think this sounds crazy? Well, just launch the mod and witness the fantasy for 
+                          yourselves!
+                         
+Additional Thanks to    : Raven Software for creating Heretic II, the Enhancement Pack, and HereticEd! 
+                          Sega Enterprises of America and Japan for creating Golden Axe!
+                         
+=========================
+
+* INSTALLATION GUIDELINES *
+    1.) Make sure that your version of the game is 1.06. If it's not then go to www.raven-games.com
+        and download the Enhancement Pack!
+ 
+    2.) This map uses custom textures, sky and extra model and skin. Don't worry about it cause they are included in this zip
+        also. Just unzip all files to your Heretic2 base folder.
+
+=========================
+
+* PLAY INFORMATION *
+Single Player           : Yes
+Cooperative             : Yes (4 starting points) 
+Deathmatch              : Yes (4 starting points) 
+Difficulty Settings     : No
+New Sounds              : No
+New Graphics            : No
+New Music               : No
+
+Small Note              : This map has a big open area and you might not be able to see far. To solve this
+                          limitations, type 'r_farclipdist 10000' in the console to extend the limit.   
+
+* CONSTRUCTION *
+Base                    : Inspired by an old side-scrolling arcade game, as mentioned previously.
+Editor used             : HereticEd
+
+Known bugs              : You might notice that the map is laggy. That's because of wide open area implemented in the map
+                          which takes more time for the engine to render.
+
+Texture Sets used       : andoria, darkjedi188, general, palace, silverspring, swamp
+
+Compile machine         : Bsp process :     9 seconds
+                          Vis process :    39 seconds
+                          Rad process :  8649 seconds
+                          That was done with P3 533MHz with 256MB RAMs and was done only with Fastvis cause the machine can't
+                          do the Rad process with Fullvis.
+
+=========================
+
+* COPYRIGHT NOTICE *
+You are free to copy these files for personal use, or to make it available for 
+redistribution in its electronic format, provided that: 
+
+(1) they remain wholly unedited and unmodified 
+
+(2) no fee or compensation is charged for copies of or access to these files

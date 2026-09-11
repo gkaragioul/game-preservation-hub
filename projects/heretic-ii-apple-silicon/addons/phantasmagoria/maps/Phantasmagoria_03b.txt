@@ -1,0 +1,42 @@
+================================================================
+Title                   : Phantasmagoria  v0.3 beta
+Filename                : phant.bsp
+Author                  : Swen Klemund (Germany)
+Email Address           : swen@klemund.com
+                          swen@north.de
+Description             : HERETIC II - singleplayer and deathmatch map
+Additional Credits to   : - Raven Software, for Heretic II
+                          - Negative Eddy Software and Ben Williams,
+                            for QuMa1.6
+================================================================
+My Homepages:
+ German Quake, Quake2, Hexen2 and Heretic2 Site
+   http://www.klemund.com/
+     http://www.aldinger.com/quake/
+     http://www.aldinger.com/quake2/
+     http://www.aldinger.com/hexen2/
+     http://www.aldinger.com/heretic2/
+ Deutsches Netzwerkspieler Archiv:
+     http://www.klemund.com/network/
+================================================================
+
+* Play Information *
+
+Level Name              : Phantasmagoria
+Single Player           : Yes
+Cooperative 2-4 Player  : No
+Deathmatch 1-16 Player  : Yes, 5 Player
+New Graphics            : Yes
+
+* Construction *
+
+Build Time        : 3 weeks ...
+Editor(s) used    : QuMa1.6, HereticEd, Wally, Pakker
+Known Bugs        : ?
+
+Build Time for QBsp:
+  QBsp3           :  100 seconds
+  QVis3 -level 4  : 2994 seconds
+  QRad3 -extra    :  893 seconds
+  (using a Pentium 166, 40 Mb)
+

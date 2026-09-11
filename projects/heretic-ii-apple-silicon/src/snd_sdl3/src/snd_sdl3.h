@@ -1,0 +1,21 @@
+//
+// snd_sdl3.h
+//
+// Copyright 2025 mxd
+//
+
+#pragma once
+
+#include "snd_local.h"
+
+extern cvar_t* s_hrtf; //mxd. Toggle HRTF spatialization (OpenAL Soft Aureal 3D mode).
+
+extern qboolean SNDSDL3_BackendInit(void);
+extern void SNDSDL3_BackendShutdown(void);
+
+extern void SNDSDL3_SetPlaybackPaused(qboolean paused);
+extern void SNDSDL3_GetStats(snd_audio_stats_t* stats);
+extern void SNDSDL3_Update(void);
+extern void SNDSDL3_Spatialize(channel_t* ch);
+extern qboolean SNDSDL3_Cache(sfx_t* sfx, const wavinfo_t* info, byte* data);
+extern void SNDSDL3_RawSamples(int num_samples, uint rate, int width, int num_channels, const byte* data, float volume);

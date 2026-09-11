@@ -1,0 +1,32 @@
+==== Heretic II Remastered.app/Contents/Resources/build/Heretic2R
+Heretic II Remastered.app/Contents/Resources/build/Heretic2R:
+	@loader_path/H2Common.dylib (compatibility version 0.0.0, current version 0.0.0)
+	@loader_path/libSDL3.0.dylib (compatibility version 401.0.0, current version 401.10.0)
+	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL (compatibility version 1.0.0, current version 1.0.0)
+	/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit (compatibility version 45.0.0, current version 2685.60.104)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+
+==== Heretic II Remastered.app/Contents/Resources/build/ref_gl3.dylib
+Heretic II Remastered.app/Contents/Resources/build/ref_gl3.dylib:
+	@loader_path/ref_gl3.dylib (compatibility version 0.0.0, current version 0.0.0)
+	@loader_path/H2Common.dylib (compatibility version 0.0.0, current version 0.0.0)
+	@loader_path/libSDL3.0.dylib (compatibility version 401.0.0, current version 401.10.0)
+	/System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL (compatibility version 1.0.0, current version 1.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+==== Heretic II Remastered.app/Contents/Resources/build/snd_sdl3.dylib
+Heretic II Remastered.app/Contents/Resources/build/snd_sdl3.dylib:
+	@loader_path/snd_sdl3.dylib (compatibility version 0.0.0, current version 0.0.0)
+	@loader_path/H2Common.dylib (compatibility version 0.0.0, current version 0.0.0)
+	@loader_path/libSDL3.0.dylib (compatibility version 401.0.0, current version 401.10.0)
+	@loader_path/libopenal.1.dylib (compatibility version 1.0.0, current version 1.25.2)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
+
+==== Heretic II Remastered.app/Contents/Resources/build/H2Common.dylib
+Heretic II Remastered.app/Contents/Resources/build/H2Common.dylib:
+	@loader_path/H2Common.dylib (compatibility version 0.0.0, current version 0.0.0)
+	/usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+	/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)

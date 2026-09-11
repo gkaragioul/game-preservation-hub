@@ -1,0 +1,45 @@
+================================================================
+Single Player Heretic II Map
+================================================================
+
+Title                   : Andoria Waterworks
+Release Date		: 2020-09-12
+Author                  : whirledtsar
+Email Address           : whirls98@gmail.com
+Other Files By Author   : Shifting Sands and Tyrant's Tome for Hexen 2; Wolf Chapel Revisit and Lepistus for Hexen; a map in HUMP Mini for Heretic; maps in XUMP and Hexmas for Hexen; "Medevil" for Doom 2; a map in Mayhem 19 for Doom 2
+Description             : A new singleplayer map for Heretic II set in Andoria. Due to engine & compiler limitations, it unfortunately had to be split into 2 map files. It's a medium-sized level (~25 minutes) with a focus on action as well as some traps and rope-swinging. Many but not all of the weapons & defensive weapons appear - even the Enhancement Patch's Whirlwind spell. Tested on the Action difficulty. There is no story, so if you wish you can imagine that it takes place at some point during Corvus' original journeys through Andoria. He even has the sickly plague skin for it. There are three unmarked secrets to find, as well as a few intentional sequence breaks/shortcuts you can accomplish with acrobatics.
+Making that animated waterfall texture work was a fucking insane pain in the dick that nearly made me tear my hair out, so you better appreciate it.
+To play, copy contents to your "Heretic 2/base" folder and use the included batch file.
+Additional Credits to   : Raven Software; Trenchbroom devs for Ht2 support
+=========================
+
+* Play Information *
+
+Single Player           : Yes 
+Cooperative             : No
+Deathmatch              : No
+Difficulty Settings     : Yes (intended for Action)
+New Sounds              : No
+New Graphics            : No
+New Music               : No
+
+
+* Construction *
+
+Base                    : New level from scratch
+Editor used             : Trenchbroom
+Known bugs              : N/A
+Build time              : ~1 month
+Texture Sets       	: Andoria, Palace, Swamp
+
+
+** Copyright / Permissions **
+
+Authors MAY use the contents of this file as a base for modification or
+reuse.  Permissions have been obtained from original authors for any of
+their resources modified or included in this file.
+
+You MAY distribute this file, provided you include this text
+file, with no modifications.  You may distribute this file in any
+electronic format (BBS, Diskette, CD, etc) as long as you include
+this file intact.

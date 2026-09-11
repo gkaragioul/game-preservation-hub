@@ -1,0 +1,18 @@
+{
+  "rows": 35586,
+  "avg_ms": 16.75828460630585,
+  "p50_ms": 16.729,
+  "p95_ms": 16.787,
+  "p99_ms": 16.793,
+  "max_ms": 500.0,
+  "over_16_67": 34225,
+  "over_20": 7,
+  "over_33": 3,
+  "avg_gpu_ms": 1.7607494239307593,
+  "p95_gpu_ms": 3.2739999999999996,
+  "audio_underruns_start": 0,
+  "audio_underruns_end": 0,
+  "audio_callbacks_end": 25627,
+  "max_particles_total": 617,
+  "max_alpha_entities": 9
+}

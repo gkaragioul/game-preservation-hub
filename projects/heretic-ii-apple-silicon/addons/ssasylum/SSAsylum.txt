@@ -1,0 +1,32 @@
+SSAsylum - By Voltais
+
+The Silver Spring Asylum... Bordering the Darkmire Swamps, it was the prime target
+of Operation First Strike, the beginning of Morcalavins reign of terror with the plague.
+With a force of Plague Ssithra, Plague Spreaders, various beasts of the land and the
+Asylums own, now infected, inhabitants, Morcalavin begins his spread of terror. But there's
+one young guard, hiding in the kitchen, that he missed...
+
+-----------------------------------------------------------------------------------------------
+Silver Spring Asylum
+By:...............................Voltais
+Mode:.............................Single Play
+New Graphics\sounds\etc.: ........No
+Co-op:............................Not Supported
+Deathmatch:.......................Not Supported
+Compile Time:.....................2 hrs 12 mins
+-----------------------------------------------------------------------------------------------
+Miscelanneous Goodies
+How Long I actually worked on the map: Not as long as it would seem, given announcement in Nov.
+Releasal: Today
+When's Today: Saturday Feb 26 of 2000
+Have fun!
+-----------------------------------------------------------------------------------------------
+Legal Stuff
+Do whatever you bloody well please in the map, and in the distribution of the map, with
+the following exceptions:
+It is not to be included in a money-making venture without my express consent;
+The .BSP file is not to be mashed up for other uses, cut up for prefabs, etc. etc. or
+Passed off as the players own map. It has my name on it. That's for a reason. If you
+want Prefabs outta the map, just ask me and I'll be more then happy to give you the items
+in question.
+-Volt
