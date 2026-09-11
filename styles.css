@@ -156,21 +156,29 @@ h1 {
 }
 
 #rights-boundary,
-.contribute {
+.contribute,
+.migration-note {
   padding: 1.75rem;
   border-left: 3px solid var(--accent);
   background: rgba(24, 37, 56, 0.72);
 }
 
 #rights-boundary h2,
-.contribute h2 { margin-bottom: 0.65rem; }
+.contribute h2,
+.migration-note h2 { margin-bottom: 0.65rem; }
 
 #rights-boundary p,
-.contribute p { max-width: 65rem; margin-bottom: 0; }
+.contribute p,
+.migration-note p { max-width: 65rem; margin-bottom: 0; }
 
 .contribute {
   margin-top: 1rem;
   border-left-color: var(--paused);
+}
+
+.migration-note {
+  margin-top: 1rem;
+  border-left-color: var(--source);
 }
 
 footer {

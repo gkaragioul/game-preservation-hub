@@ -10,11 +10,11 @@ $requiredContent = @(
   'Heretic II Apple Silicon',
   'Theme Hospital Apple Silicon',
   'Oni Modern',
-  'https://github.com/gkaragioul/ww3-offline-preservation',
-  'https://github.com/gkaragioul/spiral-warrior-offline-preservation',
-  'https://github.com/gkaragioul/Heretic2_Apple_Silicon',
-  'https://github.com/gkaragioul/ThemeHospital_Apple_Silicon',
-  'https://github.com/gkaragioul/OniModern'
+  'https://github.com/gkaragioul/game-preservation-hub/tree/main/projects/world-war-3',
+  'https://github.com/gkaragioul/game-preservation-hub/tree/main/projects/spiral-warrior',
+  'https://github.com/gkaragioul/game-preservation-hub/tree/main/projects/heretic-ii-apple-silicon',
+  'https://github.com/gkaragioul/game-preservation-hub/tree/main/projects/theme-hospital-apple-silicon',
+  'https://github.com/gkaragioul/game-preservation-hub/tree/main/projects/oni-modern'
 )
 
 foreach ($item in $requiredContent) {
@@ -29,6 +29,10 @@ if (([regex]::Matches($html, 'class="project-card"')).Count -ne 5) {
 
 if ($html -notlike '*no original game files*') {
   throw 'Missing rights boundary.'
+}
+
+if ($html -notlike '*archived original repositories*') {
+  throw 'Missing migration notice.'
 }
 
 $cssPath = Join-Path $repositoryRoot 'styles.css'
