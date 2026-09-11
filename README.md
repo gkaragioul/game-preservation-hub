@@ -12,7 +12,7 @@ The [`compatibility/`](compatibility/) directory is the shared public data layer
 
 - [`compatibility/schema.json`](compatibility/schema.json) defines an evidence-led JSON Schema for compatibility reports.
 - [`compatibility/records/`](compatibility/records/) contains initial reports grounded in the projects already hosted here.
-- [`docs/rlabs-scan-v0.1.md`](docs/rlabs-scan-v0.1.md) defines the planned standalone Windows inspection CLI that will produce compatible report data.
+- [`RLabs Scan`](https://github.com/gkaragioul/rlabs-scan) is the local, read-only Windows PE inspection CLI that produces compatibility-report data. Its [`v0.1 interface specification`](docs/rlabs-scan-v0.1.md) remains the public contract.
 
 The data format is deliberately separate from `rlabs-scan`: projects can publish findings by hand, through another tool, or through the scanner once its interface is stable.
 

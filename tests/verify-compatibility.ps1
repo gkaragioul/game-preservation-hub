@@ -43,5 +43,8 @@ $rootReadme = Get-Content -LiteralPath (Join-Path $repositoryRoot 'README.md') -
 if ($rootReadme -notmatch 'RLabs') {
     throw 'The root README must position RLabs.'
 }
+if ($rootReadme -notmatch 'https://github.com/gkaragioul/rlabs-scan') {
+    throw 'The root README must link to the rlabs-scan repository.'
+}
 
 Write-Output "Validated $($records.Count) compatibility records."
