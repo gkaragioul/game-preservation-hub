@@ -1,6 +1,6 @@
-# Game Preservation & Modernization
+# Game Preservation Hub
 
-The public hub is available at [gkaragioul.github.io/game-preservation-hub](https://gkaragioul.github.io/game-preservation-hub/).
+This repository is the single GitHub home for the projects listed below.
 
 ## Projects
 
@@ -12,4 +12,4 @@ The public hub is available at [gkaragioul.github.io/game-preservation-hub](http
 
 Project-specific documentation, requirements, and updates are kept in each project folder. The original repositories are archived as read-only historical references.
 
-This hub distributes no original game files, assets, clients, or proprietary content.
+This hub distributes no original game files, assets, clients, or proprietary content. The original standalone repositories are archived as read-only historical references.
