@@ -30,3 +30,15 @@ if (([regex]::Matches($html, 'class="project-card"')).Count -ne 5) {
 if ($html -notlike '*no original game files*') {
   throw 'Missing rights boundary.'
 }
+
+$cssPath = Join-Path $repositoryRoot 'styles.css'
+$css = Get-Content -LiteralPath $cssPath -Raw
+foreach ($selector in @('.project-card', '#project-grid', ':focus-visible', '@media')) {
+  if ($css -notlike "*$selector*") {
+    throw "Missing responsive/accessibility selector: $selector"
+  }
+}
+
+if ($html -notlike '*<link rel="stylesheet" href="styles.css">*') {
+  throw 'The page does not load its stylesheet.'
+}
