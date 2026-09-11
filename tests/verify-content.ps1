@@ -42,3 +42,11 @@ foreach ($selector in @('.project-card', '#project-grid', ':focus-visible', '@me
 if ($html -notlike '*<link rel="stylesheet" href="styles.css">*') {
   throw 'The page does not load its stylesheet.'
 }
+
+$workflowPath = Join-Path $repositoryRoot '.github/workflows/deploy-pages.yml'
+$workflow = Get-Content -LiteralPath $workflowPath -Raw
+foreach ($setting in @('workflow_dispatch:', 'push:', 'branches: [main]', 'actions/deploy-pages@v4')) {
+  if (-not $workflow.Contains($setting)) {
+    throw "Missing GitHub Pages workflow setting: $setting"
+  }
+}
