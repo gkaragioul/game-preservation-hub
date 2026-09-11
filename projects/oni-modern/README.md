@@ -8,6 +8,8 @@ A Windows 11 compatibility launcher for a **user-owned local installation** of *
 > [!WARNING]
 > This is an independent community project. It is not affiliated with or endorsed by Bungie, Take-Two Interactive, Rockstar Games, or the Oni community projects cited below. See [NOTICE.md](NOTICE.md) for content policy, provenance, and attribution.
 
+![Oni Modern project cover](assets/project-cover.jpg)
+
 ## Download this project
 
 - **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/oni-modern`.

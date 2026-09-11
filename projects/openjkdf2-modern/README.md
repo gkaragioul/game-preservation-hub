@@ -5,6 +5,8 @@ Jedi Knight - Dark Forces II* comfortable on a current PC: modern FPS controls
 by default, native-resolution Borderless Fullscreen, safer display switching,
 improved frame pacing, and observable OpenGL 3.3 rendering.
 
+![OpenJKDF2 Modern project cover](assets/project-cover.png)
+
 ## Download source
 
 - **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/openjkdf2-modern`.

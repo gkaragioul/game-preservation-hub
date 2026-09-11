@@ -4,6 +4,8 @@ Native Apple Silicon and Metal renderer work for [CorsixTH](https://github.com/C
 
 This repository contains source code, build configuration, and compatibility work only. It does not include Theme Hospital game data, GOG installers, original assets, music, videos, manuals, or a playable commercial game bundle.
 
+![Theme Hospital Apple Silicon project cover](assets/project-cover.png)
+
 ## Download this project
 
 - **Simple download:** [Download the complete Game Preservation Hub as a ZIP](https://github.com/gkaragioul/game-preservation-hub/archive/refs/heads/main.zip). Extract it, then open `projects/theme-hospital-apple-silicon`.

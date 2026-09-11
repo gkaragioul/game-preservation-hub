@@ -12,6 +12,8 @@ no production endpoint contacted after launch.
 **This repository contains no game client, no game assets, no decrypted source
 and no keys.** See [NOTICE](NOTICE).
 
+![Spiral Warrior preservation project cover](assets/project-cover.png)
+
 ---
 
 ## Download this project

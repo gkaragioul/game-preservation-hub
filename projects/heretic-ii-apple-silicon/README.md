@@ -4,6 +4,8 @@ Native macOS Apple Silicon port and app packaging work for **Heretic II Remaster
 
 This repository tracks the source, macOS compatibility work, build scripts, and project notes for the Apple Silicon version. It does **not** store the generated `.app` bundle or proprietary game-data PAK files.
 
+![Heretic II Apple Silicon project cover](assets/project-cover.png)
+
 ![Heretic II Remastered](Logo.png)
 
 ## Download this project
