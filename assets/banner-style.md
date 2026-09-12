@@ -1,11 +1,9 @@
-# Banner style
+# Site-aligned header
 
-`recompile-labs-banner-green.png` is a built-in image-generation edit of the
-original `recompile-labs-banner.png`, which remains available unchanged.
+`recompilelabs-site-header.png` is a direct browser capture of the navigation
+and hero of https://recompilelabs.com at 1192 × 612 pixels. It preserves the
+site's actual R_ logo, RecompileLabs name, headline, wording, artwork and palette.
+It replaces the castle banner in the README; it is not AI-generated artwork.
 
-Direction: preserve the RECOMPILE LABS wordmark, original subtitle, and
-ruins-to-wireframe composition; align the palette with recompilelabs.com using
-charcoal green #101412, pale lime #cef79e, off-white type, subdued background
-contrast, and a faint grid. No additional slogans, badges, or text.
-
-The README title remains RLabs — Compatibility, Recovery & Preservation.
+The image links to the site's scanner. Real Markdown navigation links below
+the image provide accessible navigation within GitHub.

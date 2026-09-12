@@ -1,14 +1,6 @@
-# RLabs — Compatibility, Recovery & Preservation
+[![RecompileLabs — Old games. New possibilities. Check your game. Free to use, no account, files stay on your device.](assets/recompilelabs-site-header.png)](https://recompilelabs.com/#scanner)
 
-[![Recompile Labs — Game Continuity, Recovery, Modernization](assets/recompile-labs-banner-green.png)](https://recompilelabs.com/)
-
-## Old games. New possibilities.
-
-Games outlive the systems they were built for. We build open tools to understand what breaks—and share what it takes to keep them running.
-
-[![Check your game](assets/check-your-game.svg)](https://recompilelabs.com/#scanner)
-
-Free to use · No account · Files stay on your device
+**[Check your game →](https://recompilelabs.com/#scanner)**
 
 [Website](https://recompilelabs.com/) · [Projects](#different-games-shared-lessons) · [Scanner & CLI](https://github.com/gkaragioul/rlabs-scan) · [Contribute](CONTRIBUTING.md)
 
