@@ -1,8 +1,15 @@
 # `rlabs-scan` v0.1 — Interface specification
 
+> Original CLI design document. The Python implementation is now available in
+> [gkaragioul/rlabs-scan](https://github.com/gkaragioul/rlabs-scan); consult its README
+> for the shipped commands and behavior. The recommended public entry point is
+> [the browser scanner](https://recompilelabs.com/#scanner), which uses a separate
+> JavaScript implementation and report format. Proposed features below should not
+> be read as a checklist of features already shipped.
+
 ## Purpose
 
-`rlabs-scan` is a planned, standalone Windows command-line tool. It inspects a user-selected Windows executable and produces a local, machine-readable compatibility report. It is not implemented in this repository; this document fixes the first public interface before a dedicated repository is created.
+`rlabs-scan` is a standalone command-line tool for inspecting Windows executables and producing local, machine-readable reports. Its implementation lives in the dedicated repository linked above. This document preserves the original v0.1 design.
 
 The tool helps turn a basic question — “why does this executable not run here?” — into inspectable facts about its architecture, imports, declared runtime dependencies, and missing local dependencies.
 
@@ -24,7 +31,7 @@ It will not decompile binaries, patch executables, bypass protection, extract ga
 ## Command
 
 ```text
-rlabs-scan scan <executable> [--output <report.json>] [--format json] [--search-path <directory>...]
+rlabs scan <executable> [--output <report.json>] [--format json] [--search-path <directory>...]
 ```
 
 - `<executable>` is a local `.exe` file.

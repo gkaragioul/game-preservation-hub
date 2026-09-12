@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="224" height="52" viewBox="0 0 224 52" role="img" aria-label="Check your game">
+<rect width="224" height="52" rx="6" fill="#cef79e"/>
+<text x="22" y="32" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="600" fill="#15220f">Check your game</text>
+<path d="M186 26h17m-6-6 6 6-6 6" fill="none" stroke="#15220f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

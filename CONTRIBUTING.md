@@ -11,6 +11,10 @@ Thank you for making compatibility and preservation knowledge more durable. Cont
 
 ## Compatibility reports
 
+For an initial inspection, open [RLabs Scan in your browser](https://recompilelabs.com/#scanner), choose your game folder, and save or copy the findings. Files stay on your device. Review the report before sharing; it includes the executable's filename and dependency names.
+
+Browser reports use a different format from the hub schema below. Attach them as supporting evidence to an issue, or translate relevant findings into a hub record together with your test environment and observed behavior. A completed scan alone does not demonstrate that a game works. There is no automatic submission or automatic anonymous-report service.
+
 1. Read [`compatibility/README.md`](compatibility/README.md) and use [`compatibility/schema.json`](compatibility/schema.json).
 2. Create one JSON file per material software-and-environment combination.
 3. State exactly what flow you tested. Prefer `partial` or `research` over a broad claim when evidence is limited.
