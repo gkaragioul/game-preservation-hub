@@ -13,7 +13,7 @@ Thank you for making compatibility and preservation knowledge more durable. Cont
 
 For an initial inspection, open [RLabs Scan in your browser](https://recompilelabs.com/#scanner), choose your game folder, and save or copy the findings. Files stay on your device. Review the report before sharing; it includes the executable's filename and dependency names.
 
-Browser reports use a different format from the hub schema below. Attach them as supporting evidence to an issue, or translate relevant findings into a hub record together with your test environment and observed behavior. A completed scan alone does not demonstrate that a game works. There is no automatic submission or automatic anonymous-report service.
+Browser exports use a different format from the hub schema below. Attach them as supporting evidence to an issue, or translate relevant findings into a hub record together with your test environment and observed behavior. A completed scan alone does not demonstrate that a game works. Separately, the website automatically sends a minimized technical report, as disclosed before folder selection. It contains a file hash and selected technical facts, not game files, filenames, paths or usernames. It is not an anonymity guarantee and does not automatically publish a hub compatibility record. The Python CLI does not submit reports.
 
 1. Read [`compatibility/README.md`](compatibility/README.md) and use [`compatibility/schema.json`](compatibility/schema.json).
 2. Create one JSON file per material software-and-environment combination.
@@ -35,5 +35,7 @@ pwsh -NoProfile -File tests/verify-compatibility.ps1
 - Preserve existing license, attribution, and project-specific contribution rules.
 
 ## Boundaries
+
+Before pushing, install the local publication hook and follow [publication checks](docs/PUBLICATION.md). Private research and internal workspace exports are outside this public contribution scope. Pull requests must pass the publication-boundary check before merging.
 
 Do not contribute game files, proprietary assets, commercial clients, decrypted source, keys, credentials, account data, personal data, or bypasses for access controls. Do not upload packet captures or logs that contain tokens, account identifiers, or other private information. RLabs is for lawful compatibility, recovery, and preservation research.
