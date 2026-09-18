@@ -1,0 +1,497 @@
+{
+  "projects/heretic-ii-apple-silicon/.porting/audio/audio_baseline.md": {
+    "sha256": "559b864e12f5c355086f9e94bb97cd950945e4f0418c5e28dca1d122e6ea5bc2",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/boot_notes.md": {
+    "sha256": "d031a8b443bdc675a834e8ae6f5f9a34d7b039bba50fa9b3c33cd47bf9581673",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/build_plan.md": {
+    "sha256": "3a9c23c5c50b92f9d71e1782ad6719333d53aef98657bb8900d5651e1e34ba06",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/current_goal.md": {
+    "sha256": "108b09ea8f8c49225c35c2e4296732b1bd8e1e52cd5227b5c1e48307ac5d14ad",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/data_validation.md": {
+    "sha256": "e7a67eeff30cd4c81c018da0bb8920a933b858172f2117891ac5bc6c202cce27",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/dependency_map.md": {
+    "sha256": "354975602ca73c3806f48fbb3294d42eacfc5b18d8df59e67e12d8c18b970008",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/discovery.md": {
+    "sha256": "e58de288a3ec93e7b6f7f8c00dccfe4c27a10337618a394dc0bc1930f98f6a18",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/gameplay_baseline.md": {
+    "sha256": "ab6e238e422a084d4c17b65f8c07391cf1ee589539157844f00d208cb5aa8814",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/known_issues.md": {
+    "sha256": "c487789218085a1ff0f3b4dd3fe5973385d411af42f6f3c793e0f982c0d2665b",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/legal_asset_boundaries.md": {
+    "sha256": "a80c1a8d5e4d49a4c3cafb2f35df7beba35d5b80d783ca0204e3bf0db6c60d69",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/legal_distribution.md": {
+    "sha256": "d89922ef5e5c5dca84b24f28a9937258f08c9f248506cf0dbeb19c6ecd7d4739",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/legal_distribution_rules.md": {
+    "sha256": "c7042a6a86946d7c607b4120a4db9abdaf6d395c84d5add8fedc1b0de35b23d8",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/m22_public_acceptance.md": {
+    "sha256": "ba1b72b439f10d5d03a993fc0d5d4f466b935e11e8ca88ae568e6f6cbac0e9cf",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/macos_experience.md": {
+    "sha256": "e8eb3b4ae3f892a39182f35069314d97d877b4edeefeaa87dda14b8252616957",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/memory.md": {
+    "sha256": "47c6b72320f548655bfdc9dd8023112b75b8bde1da026a28295e8dce6aefee37",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/metal/metal_feasibility.md": {
+    "sha256": "d8a112e955e37574e455f942047150de5919750a2dd33b9d6658085ecd5d39f4",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/milestone_completion_audit.md": {
+    "sha256": "381b9305b635c244c3ae2b341031cd5a10f7fa13374fde95e0ea8457a17bdc93",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/packaging.md": {
+    "sha256": "57eb7060200c7ef0ccd362229bc9dd7c04945b4e8fd531d5d9d4694b5b11d40f",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/packaging/m17_otool_L.txt": {
+    "sha256": "6a5d5be9a5c1d9c68b01ef9419cbb737534c40bb2c9d75e9087edb740eb5d61b",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/packaging/m17_removed_bundle_artifacts.txt": {
+    "sha256": "b6c2564638d13ac74ea6e08b0b09e84605f4a60becada90914f72f8320e6e3e1",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/frame_pacing.md": {
+    "sha256": "be6a39431be2d8633a83b34dd39cbe285ae0db4dadac3c0264da3ae78e763c22",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/full_power_120fps.md": {
+    "sha256": "e4e36bc0bac9877cb6bb5beab4a06690835ddbf16053b49ec62bec9210be1702",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m02_performance_summary.md": {
+    "sha256": "7f8059d5f1430bb81adb90eb70904647dcaff11c34c4c248a192ce10249c38da",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m10_power_saver_60fps_analysis.json": {
+    "sha256": "8b76e45151161adcbc6fdd46bbe802193f1e4bb85312fc5e3d31abf82e15ba61",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m10_powersaver_direct_display3_analysis.json": {
+    "sha256": "4136e28a253a9d8941bb0462bcfdf17ee8cb4e7a02d8e15e0ea9c3b48320d1a4",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m11_full_power_120_display3_analysis.json": {
+    "sha256": "14bf32c5753fc1da1ea579f95af3dbb085165f794b8ebbcc0096ca958ebb6c9d",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m12_frame_pacing_analysis.json": {
+    "sha256": "3f8ba47d7229fd91ec1c8f262dc042cb933c6e23dd95acf082391d5d935ac1b6",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m13_opengl_optimization_analysis.json": {
+    "sha256": "3c10138304b91389096c7ef7d9c7628523202c2b0f81b054135242ec8aca685b",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m13_opengl_optimization_same_window_analysis.json": {
+    "sha256": "7d1b88761f208d5314c5e61b743df62669b807ef15503150576ca23886790a59",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m20_opengl_heavy_route.md": {
+    "sha256": "e0f9e48c129c97f62c5f46abd602f6d48a16947bb74099332f8f4e71441ad66b",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m20_opengl_phase_analysis.json": {
+    "sha256": "3947cb551e9b9b11b44dfc66d2bb11f52d00080fee931ffe03c579c271465f89",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_finalroute_analysis.json": {
+    "sha256": "077f31dae846102f90db791e570fe2192cc090da085483f463d564058d3c100c",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_finalroute_filtered_analysis.json": {
+    "sha256": "476810ec672105d11a69a986cb6814c4c1afd2fa70aca4501f2d37ec2041cefc",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_nocookcards_analysis.json": {
+    "sha256": "70d702ffd6e7ab9e0b3828c0e61dd622443677d84c0cc99e6dac32123f289b75",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_nocookcards_filtered_analysis.json": {
+    "sha256": "91016026d68da66e4a922e29f389e34b19c22a11f58143f9dbccc0665ea135f9",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_spell_combat_analysis.json": {
+    "sha256": "9350b2e47fee9172cc2824342fab51f5da00978fef1eddb24657b09937aa1a75",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/m21_spell_combat_route.md": {
+    "sha256": "97258611fc6b6adcc9e9a11ad920ad5195a9e0639395e545829c20a5e82f4bd5",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/opengl_optimization.md": {
+    "sha256": "19a112d87e49de05b9b4d53951c3eed7a4108750503ee56bbe4b09042816b892",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/performance/power_saver_60fps.md": {
+    "sha256": "16d6bd79c5dde3dcdc267b952c918a4e73821299ec068ecf94693fb2b7beb06e",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/public_summary.md": {
+    "sha256": "92ff72919b35668677085285f0c04be4248a0d2f9d720355a97ea3a51bd680a7",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/qa/m18_10min_powersaver_steady_summary.json": {
+    "sha256": "a02eb36d16a9f4e4242af7cce89c0759525f25418a138766dc3c9a66d3222b16",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/qa/m18_10min_powersaver_summary.json": {
+    "sha256": "777950df5c398754dcbe7725d6498db26f4df7ef93c84f6ef6938865b09636ec",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/qa/qa_report.md": {
+    "sha256": "3e49784096861204ba28fd6f415597f3dc4453ecb88b0d36dfa08c97c75caba7",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/renderer/display_modes.md": {
+    "sha256": "d7ec1fe7fc8dc1311a320e46d47925818128c18344b6f41a097cc9283423a8ff",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/renderer/fx_correctness.md": {
+    "sha256": "14cc44cd0ed024533fea6dfb090c6b71197dd4b292c8a25b45f9b2e967f4b4c9",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/renderer/opengl_baseline.md": {
+    "sha256": "d182b62f249e7dd0d3156d83ea3453559bf032dc2e6e9744597d23f979ef6441",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/risk_register.md": {
+    "sha256": "e749908412bef7ff20d00a93361fa3bfa2e24f7e7f3d53cec0855be39d512fc5",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/routes/m21_spell_combat_route.cfg": {
+    "sha256": "c17d57a94cca88630869ff17afa0b3b01b875e78738b2ca9e4f714f5acb80860",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/routes/m21_spell_cooking_closeproof.cfg": {
+    "sha256": "b2f71199bf24a0dbf71b09830f5ce1213b1a87ff338655f164900ebd35909789",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/ui/graphics_options.md": {
+    "sha256": "f08ef3efb31f6e46348f870b1bc777b4cac19ac63f00c9e37b1697ae931680af",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/ui/loading_menu.md": {
+    "sha256": "a72318c05dbd0a5c8d24108e48f4cc0e25f6dea34e0b7cbef354a9061d5c9fa1",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/.porting/workspace_map.md": {
+    "sha256": "137e8b6a828526a5a274713c549ac57a0102d9f89a8d18017d0a0e8de5ca38e6",
+    "rules": [
+      "private-path"
+    ],
+    "reason": "Pre-existing public Heretic II port notebook, audited separately from private research; permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/addons/sidol/maps/vardias.bsp": {
+    "sha256": "e1ecf30be6ba76c1367e22583c3d4405be00ae86e4a2c8e81b763650d467eba9",
+    "rules": [
+      "credential"
+    ],
+    "reason": "Pre-existing public parser delimiter or binary asset pattern; no project credential. Permit only these exact bytes."
+  },
+  "projects/heretic-ii-apple-silicon/addons/sidol/maps/vardiau.bsp": {
+    "sha256": "696f35e2eca3b3f05d501a75c64ac6aafc3615866009b6770f24355978f35fcd",
+    "rules": [
+      "credential"
+    ],
+    "reason": "Pre-existing public parser delimiter or binary asset pattern; no project credential. Permit only these exact bytes."
+  },
+  "projects/openjkdf2-modern/.vs/cmake.db": {
+    "sha256": "4c497b04231b1ebdf2d0b831ccfe7801b72248b3a2bab27aec68ad41685bc7e6",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/addr2line.exe": {
+    "sha256": "4aa7d1970705354d80560fd238f406d129a9d8f4e5119b85277ab79cda765d90",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/catchsegv.exe": {
+    "sha256": "1c5de52e21c67e31dbdd8d648a6670f5b01276035ee215952792a330af3b3d8e",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/dbgcore.dll": {
+    "sha256": "ef66084434e77a1fe45001085949a8f20e873431eb6016856c55bd0da7c3d6ae",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/dbghelp.dll": {
+    "sha256": "2cef144c25e0af97f53dec368d299d06f9b2d5be0fb057d77b8e18cf618350a7",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/drmingw.exe": {
+    "sha256": "638061f5b4b2151cbd1339396e3adcb699a112f57816478a70848546259b804f",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/exchndl.dll": {
+    "sha256": "bcf3131534502852be6ff7d82cf544cece98ef6615f07009efa40808b14a7645",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/mgwhelp.dll": {
+    "sha256": "81bebb81e73d2e848fdbb1dec373f9d14988a6eb5ac1b633aaf3e9c487084928",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/3rdparty/drmingw-0.9.3-win64/bin/symsrv.dll": {
+    "sha256": "a604151a45669f414d61392533562ec20ab532db216669143d1a48ddf5b3c05c",
+    "rules": [
+      "artifact"
+    ],
+    "reason": "Pre-existing published upstream OpenJKDF2 artifact; permit only these exact bytes, not new or changed binaries."
+  },
+  "projects/openjkdf2-modern/src/external/mbedtls/pkparse.c": {
+    "sha256": "3660ef67162cf296dc613a80d5e6f971b33b37030278791c34a73126075d04c1",
+    "rules": [
+      "credential"
+    ],
+    "reason": "Pre-existing public parser delimiter or binary asset pattern; no project credential. Permit only these exact bytes."
+  },
+  "projects/openjkdf2-modern/src/external/mbedtls/pkwrite.c": {
+    "sha256": "c35c263f9041a8b534489c36a31c49e2a54e293bc744032338249c15777c14e2",
+    "rules": [
+      "credential"
+    ],
+    "reason": "Pre-existing public parser delimiter or binary asset pattern; no project credential. Permit only these exact bytes."
+  },
+  "projects/openjkdf2-modern/lib/GameNetworkingSockets": {
+    "gitObject": "505c697d0abef5da2ff3be35aa4ea3687597c3e9",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/SDL": {
+    "gitObject": "f87239e71e42da91ca317a12eefb82cfbf3393eb",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/SDL_mixer": {
+    "gitObject": "72a81869b45e249e8e67102db4e98dd2441f05a1",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/freeglut": {
+    "gitObject": "63c0e78d84ecbfcf8accd8bac04404427899053b",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/glew": {
+    "gitObject": "8f9a60f6aafdeba39a232f5b397eb910bb6ff7c8",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/libpng": {
+    "gitObject": "f5e92d76973a7a53f517579bc95d61483bf108c0",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/openal": {
+    "gitObject": "d3875f333fb6abe2f39d82caca329414871ae53b",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/physfs": {
+    "gitObject": "d1ca6e14aa904363706a0f5712d8b8e6e13c5fa6",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/protobuf": {
+    "gitObject": "f0dc78d7e6e331b8c6bb2d5283e06aa26883ca7c",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  },
+  "projects/openjkdf2-modern/lib/zlib": {
+    "gitObject": "5a82f71ed1dfc0bec044d9702463dbdf84ea3b71",
+    "reason": "Pre-existing public upstream dependency pin. Contents are not recursively scanned; a changed pin requires review."
+  }
+}

@@ -10,7 +10,7 @@
 
 **[Check your game online with RLabs Scan](https://recompilelabs.com/#scanner)** — choose a Windows game folder; no account, Python installation, or terminal required.
 
-The scan runs locally inside your browser. It lists the selected folder's filenames and inspects one executable, rather than uploading or reading the entire game installation. If several executables are found, you choose which one to inspect. Results can be saved or copied; nothing is submitted automatically.
+The scan runs locally inside your browser. It lists the selected folder's filenames and inspects one executable, rather than uploading or reading the entire game installation. If several executables are found, you choose which one to inspect. As disclosed before folder selection, the website automatically sends a small technical report: executable SHA-256, architecture, import count and allowlisted component observations. Game files, filenames, folder paths and usernames are not uploaded. The file hash identifies a build, so this is not an anonymity guarantee. Saved or copied reports are richer local exports; review them before sharing. The Python CLI does not submit reports.
 
 Current limits: 128 MB per executable, 30,000 files per selected folder, and a 30-second scan timeout. Results describe static clues, not tested compatibility. The browser cannot determine whether a dependency is installed elsewhere in Windows.
 

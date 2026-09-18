@@ -1,0 +1,43 @@
+name: Publication boundary
+on:
+  push:
+    branches: [main]
+  pull_request_target:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  publication-boundary:
+    name: publication-boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out trusted policy
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: policy
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Test trusted guard
+        run: node --test policy/tools/publication.test.mjs
+      - name: Fetch candidate as data only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: candidate
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: false
+      - name: Inspect public tree and proposed history
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          if [ -n "$BASE" ]; then
+            node policy/tools/check-publication.mjs --repo candidate --ref HEAD --base "$BASE"
+          else
+            node policy/tools/check-publication.mjs --repo candidate --ref HEAD
+          fi
