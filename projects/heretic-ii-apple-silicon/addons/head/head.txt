@@ -1,0 +1,35 @@
+*********************************
+HERETIC II Deathmatch Map
+*********************************
+Map Name:       Head
+Filename:       head.bsp
+Author:         Wydraz
+Date:           February 18, 1999
+E-Mail:         wydraz@nycap.rr.com
+URL:            http://home.nycap.rr.com/wydraz/heretic2
+
+*********************************
+INSTALLATION
+*********************************
+Copy head.bsp into your 'heretic II\base\maps' directory
+
+To run the map, call up the console (~) and type "map head"
+
+*********************************
+INFORMATION
+*********************************
+Single Player:  Yes
+Difficulty:     All
+Co-op:          No
+Death Match:    Four to Twelve players suggested
+
+Map Details:
+Although playable as a solo map, with a challenging mix of
+monsters and a familiar End Boss, Head is a fun deathmatch
+level which features several shrines, three arenas (the
+Floating Monolith, the Dripping Cavern, and the Lava God)
+connected by halls and teleports. Includes support for
+the Heretic II Enhancement Pack!
+
+This map is copyright ©1999 Wydraz. It may not be
+distributed commercially without permission.

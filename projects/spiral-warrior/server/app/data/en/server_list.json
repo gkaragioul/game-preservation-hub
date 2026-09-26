@@ -1,0 +1,12 @@
+{
+  "servers": [
+    {
+      "id": 1,
+      "name": "Offline English",
+      "status": "Smooth",
+      "notice": "Local offline preservation server",
+      "host": "127.0.0.1",
+      "port": 18080
+    }
+  ]
+}

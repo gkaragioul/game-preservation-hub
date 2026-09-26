@@ -1,0 +1,314 @@
+// # signifies a .wav file
+Isle of Golgotha
+Nesting Grounds
+Hell Canyons
+Cauthor S'gath
+Cauthorian Arena
+Outer Cauthoria
+;
+You are strong again.#Cinematics/Sewer/41-392.wav
+Send me, once and for all.#Player/sendme.wav
+As you wish.#Cinematics/T'Chekrik/88-408.wav
+;
+TOME: Quickly. We are nearer@to our goal.#Player/goal.wav
+I will go. Parthoris will@not be taken again.#Cinematics/Dranor/30-314.wav
+TOME: You must continue on.#Player/continue.wav
+You needn't fear.@I will move quickly.#Cinematics/Sewer/46-392.wav
+;
+;
+;
+;
+;
+;
+;
+;
+Heretic II Training Level
+;
+This isn't right.  Where is everyone?#corvus\isnt_right.wav
+Hmm... (magically warded)#Corvus\hmm.wav
+What has befallen my people?#corvus\befallen.wav
+The Raven -- @it is the symbol of my people.#corvus\the_raven.wav 
+My brethren are insane with bloodlust!#corvus\bloodlust.wav
+A statue... of me?#corvus\statue_of_me.wav
+Season of the Sun.#corvus\season_of_sun.wav  
+Constellations, seasons? @What is the meaning of all this?#corvus\constellations.wav 
+The Celestial Watcher must be near.#corvus\watcher_near.wav 
+The Andoria Gates are sealed.  @I'll have to find another way inside.#corvus\andoria_gates.wav 
+At last, inside the city.#corvus\at_last_inside.wav
+This should hold the Earthblood.#corvus\hold_earthblood.wav
+That must be the Sea Crystal.#corvus\sea_crystal.wav  
+There...is the Earthblood pool.#corvus\earthblood_pool.wav
+By the Gods!#corvus\bythegods.wav
+;
+Locked.#corvus\locked.wav
+It's locked.#corvus\its_locked.wav
+I'll have to open this elsewhere.#corvus\open_elsewhere.wav
+Jammed.#corvus\jammed.wav
+It's Jammed.#corvus\its_jammed.wav
+It won't open.#corvus\wont_open.wav
+I'll never get through here.#corvus\never_through.wav
+No#corvus\no.wav
+No.#corvus\no_denial.wav
+No#corvus\no_disbelief.wav
+Noooo!#corvus\no_anger1.wav
+No!#corvus\no_anger2.wav
+;
+;(spoken when he finds an object/puzzle item)
+It's out of power.#corvus\out_of_power.wav
+A refinery.#corvus\refinery.wav
+Ore...but not refined.#corvus\ore.wav
+A suitable power source.#corvus\suitable_power.wav
+Hmmm, something's...missing.#corvus\missing.wav
+The Warrior's amulet.#corvus\amulet.wav
+Hmmm, a cog piece.#corvus\cog_piece.wav
+I need the cog piece.#corvus\need_cog.wav
+It's missing a wheel.#corvus\missing_wheel.wav
+A mine cart wheel.#corvus\mine_cart.wav
+;
+;TOME OF POWER
+;
+#world/quakeshort.wav
+;
+;
+Sidhe shrines are scattered throughout@Parthoris.@You can pray at them for aid.#tome\sidhe_shrines.wav
+;
+;
+Walk into low ledges to@automatically climb onto them.
+Press ACTION or JUMP@to climb taller walls.
+Aim down and press FORWARD to submerge@in water, aim up and FORWARD to surface.
+Surface, then swim to the ledge@to climb out of the water.
+JUMP or press ACTION@while next to a rope to grab onto it.
+Press FORWARD or BACK@to climb up or down rope.
+Strafe LEFT or RIGHT,@or ATTACK to swing on ropes.@@Press jump to leap off of ropes.
+Press JUMP while on rope to jump off.
+Press ACTION to use buttons and levers.
+CREEP to the ledge, then JUMP forward@to reach the other side.@@You won't fall off a ledge,@when you CREEP to it.
+Press ACTION to use puzzle items.@Walk to the door and use the town key.
+To get the puzzle piece, climb the@small crate, then press forward and@hold JUMP to perform a forward flip.
+Press ATTACK while running with staff@to perform spinning staff attack.
+To pole vault over longer distances,@ready the staff, then RUN and JUMP.
+Press JUMP then@LEFT/RIGHT/FORWARD/BACKWARD@to perform a jump flip.
+Press CROUCH then@any direction to roll.
+Forward jump into wall to perform@backflip off wall.
+Congratulations!@You've successfully completed the tutorial.@Walk through the portal to exit.
+Swim through the tunnel@to reach the rest of the level.
+;OBJECTIVES
+;
+In the wake of Morcalavin's chaos, the cauthorians are rebuilding their empire using elven slaves. You must defeat their leader - Shadow Slayer - to free your people. But first you have journeyed to the Isle of Golgotha, the 'place of skulls', to retrieve the fabled $Golden Hellstaff. Find it and return to your boat%.
+mission98
+Your Tome of Power has transported you to Three Oaks Glade, where the next leg of you journey begins. You must get through the gorgon nesting grounds in order to find the entrance to the Hell Canyons. Gorgons are fiercely protective of their nesting sites, so you must continue with caution.
+The Hell Canyons - a desolate place that promises only misery and death. The Infernal Caverns are said to lie at their heart - one of only a few sources for the metal from which assassins make their throwing knives. Silverspring intelligence says that elven slaves are used to mine the metal ore. Legend also has it that a mysterious temple lies somewhere within the depths of the caves, guarded by vicious fire imps. $You must kill the slavemasters, and investigate the ancient temple%. Perhaps then the way to Cauthor S'Gath will be made clear.
+Cauthor S'Gath - the ancestral heart of the assassin empire. Destroyed by D'sparil long ago, the cauthorians are now rebuilding it. The city itself is built around an arena, where the assassins indulge in their blood sports. $If you will find Shadow Slayer anywhere, it will be somewhere close to the arena.% There are elven slaves hard at work in the city - they have neither the strength nor the will to bother you. Be on the lookout for the slavemasters though - traitorous elves who have betrayed their own kind to save their own skins.
+You have fallen into the cauthorian arena. You must fight your way to freedom. Your fellow sidhe will undoubtedly try to kill you to win their own freedom, so show no mercy. $Only by finding a way out of the arena can you face Shadow Slayer.%
+A sense of foreboding and utter hatred suggests that $Shadow Slayer% is near. By destroying the leader of the assassins, the cauthorian empire will once again fragment into separate clans. You will need all of your strength and cunning to be victorious. $Find the assassin leader's lair.%
+Do not be fooled by her death - she has the power to resurrect, but she can use it only once. $Destroy the source of Shadow Slayer's power before she can return.% Otherwise you will have to face her again. The clock is ticking...
+Shadow Slayer is no more. However you must find a way out of the city and to freedom. Your Tome has opened a portal in front of the city gates that will take you to safety - for now.
+Your Tome of Power has teleported you to safety - for now. To travel directly home would let Cauthorians track your portal signature and follow you - right into Silverspring. You must leave Cauthorian territory - and give your Tome time to recover - before returning home.
+mission107
+;
+;
+;
+PUZZLE PIECES
+;
+K'Chekrik Gate Key
+Quarters Key
+Cog Piece
+Sea Crystal
+Inner Sanctum Key
+Priestess Key
+Symbol of the High Priestess
+Warrior's Amulet
+Statuary Gem
+Hero's Spear
+Mine Cart Wheel
+Unrefined Ore
+Empty Container
+Potion of Siernan
+Refined Ore
+Shield of Ssithra
+Earthblood Container
+Slave Camp Key
+;
+;GUARDIAN
+Only those who are pure of heart@or possess the Warrior's Shield@may pass.#cinematics/statue/47-327.wav
+
+aaaaaaahhhhhhhhhhhhhhh.......#player/falldeath1.wav
+; IN GAME CINEMATICS
+; Elf Warriors
+;
+#monsters/plagueElf/voices/overtherem.wav
+#monsters/plagueElf/voices/cuthimmrj.wav
+#monsters/plagueElf/voices/killhimbp.wav
+;
+; Sslayer sounds
+;
+#Cinematics/Fallen Priestess/99-450.wav
+#monsters/highpriestess/fall.wav
+#monsters/highpriestess/pain1.wav
+#monsters/tbeast/roar2.wav
+#monsters/sslayer.wav
+;
+;
+;
+;
+;
+#items/teleport2.wav
+;
+; DIALOGUE
+;
+I have recovered from opening the world ripple,@but not in full.#Cinematics/Sewer/42-395.wav
+I am grateful for your help. Should I survive,@I will repay you.#Cinematics/Second Siernan/74-21.wav  
+;
+You are strong again?#Sewer\41-392.wav
+As you wish...#T'Chekrik\88-408.wav
+You needn't fear. I will move quickly.#Sewer\46-392.wav
+;
+;
+; FIRST SIERNAN
+;
+;
+;  
+;
+;    
+;
+;
+;  
+;
+;
+; 
+;
+;  
+;
+;  
+;  
+; SIERNAN W/O INGREDIENTS
+;
+;
+;
+; SIERNAN W INGREDIENTS
+;
+;
+;
+;
+; FINAL SIERNAN
+;
+; 
+;
+;
+;
+;
+;
+;
+;
+;
+;      
+;
+;
+;  
+; SCOUT
+;  
+; 
+;
+; 
+; 
+;
+;
+;
+; CAPTURED BY BUGS
+;
+;
+; 
+;
+;
+As you wish.  
+;
+;
+;
+Challenge accepted#Cinematics/T'Chekrik/91-406.wav
+; FIRST HIGH PRIESTESS
+I can grant your wish.
+My wish?
+;
+; 
+;
+;  
+;
+; FALLEN PRIESTESS
+;
+;
+;
+;
+;
+;
+;
+I do not understand.
+;
+;  
+;
+;
+;  
+;
+;
+;
+;
+What must I do?
+;  
+;
+Send me... now.@I will bring an end to this storm --@once and for all.
+; SSITHRA VICTIM
+;   
+;
+;
+; MORCALAVIN
+;
+;
+;
+;
+If it has to come to that.
+;
+We shall see...
+
+; -- Strings for the first tutorial level -- (leave the above line blank, please.  Bob will hurt you bad.)
+;
+Welcome to the first part of the@tutorial.  Walk to the books to@receive instructions.
+In the first part of this tutorial,@you will be introduced to the interface.
+In the lower left corner of the screen@is a green bar that represents green@magic, or Mana, which is the power source@for your offensive spells.
+Next to the green bar is an icon that@represents your currently selected@offensive spell or weapon.
+Press the 1 key.@@Notice how the icon changed to show@your new selected weapon.
+Press the 2 key to select@your fireball spell.@@Using your attack button, cast the@fireball spell to shoot and destroy@a barrel...
+Notice how your mana bar decreases@as you use the power.
+The floating green gems are pure green@mana that power your offensive spells.@@Walk into them to pick them up...
+Notice how the green mana bar@increases in power.
+Destroy all the barrels, then walk@through the open door to the next room.
+;
+Besides offensive spells, you can carry@offensive weapons.@@In the middle of the room is the@Hellstaff weapon; Walk over it to@pick it up.
+You will notice two things.  The icon@next to the green mana bar changes to@represent the hellstaff.  A new icon now@appears next to the selected weapon icon.
+This new icon represents ammunition for@the Hellstaff.  Because the hellstaff@is a weapon and not a spell it uses@ammunition, not Mana.
+Weapons that use ammunition will have@this icon displayed, with the@respective ammo indicated.
+Using the fire button, shoot the@hellstaff at a barrel, destroying it.
+The floating red skulls or HellOrbs,@represent ammo for the hellstaff.@@Walk over them to pick them up and watch@your ammo icon increase in number.
+Destroy all the barrels,@and exit through the open door.
+;
+In the lower right corner of the screen@is a blue bar that represents blue@magic, or Mana, which is the power@source for your defensive spells.
+Next to the blue bar is an icon that@represents your currently selected@defensive spell.
+The icon is of the Tome of Power which@Lanius carries with him.
+The Tome of Power, when used, enhances@all your offensive spells and weapons.
+Pick up all the blue gems floating in@the room.  they are pure blue mana that@power the defensive spells.
+Notice how the blue mana bar@increases in power.
+Now you should have enough blue mana@to use your defensive spell;@the Tome of Power.
+Press the defend key (default is enter)@to cast the selected defensive spell.@A red bar will appear at the top right@of the screen.
+This is the power-up meter showing how@much time you have left before this@spell runs out.
+Now start attacking the barrels using@all your offensive spells and weapons;@notice how all of them act differently@when powered up.
+Destroy all barrels, then exit the room.
+;
+Pick up the object in the middle of@the room.  It is a defensive spell.
+You now possess the ability to cast a@new defensive spell.  Press the next@defense key (default is ']').
+Notice how the defensive spell icon@changed to show a graphic of the @Ring of Repulsion spell.
+The Next and Previous Defense keys@cycle through the selection of the@defensive spells
+Select the Ring of Repulsion defensive@spell, then press the defend key.
+Cool, huh?  You had enough defensive@mana to cast the spell.  All spells use@different amounts of mana.
+Lastly, located next to the defensive@spell icon, is the Health icon which@indicates your health numerically;@0 being dead.
+This concludes the interface@introduction.  Walk down the long@hallway and step through the door to@reach the next area of the tutorial.
+;
+Press the Inventory key (default is "i")@to see the puzzle pieces that you currently have.
+To shorten your jump distance,@press backward during jump.@@To drift sidewards during jump,@press the respective strafe keys.

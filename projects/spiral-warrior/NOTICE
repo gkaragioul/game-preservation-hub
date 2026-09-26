@@ -1,0 +1,97 @@
+NOTICE
+======
+
+Trademarks and copyright
+------------------------
+
+"Spiral Warrior", "螺旋勇士", "Spin Arena" and all related names, logos,
+artwork, audio, text, data tables and client software are the property of
+their respective owners.
+
+Per the client's own in-app attribution, the Chinese edition is credited to:
+
+    著作权人 / copyright holder:
+        杭州电魂网络科技股份有限公司
+        (Hangzhou Dianhun Network Technology Co., Ltd.)
+    ISBN 978-7-498-09240-3
+    国新出审【2021】1110号
+
+The Chinese build was distributed through the 9game / Aligames channel
+(package `com.dianhun.lxys.aligames`). The international build is
+`com.oversea.spinarena`.
+
+This project is not affiliated with, endorsed by, sponsored by, or in any
+way officially connected to any of the above parties. Names are used only
+to identify the software this project interoperates with, as permitted by
+nominative fair use.
+
+What the MIT licence covers
+---------------------------
+
+The LICENSE file applies to **this project's own source code and
+documentation only**: the local server, the launcher, the analysis and
+extraction tooling, and the written notes.
+
+It does not, and cannot, grant any right in the game itself, its assets, its
+client binaries, or its trademarks.
+
+What this repository does not contain
+-------------------------------------
+
+  * No game client, APK, XAPK, split APK, OBB or installer.
+  * No game assets: no art, audio, video, fonts or localisation bundles.
+  * No decrypted, decompiled or otherwise recovered proprietary source code,
+    apart from a few short lines quoted in `tools/cn_client_patch.py` and
+    `server/tests/test_cn_client_patch.py` so the patch can find the code it
+    changes.
+  * No cryptographic keys. The client's script-bundle key is supplied by the
+    operator through the `SPIRAL_BUNDLE_KEY` environment variable and is
+    never committed here.
+  * No signing keystores or private keys.
+  * No packet captures, account credentials, session tokens, or any data
+    belonging to other players.
+  * No patched or redistributable client. The build tooling derives a local
+    runtime artifact on the operator's own machine from the operator's own
+    copy; the result is never published.
+
+Checksums appearing in `CHECKSUMS.sha256` and `docs/ARTIFACT_INVENTORY.md`
+are one-way hashes used to verify that a locally supplied file is the
+expected one. They are not the files and cannot be used to obtain them.
+
+Third-party dependencies
+------------------------
+
+Python dependencies are listed in `server/requirements-win-py312.lock` and
+remain under their own licences. The Android SDK, platform tools and
+emulator are downloaded from Google by `tools/bootstrap_android.ps1` and are
+governed by Google's terms; they are not redistributed here.
+
+Data tables
+-----------
+
+`server/app/protocol/roguelike_events.py` and
+`server/app/protocol/roguelike_exports.py` contain small factual mappings
+(numeric event and reward identifiers) recovered from the client's own data
+files. They are included because a server cannot interoperate without them.
+They are regenerated from a locally supplied copy by the scripts in `tools/`,
+and the tests that verify them are gated behind the `preservation_artifact`
+marker precisely so that a clean checkout never requires the original.
+
+Decryption and patching tools
+-----------------------------
+
+`tools/cocos_jsc.py` decrypts the client's script bundle with a key the
+operator supplies. `tools/cn_client_patch.py` patches the operator's own local
+copy so that it logs in to the local server instead of the publisher's retired
+login service. They are provided only for personal, offline use of a
+lawfully obtained copy of a game whose official servers have shut down.
+Whether that use is lawful depends on the operator's jurisdiction; operators
+are responsible for checking their local law and for how they use the tools.
+
+If you are a rights holder
+--------------------------
+
+If you believe anything in this repository exceeds interoperability and fair
+use, please open an issue in the Game Preservation Hub
+(https://github.com/gkaragioul/game-preservation-hub). We will act on well-founded requests
+promptly.

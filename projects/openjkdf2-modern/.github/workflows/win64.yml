@@ -1,0 +1,25 @@
+name: Windows x64 Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  release-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+        name: Checkout
+      - name: Build and test Release
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\build-windows.ps1 -Configuration Release -Test
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: openjkdf2-amd-enhanced-windows-x64-release
+          path: build/msvc-release/openjkdf2-64.exe

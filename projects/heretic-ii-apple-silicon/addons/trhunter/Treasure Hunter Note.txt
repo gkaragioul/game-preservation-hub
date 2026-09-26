@@ -1,0 +1,49 @@
+IMPORTANT NOTE: This SP addon can only be played with Heretic 2 v1.06 .
+
+I. Instructions:
+
+1. Unzip all files in the zip file to your heretic2 folder. Each file have their
+own path that will be created in unzipping process so don't worry about them.
+2. If you want to use your configurations for this SP addon, copy your user.cfg
+from /user (under your heretic2 folder) to /Trhuuser.
+3. To play this SP addon, run TrHunter.bat.
+
+II. Information:
+ 
+ These SP addon support coop mode but doesn't support DM mode.
+ This addon also features Imps. They only require one skin but I include 2 other
+skins. Its skins and model are located in Trhunter/models/monsters/imp. You can
+choose the skin by renaming the current skin (!skin.m8) to other name and rename
+other skin (imp0.m8 or imp1.m8) to !skin.m8 .
+
+III. There are some notes about these addon:
+
+1. You can find weapons and spells in this addon but I don't force you to take
+any of them. However if you don't take a weapon (e.g hellstaff) in a map, you MAY
+not find it anymore in other maps.
+2. Some maps have secrets. They are optional of course, but useful weapons or
+spells might be there. Can you find them all?
+3. You can carry only one kind of puzzle item at a time.
+4. Most maps are big (long at least) so if you can't see far enter this in the
+console:
+ r_farclipdist 8192
+ The default is 4096 so this should double the view range. You can set more than
+8192 if you like.
+5. Every lungs shrine you find in this addon are permanent or can be used again
+after some time. It takes about 45 seconds for a shrine to recharge.
+6. This SP addon has many gauntlets so be ready for them.
+
+IV. Hints and tips:
+
+1. Imp's fireballs are deadly so do your best to dodge them.
+2. Although imps like to dodge your shots, there is a spell that imps won't
+dodge. Find it to make fighting imps easier.
+3. Some enemies don't have high shooting elevation angle. If you know who they 
+are, use that weakness for your advantage.
+4. Don't let yourself drowned in slime or mud cause they can kill you instantly.
+
+V. This SP Addon is created by Dewo. You can send your comments and feedbacks to
+my email addy (dewodpnx@yahoo.com) or post your comments in R-G forums at 
+http://forums.raven-games.com.
+
+Enjoy and don't give up :D!

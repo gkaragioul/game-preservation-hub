@@ -1,0 +1,108 @@
+{
+  "frame": {
+    "all": {
+      "frames": 6198,
+      "duration_s": 58.018,
+      "targets": [
+        120
+      ],
+      "avg_ms": 8.773639883833495,
+      "min_ms": 0.1,
+      "max_ms": 500.0,
+      "std_ms": 9.541235325978262,
+      "p50_ms": 8.397,
+      "p95_ms": 9.2813,
+      "p99_ms": 13.300749999999994,
+      "fps": 113.9777804013386,
+      "over_budget_8_33": 6143,
+      "over_9ms": 367,
+      "over_10ms": 198,
+      "over_12ms": 108,
+      "gpu_avg_ms": 3.127412068409164,
+      "gpu_p95_ms": 4.79115,
+      "gpu_p99_ms": 6.693029999999999,
+      "gpu_max_ms": 43.057,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          1
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          2
+        ],
+        "vsync": [
+          0
+        ]
+      },
+      "entities_avg": 28.660374314294934,
+      "alpha_avg": 21.62132946111649,
+      "particles_avg": 12.626008389803163,
+      "alpha_particles_avg": 107.05243626976444
+    },
+    "steady_after_5s": {
+      "frames": 6177,
+      "duration_s": 52.951,
+      "targets": [
+        120
+      ],
+      "avg_ms": 8.617161405212887,
+      "min_ms": 8.333,
+      "max_ms": 277.902,
+      "std_ms": 3.630139141480818,
+      "p50_ms": 8.397,
+      "p95_ms": 9.277,
+      "p99_ms": 13.223,
+      "fps": 116.0474955702997,
+      "over_budget_8_33": 6123,
+      "over_9ms": 365,
+      "over_10ms": 196,
+      "over_12ms": 106,
+      "gpu_avg_ms": 3.138044358102639,
+      "gpu_p95_ms": 4.793199999999999,
+      "gpu_p99_ms": 6.693239999999999,
+      "gpu_max_ms": 43.057,
+      "audio_underruns_max": 0,
+      "flags": {
+        "bloom": [
+          1
+        ],
+        "ssao": [
+          0
+        ],
+        "shadows": [
+          0
+        ],
+        "reflections": [
+          0
+        ],
+        "detail": [
+          2
+        ],
+        "vsync": [
+          0
+        ]
+      },
+      "entities_avg": 28.751497490691275,
+      "alpha_avg": 21.694673789865632,
+      "particles_avg": 12.66893313906427,
+      "alpha_particles_avg": 107.41638335761697
+    }
+  },
+  "process": {
+    "samples": 60,
+    "cpu_avg_pct": 70.1,
+    "cpu_p95_pct": 88.66999999999999,
+    "cpu_max_pct": 91.9,
+    "rss_avg_mb": 582.5333333333333,
+    "rss_max_mb": 1022.609375
+  }
+}

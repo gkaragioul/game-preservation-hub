@@ -1,0 +1,22 @@
+{
+  "60_power_saver": {
+    "runtime_frames_filtered": 2803,
+    "avg_ms": 16.758789154477345,
+    "p95_ms": 16.788,
+    "p99_ms": 16.793,
+    "max_ms": 59.468,
+    "avg_fps": 59.67018206281544,
+    "over_20ms": 5,
+    "over_33_33ms": 1
+  },
+  "120_full_power": {
+    "runtime_frames_filtered": 5875,
+    "avg_ms": 8.433719489361701,
+    "p95_ms": 8.456,
+    "p99_ms": 8.475,
+    "max_ms": 53.865,
+    "avg_fps": 118.57164579180048,
+    "over_20ms": 3,
+    "over_33_33ms": 1
+  }
+}

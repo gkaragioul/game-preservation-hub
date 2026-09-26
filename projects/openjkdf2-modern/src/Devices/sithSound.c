@@ -1,0 +1,479 @@
+#include "sithSound.h"
+
+#include "Win95/stdSound.h"
+#include "General/stdHashtbl.h"
+#include "General/stdString.h"
+#include "General/stdFnames.h"
+#include "World/sithWorld.h"
+#include "stdPlatform.h" // Added: word-safe read bounce for VRAM-resident PCM
+#include "jk.h"
+
+// Un-inlined: searches semicolon-delimited directory list for a sound file.
+// Returns file handle on success, 0 on failure. outPath receives the full path found.
+static int sithSound_FindInSearchPaths(const char *filename, char *outPath, int outPathSize)
+{
+    char dirBuf[128];
+    char *searchPaths = "sound;voice";
+    while ( 1 )
+    {
+        searchPaths = stdString_CopyBetweenDelimiter(searchPaths, dirBuf, 128, ";");
+        if ( dirBuf[0] )
+        {
+            stdString_snprintf(outPath, outPathSize, "%s%c%s", dirBuf, '\\', filename);
+            int fd = pSithHS->fileOpen(outPath, "rb");
+            if ( fd )
+                return fd;
+        }
+        if ( !searchPaths )
+            return 0;
+    }
+}
+
+int sithSound_Startup()
+{
+#ifdef TARGET_RETRO_HOMEBREW
+    if (openjkdf2_bIsExtraLowMemoryPlatform)
+        sithSound_maxDataLoaded = 0x60000;
+    else
+        sithSound_maxDataLoaded = 0x200000;
+#elif defined(QOL_IMPROVEMENTS)
+    sithSound_maxDataLoaded = 0x4000000; // 64MiB
+#endif
+
+    if ( stdSound_Startup() )
+    {
+        sithSound_hashtable = stdHashtbl_New(256);
+        if ( sithSound_hashtable )
+        {
+            sithSound_bInit = 1;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int sithSound_Shutdown()
+{
+    if ( !sithSound_bInit )
+        return 0;
+
+    stdSound_Shutdown();
+    if ( sithSound_hashtable )
+    {
+        stdHashtbl_Free(sithSound_hashtable);
+        sithSound_hashtable = 0;
+    }
+
+    sithSound_bInit = 0;
+    return 1;
+}
+
+int sithSound_ReadSoundsListText(SithWorld *pWorld, int bSkip)
+{
+    int numSounds; // eax
+
+    SITH_ASSERTREL(pWorld); // Added: from OpenJones3D
+
+    if ( bSkip )
+        return 0;
+
+    sithWorld_UpdateLoadProgress(0.0);
+    if (!stdConffile_ReadArgs() 
+        || _strcmp(stdConffile_g_entry.aArgs[0].value, "world") 
+        || _strcmp(stdConffile_g_entry.aArgs[1].value, "sounds") )
+    {
+        sithSound_FreeWorldSounds(pWorld);
+        return 0;
+    }
+    numSounds = _atoi(stdConffile_g_entry.aArgs[2].value);
+    if ( !numSounds )
+        return 1;
+
+    sithSound_New(pWorld, numSounds);
+    
+    while ( stdConffile_ReadArgs() )
+    {
+        if ( !_strcmp(stdConffile_g_entry.aArgs[0].value, "end") )
+            break;
+        if ( sithSound_bInit )
+            sithSound_Load(stdConffile_g_entry.aArgs[0].value, stdConffile_g_entry.numArgs > 1u);
+    }
+    return 1;
+}
+
+void sithSound_FreeWorldSounds(SithWorld *pWorld)
+{
+    SITH_ASSERTREL(pWorld != NULL); // Added: from OpenJones3D
+
+    if (pWorld->sounds)
+    {
+        for (int i = 0; i < pWorld->numSoundsLoaded; i++)
+        {
+            sithSound_UnloadData(&pWorld->sounds[i]);
+            stdHashtbl_Remove(sithSound_hashtable, pWorld->sounds[i].sound_fname);
+        }
+        SITH_FREE(pWorld->sounds);
+        pWorld->numSoundsLoaded = 0;
+        pWorld->numSounds = 0;
+        pWorld->sounds = 0;
+    }
+}
+
+// MOTS altered
+int sithSound_New(SithWorld *world, int num)
+{
+    // MOTS added: reserve sound 0?
+    if (Main_bMotsCompat) {
+        num++;
+    }
+
+    sithSound* sounds  = (sithSound *)SITH_ALLOC(sizeof(sithSound) * num);
+    world->sounds = sounds;
+    if ( sounds )
+    {
+        _memset(sounds, 0, sizeof(sithSound) * num);
+        world->numSounds = num;
+        world->numSoundsLoaded = 0;
+
+        //  MOTS added TODO: wat?
+        if (Main_bMotsCompat) {
+            //world->numSoundsLoaded = 1;
+        }
+        return 1;
+    }
+    return 0;
+}
+
+sithSound* sithSound_Load(char *sound_fname, int a2)
+{
+    int32_t sound_file; // ebp
+    sithSound *sound; // esi
+    uint32_t v7; // eax
+    uint32_t v10; // eax
+    uint32_t frequencyKHz; // eax
+    struct HostServices *v12; // ecx
+    char tmp2[128];
+
+    sound_file = 0;
+
+    SITH_ASSERTREL(sound_fname != NULL); // Added: from OpenJones3D (filename)
+
+    if ( !sithSound_bInit )
+        return 0;
+
+    if ( !_strcmp(sound_fname, "none") )
+        return 0;
+
+    //printf("sithSound_Load %s\n", sound_fname);
+    sound = (sithSound *)stdHashtbl_Find(sithSound_hashtable, sound_fname);
+    if ( sound )
+    {
+        if ( a2 && (sound->isLoaded & 1) == 0 )
+        {
+            sithSound_LoadFileData(sound);
+            return sound;
+        }
+        return sound;
+    }
+
+    sound_file = sithSound_FindInSearchPaths(sound_fname, tmp2, 128);
+    if ( !sound_file )
+        return 0;
+
+    if ( sithWorld_g_pLastLoadedWorld->numSoundsLoaded < sithWorld_g_pLastLoadedWorld->numSounds )
+    {
+        sound = &sithWorld_g_pLastLoadedWorld->sounds[sithWorld_g_pLastLoadedWorld->numSoundsLoaded];
+        sound->id = sithWorld_g_pLastLoadedWorld->numSoundsLoaded;
+        if ((sithWorld_g_pLastLoadedWorld->level_type_maybe & 1))
+        {
+            sound->id |= 0x8000;
+        }
+        stdString_SafeStrCopy(sound->sound_fname, sound_fname, 32);
+        sound->bufferBytes = stdSound_ParseWav(sound_file, &sound->sampleRate, &sound->bitsPerSample, &sound->bStereo, &sound->seekOffset);
+        if ( sound->bufferBytes )
+        {
+            frequencyKHz = sound->bufferBytes / (sound->sampleRate / 1000u);
+
+            sound->sound_len = frequencyKHz;
+            if ( sound->bitsPerSample == 16 )
+                sound->sound_len = frequencyKHz / 2;
+            if ( sound->bitsPerSample == 24 ) // Added
+                sound->sound_len = frequencyKHz / 3;
+            if ( sound->bStereo )
+                sound->sound_len = sound->sound_len >> 1;
+            sound->isLoaded = 0;
+            sound->infoLoaded = 1;
+            stdHashtbl_Add(sithSound_hashtable, sound->sound_fname, sound);
+            v12 = pSithHS;
+            ++sithWorld_g_pLastLoadedWorld->numSoundsLoaded;
+            v12->fileClose(sound_file);
+            return sound;
+        }
+    }
+    if ( sound_file )
+        pSithHS->fileClose(sound_file);
+    return 0;
+}
+
+sithSound* sithSound_GetFromIdx(int idx)
+{
+    SithWorld* world = sithWorld_g_pCurrentWorld;
+
+    if (idx & 0x8000)
+    {
+        world = sithWorld_g_pStaticWorld;
+        idx &= ~0x8000;
+    }
+
+    if ( idx < 0 || idx >= world->numSoundsLoaded )
+        return 0;
+
+
+    return &world->sounds[idx];
+}
+
+
+#ifdef TARGET_RETRO_HOMEBREW
+// Added: fileRead byte-writes into the destination, but long-sound PCM may live
+// in word-addressable-only memory (DC VRAM arena). Bounce those through a chunk
+// buffer with word-safe copies; everything else reads direct.
+static int sithSound_ReadIntoBuffer(int fd, void* pDst, int len)
+{
+    if (!stdPlatform_IsWordAddressableOnly(pDst))
+        return pSithHS->fileRead(fd, pDst, len);
+
+    static char aBounce[16384]; // sound loads are main-thread only
+    char* pOut = (char*)pDst;
+    int total = 0;
+    while (total < len) {
+        int chunk = len - total;
+        if (chunk > (int)sizeof(aBounce)) chunk = (int)sizeof(aBounce);
+        int got = pSithHS->fileRead(fd, aBounce, chunk);
+        if (got <= 0) break;
+        stdPlatform_Memcpy32(pOut + total, aBounce, got);
+        total += got;
+        if (got < chunk) break;
+    }
+    return total;
+}
+#else
+#define sithSound_ReadIntoBuffer(fd, pDst, len) pSithHS->fileRead((fd), (pDst), (len))
+#endif
+
+int sithSound_LoadFileData(sithSound *sound)
+{
+    void *buf; // ebp
+    int32_t bufferMaxSize; // [esp+10h] [ebp-84h] BYREF
+    char outstr2[128];
+
+    int fd = 0;
+    if (sound->isLoaded & 1)
+        return 0;
+
+    if ( sound->bufferBytes + sithSound_curDataLoaded > sithSound_maxDataLoaded )
+        sithSound_FreeUpMemory(sound->bufferBytes + 0x19000);
+    stdSound_buffer_t* dsoundBuf = stdSound_BufferCreate(sound->bStereo, sound->sampleRate, sound->bitsPerSample, sound->bufferBytes);
+    if ( dsoundBuf )
+    {
+        sound->dsoundBuffer2 = dsoundBuf;
+        sithSound_curDataLoaded += sound->bufferBytes;
+        
+        fd = sithSound_FindInSearchPaths(sound->sound_fname, outstr2, 128);
+        if ( fd )
+        {
+            pSithHS->fseek(fd, sound->seekOffset, 0);
+            // Added: on TWL the ARM9 mixes from source PCM, so it can live in
+            // extram (the fill below goes through the word-safe read bounce);
+            // only the ARM7-visible mix output buffer needs HEAP_AUDIO.
+            { TWL_EXTRAM_SUGGEST(pSithHS);
+            buf = stdSound_BufferSetData(sound->dsoundBuffer2, sound->bufferBytes, &bufferMaxSize);
+            TWL_EXTRAM_RESTORE(pSithHS); }
+            if ( buf )
+            {
+                int numRead = sithSound_ReadIntoBuffer(fd, buf, bufferMaxSize); // Added: word-safe for VRAM-resident PCM
+                if ( stdSound_BufferUnlock(sound->dsoundBuffer2, buf, numRead) )
+                {
+                    sound->isLoaded |= 1u;
+                    pSithHS->fileClose(fd);
+                    return 1;
+                }
+            }
+        }
+    }
+    if ( fd )
+        pSithHS->fileClose(fd);
+    if ( sound->dsoundBuffer2 )
+    {
+        stdSound_BufferRelease(sound->dsoundBuffer2);
+        // Added: the counterpart of the += above -- a failed load must not leak
+        // accounting, or curDataLoaded inflates until no sound can ever load again.
+        sithSound_curDataLoaded -= sound->bufferBytes;
+    }
+    sound->dsoundBuffer2 = 0;
+    return 0;
+}
+
+int sithSound_UnloadData(sithSound *sound)
+{
+    if (!(sound->isLoaded & 1)) {
+        return 0;
+    }
+
+    stdSound_BufferRelease(sound->dsoundBuffer2);
+    sound->isLoaded &= ~1u;
+    sound->dsoundBuffer2 = 0;
+    sithSound_curDataLoaded -= sound->bufferBytes;
+    return 1;
+}
+
+stdSound_buffer_t* sithSound_LoadData(sithSound *sound)
+{
+    if (!(sound->isLoaded & 1))
+    {
+        //printf("sithSound_LoadData %s\n", sound->sound_fname);
+        sithSound_LoadFileData(sound);
+        if (!(sound->isLoaded & 1))
+            return 0;
+    }
+
+    sound->infoLoaded = 1;
+    return stdSound_BufferDuplicate(sound->dsoundBuffer2);
+}
+
+int sithSound_ReadDataFromFd(int fd, sithSound *sound)
+{
+    void *data;
+
+    int32_t bufferBytes;
+    { TWL_EXTRAM_SUGGEST(pSithHS); // Added: see sithSound_LoadFileData
+    data = stdSound_BufferSetData(sound->dsoundBuffer2, sound->bufferBytes, &bufferBytes);
+    TWL_EXTRAM_RESTORE(pSithHS); }
+    if ( data )
+    {
+        int amt = sithSound_ReadIntoBuffer(fd, data, bufferBytes); // Added: word-safe for VRAM-resident PCM
+        return stdSound_BufferUnlock(sound->dsoundBuffer2, data, amt);
+    }
+    return 0;
+}
+
+int sithSound_FreeUpMemory(uint32_t numBytesNeeded)
+{
+    SithWorld *world; // edi
+    int result; // eax
+    int v8; // [esp+10h] [ebp-Ch]
+    int v9; // [esp+14h] [ebp-8h]
+    unsigned int v10; // [esp+18h] [ebp-4h]
+
+    v8 = sithSound_var5;
+    v10 = 0;
+    v9 = 0;
+    while ( 1 )
+    {
+        world = sithWorld_g_pCurrentWorld;
+        if ( v8 )
+        {
+            world = sithWorld_g_pStaticWorld;
+            if (!world)
+                world = sithWorld_g_pCurrentWorld;
+            else if(!world) // Added: allow freeing sounds during loading
+                world = sithWorld_g_pLastLoadedWorld;
+            else
+                v8 = 0;
+        }
+
+        // Added: Prevent nullptr deref
+        if (!world) {
+            return 0;
+        }
+
+        for (uint32_t v3 = sithSound_var4; v3 < world->numSoundsLoaded; v3++)
+        {
+            if ((world->sounds[v3].isLoaded & 1) 
+                && !world->sounds[v3].field_40
+                && !stdSound_IsPlaying(world->sounds[v3].dsoundBuffer2, 0))
+            {
+                if (world->sounds[v3].infoLoaded)
+                {
+                    world->sounds[v3].infoLoaded = 0;
+                }
+                else
+                {
+                    result = world->sounds[v3].bufferBytes + v9;
+                    v9 = result;
+                    if ((world->sounds[v3].isLoaded & 1))
+                    {
+                        stdSound_BufferRelease(world->sounds[v3].dsoundBuffer2);
+                        world->sounds[v3].isLoaded &= ~1u;
+                        world->sounds[v3].dsoundBuffer2 = 0;
+                        sithSound_curDataLoaded -= world->sounds[v3].bufferBytes;
+                        result = v9;
+                    }
+                    if ( result >= numBytesNeeded )
+                    {
+                        sithSound_var5 = v8;
+                        sithSound_var4 = v3 + 1;
+                        return result;
+                    }
+                }
+            }
+        }
+        if ( v10 >= 2 )
+            return 0;
+        ++v10;
+        sithSound_var4 = 0;
+        v8 = v8 == 0;
+        sithSound_var4 = 0;
+    }
+}
+
+stdSound_buffer_t* sithSound_InitFromPath(char *path)
+{
+    int fd; // ebx
+    int bufferLen; // edi
+    stdSound_buffer_t *createdBuf; // eax
+    stdSound_buffer_t *dsoundBuf; // esi
+    int32_t bStereo; // [esp+Ch] [ebp-94h] BYREF
+    int32_t bufferMaxSize; // [esp+10h] [ebp-90h] BYREF
+    uint32_t nSamplesPerSec; // [esp+14h] [ebp-8Ch] BYREF
+    int32_t offset; // [esp+18h] [ebp-88h] BYREF
+    int32_t bitsPerSample; // [esp+1Ch] [ebp-84h] BYREF
+    char tmp[128]; // [esp+20h] [ebp-80h] BYREF
+
+    if (!path)
+        return NULL;
+
+    _sprintf(tmp, "sound%c%s", LEC_PATH_SEPARATOR_CHR, path);
+    fd = pSithHS->fileOpen(tmp, "rb");
+    if ( fd )
+    {
+        bufferLen = stdSound_ParseWav(fd, &nSamplesPerSec, &bitsPerSample, &bStereo, &offset);
+        if ( bufferLen )
+        {
+            createdBuf = stdSound_BufferCreate(bStereo, nSamplesPerSec, bitsPerSample, bufferLen);
+            dsoundBuf = createdBuf;
+            if ( createdBuf )
+            {
+                void* data = stdSound_BufferSetData(createdBuf, bufferLen, &bufferMaxSize);
+                if ( !data )
+                    return NULL;
+                size_t amtRead = pSithHS->fileRead(fd, (void *)data, bufferMaxSize);
+                if ( stdSound_BufferUnlock(dsoundBuf, data, amtRead) )
+                {
+                    pSithHS->fileClose(fd);
+                    return dsoundBuf;
+                }
+            }
+        }
+        else
+        {
+            //dsoundBuf = (stdSound_buffer_t *)offset;
+            // Added: fix undefined behavior?
+            dsoundBuf = NULL;
+        }
+        pSithHS->fileClose(fd);
+        if ( dsoundBuf )
+            stdSound_BufferRelease(dsoundBuf);
+    }
+    return NULL;
+}
+

@@ -1,0 +1,18 @@
+{
+  "account_id": "local_player",
+  "nickname": "Player",
+  "language": "en",
+  "level": 1,
+  "experience": 0,
+  "currency": {
+    "coins": 999999,
+    "gems": 999999
+  },
+  "tutorial_state": "start",
+  "inventory": [],
+  "tops": [],
+  "characters": [],
+  "stages_unlocked": [
+    1
+  ]
+}

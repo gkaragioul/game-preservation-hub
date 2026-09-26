@@ -1,0 +1,210 @@
+{
+  "m20_60": {
+    "rows": 1778,
+    "target_fps_median": 60.0,
+    "avg_ms": 16.752188413948257,
+    "p50_ms": 16.73,
+    "p95_ms": 16.787,
+    "p99_ms": 16.793,
+    "max_ms": 41.208,
+    "avg_fps": 59.69369346200625,
+    "over_budget_frames": 6,
+    "over_20ms": 3,
+    "over_33ms": 1,
+    "gpu_p95_ms": 2.2743,
+    "gpu_p99_ms": 2.55369,
+    "gpu_max_ms": 37.235,
+    "max_alpha_entities": 6,
+    "max_particles": 31,
+    "max_alpha_particles": 596,
+    "audio_underruns_max": 0,
+    "phases": {
+      "phase_world_ms": {
+        "p95": 0.7771500000000001,
+        "p99": 0.995,
+        "max": 2.07
+      },
+      "phase_entities_ms": {
+        "p95": 0.813,
+        "p99": 0.9281500000000001,
+        "max": 4.296
+      },
+      "phase_alpha_ms": {
+        "p95": 0.234,
+        "p99": 0.27069000000000004,
+        "max": 5.773
+      },
+      "phase_particles_ms": {
+        "p95": 0.024,
+        "p99": 0.058230000000000025,
+        "max": 0.132
+      },
+      "phase_post_ms": {
+        "p95": 0.036,
+        "p99": 0.058230000000000025,
+        "max": 0.384
+      },
+      "phase_total_ms": {
+        "p95": 1.693,
+        "p99": 2.1262800000000004,
+        "max": 7.25
+      }
+    }
+  },
+  "m20_120": {
+    "rows": 4065,
+    "target_fps_median": 120.0,
+    "avg_ms": 8.422535547355473,
+    "p50_ms": 8.397,
+    "p95_ms": 8.455,
+    "p99_ms": 8.461,
+    "max_ms": 37.422,
+    "avg_fps": 118.72909225227103,
+    "over_budget_frames": 24,
+    "over_20ms": 2,
+    "over_33ms": 2,
+    "gpu_p95_ms": 2.492,
+    "gpu_p99_ms": 2.8149600000000015,
+    "gpu_max_ms": 33.945,
+    "max_alpha_entities": 139,
+    "max_particles": 45,
+    "max_alpha_particles": 832,
+    "audio_underruns_max": 0,
+    "phases": {
+      "phase_world_ms": {
+        "p95": 0.623,
+        "p99": 1.0144800000000023,
+        "max": 2.97
+      },
+      "phase_entities_ms": {
+        "p95": 0.69,
+        "p99": 0.8935600000000059,
+        "max": 28.616
+      },
+      "phase_alpha_ms": {
+        "p95": 0.2618000000000011,
+        "p99": 0.4069999999999999,
+        "max": 3.422
+      },
+      "phase_particles_ms": {
+        "p95": 0.023,
+        "p99": 0.046,
+        "max": 0.141
+      },
+      "phase_post_ms": {
+        "p95": 0.093,
+        "p99": 0.1423600000000001,
+        "max": 32.324
+      },
+      "phase_total_ms": {
+        "p95": 1.4046000000000005,
+        "p99": 2.1607200000000035,
+        "max": 29.826
+      }
+    }
+  },
+  "m21_60": {
+    "rows": 2539,
+    "target_fps_median": 60.0,
+    "avg_ms": 16.739795194958646,
+    "p50_ms": 16.73,
+    "p95_ms": 16.7871,
+    "p99_ms": 16.793,
+    "max_ms": 29.086,
+    "avg_fps": 59.73788737278935,
+    "over_budget_frames": 7,
+    "over_20ms": 2,
+    "over_33ms": 0,
+    "gpu_p95_ms": 5.2802999999999995,
+    "gpu_p99_ms": 6.330919999999998,
+    "gpu_max_ms": 26.631,
+    "max_alpha_entities": 6,
+    "max_particles": 41,
+    "max_alpha_particles": 587,
+    "audio_underruns_max": 0,
+    "phases": {
+      "phase_world_ms": {
+        "p95": 2.486,
+        "p99": 2.9173999999999976,
+        "max": 10.0
+      },
+      "phase_entities_ms": {
+        "p95": 0.7680999999999999,
+        "p99": 0.9510199999999976,
+        "max": 17.169
+      },
+      "phase_alpha_ms": {
+        "p95": 0.228,
+        "p99": 0.249,
+        "max": 2.668
+      },
+      "phase_particles_ms": {
+        "p95": 0.022199999999999817,
+        "p99": 0.076,
+        "max": 0.105
+      },
+      "phase_post_ms": {
+        "p95": 0.037,
+        "p99": 0.2736199999999999,
+        "max": 0.443
+      },
+      "phase_total_ms": {
+        "p95": 3.0171,
+        "p99": 4.0108599999999885,
+        "max": 27.281
+      }
+    }
+  },
+  "m21_120": {
+    "rows": 5252,
+    "target_fps_median": 120.0,
+    "avg_ms": 8.468487242955065,
+    "p50_ms": 8.399,
+    "p95_ms": 8.456,
+    "p99_ms": 9.365439999999987,
+    "max_ms": 149.986,
+    "avg_fps": 118.0848445903842,
+    "over_budget_frames": 69,
+    "over_20ms": 5,
+    "over_33ms": 1,
+    "gpu_p95_ms": 5.237349999999999,
+    "gpu_p99_ms": 6.14106999999999,
+    "gpu_max_ms": 22.379,
+    "max_alpha_entities": 138,
+    "max_particles": 45,
+    "max_alpha_particles": 832,
+    "audio_underruns_max": 0,
+    "phases": {
+      "phase_world_ms": {
+        "p95": 2.07,
+        "p99": 2.7730699999999904,
+        "max": 8.509
+      },
+      "phase_entities_ms": {
+        "p95": 0.639,
+        "p99": 0.9053699999999971,
+        "max": 14.89
+      },
+      "phase_alpha_ms": {
+        "p95": 0.21,
+        "p99": 0.401,
+        "max": 4.279
+      },
+      "phase_particles_ms": {
+        "p95": 0.031,
+        "p99": 0.072,
+        "max": 0.65
+      },
+      "phase_post_ms": {
+        "p95": 0.369,
+        "p99": 0.4699799999999995,
+        "max": 4.575
+      },
+      "phase_total_ms": {
+        "p95": 2.69,
+        "p99": 3.897659999999992,
+        "max": 21.94
+      }
+    }
+  }
+}

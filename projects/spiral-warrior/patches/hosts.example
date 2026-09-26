@@ -1,0 +1,12 @@
+# Spiral Warrior local redirection entries
+# Replace 127.0.0.1 with the host IP reachable from the emulator if needed.
+127.0.0.1	sdk-login-cocooversea.17m3.com
+127.0.0.1	sdk-package-update-config.17m3.com
+127.0.0.1	ups-config.17m3.com
+127.0.0.1	sdk-heartbeat.17m3.com
+127.0.0.1	cdnsgp-x3jl-release.17m3.com
+127.0.0.1	cdn-spinarena.17m3.com
+127.0.0.1	lxys-area.17m3.com
+127.0.0.1	lxys-audit-area.17m3.com
+127.0.0.1	lxys-test-area.17m3.com
+127.0.0.1	lxys1-client.17m3.com

@@ -1,0 +1,209 @@
+MSGS 149          # <--- DON'T FORGET TO UPDATE THIS COUNT
+
+#  "<key>"     <unused number>   "<string>"
+
+#******************************
+#  OpenJKDF2 added UI strings
+#******************************
+   "OPENJKDF2_EXAMPLE"    0  "Example!"
+
+#******************************
+#  Gameplay
+#******************************
+   "GUIEXT_SHOW_SABER_CROSSHAIR"          0 "Show Crosshair with lightsaber"
+   "GUIEXT_SHOW_SABER_CROSSHAIR_HINT"     0 "Display the crosshair when the lightsaber is equipped?"
+   "GUIEXT_SHOW_FIST_CROSSHAIR"           0 "Show Crosshair with fist"
+   "GUIEXT_SHOW_FIST_CROSSHAIR_HINT"      0 "Display the crosshair when the fists are equipped?"
+   "GUIEXT_DISABLE_WAGGLE"                0 "Disable Weapon Waggle"
+   "GUIEXT_DISABLE_WAGGLE_HINT"           0 "Disable weapon waggle when moving?"
+   "GUIEXT_CROSSHAIR_SCALE"               0 "Crosshair Scale"
+   "GUIEXT_CROSSHAIR_SCALE_HINT"          0 "Adjust the size of the crosshair (from 0% to 200%)"
+
+#******************************
+#  Display
+#******************************
+   "GUIEXT_FOV"                           0 "FOV"
+   "GUIEXT_FOV_HINT"                      0 "Set FOV"
+   "GUIEXT_FOV_VERTICAL"                  0 "FOV is vertical (Hor+)"
+   "GUIEXT_EN_FULLSCREEN"                 0 "Enable Fullscreen"
+   "GUIEXT_DISPLAY_OPTIONS"                0 "Display Options"
+   "GUIEXT_DISPLAY_MODE"                   0 "Mode"
+   "GUIEXT_DISPLAY_MONITOR"                0 "Monitor"
+   "GUIEXT_DISPLAY_RESOLUTION"             0 "Resolution"
+   "GUIEXT_DISPLAY_WIDTH"                  0 "Width"
+   "GUIEXT_DISPLAY_HEIGHT"                 0 "Height"
+   "GUIEXT_DISPLAY_REFRESH"                0 "Refresh Behavior"
+   "GUIEXT_DISPLAY_EFFECTIVE"              0 "Effective Settings"
+   "GUIEXT_EXCLUSIVE_UNAVAILABLE"           0 "Exclusive Fullscreen is unavailable until display restoration is verified."
+   "GUIEXT_EN_HIDPI"                      0 "Enable HiDPI"
+   "GUIEXT_EN_TEXTURE_FILTERING"          0 "Enable Texture Filtering"
+   "GUIEXT_ASPECT_OPTIONS"                0 "Aspect Options"
+   "GUIEXT_ASPECT_GAMEPLAY"               0 "Preserve original gameplay aspect"
+   "GUIEXT_ASPECT_MENUS"                  0 "Preserve menu aspect"
+   "GUIEXT_ASPECT_HUD"                    0 "Preserve HUD aspect"
+   "GUIEXT_ASPECT_VIDEOS"                 0 "Preserve authored video aspect"
+   "GUIEXT_FPS_LIMIT"                     0 "FPS Limit"
+   "GUIEXT_FPS_LIMIT_HINT"                0 "Set the rendering cap. Rates above 100 FPS, Desktop Refresh, and Unlimited require timing verification."
+   "GUIEXT_EN_VSYNC"                      0 "Enable VSync"
+   "GUIEXT_EN_BLOOM"                      0 "Enable Bloom"
+   "GUIEXT_EN_SSAO"                       0 "Enable SSAO"
+   "GUIEXT_SSAA_MULT"                     0 "SSAA Multiplier:"
+   "GUIEXT_GAMMA_VAL"                     0 "Gamma Value:"
+   "GUIEXT_HUD_SCALE"                     0 "HUD Scale:"
+
+   "GUIEXT_EN_JKGFXMOD"                   0 "Enable jkgfxmod"
+   "GUIEXT_EN_JKGFXMOD_HINT"              0 "Override in-game textures with textures from jkgm folder?"
+   "GUIEXT_EN_TEXTURE_PRECACHE"           0 "Enable texture precaching"
+   "GUIEXT_EN_TEXTURE_PRECACHE_HINT"      0 "Load all material textures ahead-of-time instead of just-in-time?"
+
+# TWL-only for now
+   "GUIEXT_EN_EMISSIVE_TEXTURES"          0 "Enable emissive textures"
+   "GUIEXT_EN_EMISSIVE_TEXTURES_HINT"     0 "Display textures which glow in the dark."
+   "GUIEXT_EN_CLASSIC_LIGHTING"           0 "Enable classic lighting"
+   "GUIEXT_EN_CLASSIC_LIGHTING_HINT"      0 "Use the original 256-color light tables."
+
+
+#******************************
+#  Sound
+#******************************
+  "GUIEXT_CUTSCENE_VOLUME"                0 "Cutscene Volume"
+  "GUIEXT_CUTSCENE_VOLUME_HINT"           0 "Set the volume of audio during cutscenes"
+
+#******************************
+#  Quake Console and Updates
+#******************************
+   "GUIEXT_UPDATE_IS_AVAIL"                   0 "An update is available: %S => %S"
+   "GUIEXT_UPDATE_CLICK_TO_DL"                0 "Click here to download."
+   "GUIEXT_UPDATE_DOWNLOADING"                0 "Downloading..."
+   "GUIEXT_UPDATE_COMPLETE_RESTART"           0 "Update complete, restart to apply."
+   "GUIEXT_UPDATE_COMPLETE_SEMIAUTO"          0 "Update downloaded, complete installation and restart."
+
+
+#******************************
+#  Multiplayer Setup
+#******************************
+   "GUIEXT_DEDICATED_SERVER"        0 "Dedicated Server"
+   "GUIEXT_DEDICATED_SERVER_HINT"   0 "Launch server without participating as a player."
+   "GUIEXT_COOP"                    0 "Experimental Co-op"
+   "GUIEXT_COOP_HINT"               0 "Launch server with actors enabled."
+   "GUIEXT_SERVER_PORT"             0 "Server Port:"
+
+   #"GUIEXT_"                0 ""
+
+#******************************
+#  General
+#******************************
+   "GUIEXT_CONTROL_STYLE"                    0 "Control Style"
+   "GUIEXT_CONTROL_STYLE_MODERN"             0 "Modern"
+   "GUIEXT_CONTROL_STYLE_CLASSIC"            0 "Classic"
+   "GUIEXT_APPLY_CONTROL_STYLE"              0 "Apply Control Style"
+   "GUIEXT_CONTROLS_APPLY_TITLE"             0 "Apply Control Preset"
+   "GUIEXT_CONTROLS_APPLY_Q"                 0 "Replace your current keyboard and mouse bindings?"
+   "KEY_MOUSE_WHEEL_UP"                      0 "Mouse Wheel Up"
+   "KEY_MOUSE_WHEEL_DOWN"                    0 "Mouse Wheel Down"
+   "GUIEXT_RAW_MOUSE"                        0 "Raw Mouse Input"
+   "GUIEXT_RAW_MOUSE_HINT"                   0 "Use SDL relative mouse mode with unscaled Windows input when available."
+   "GUIEXT_MOUSE_ACCEL"                      0 "Mouse Acceleration"
+   "GUIEXT_MOUSE_ACCEL_HINT"                 0 "Allow Windows system scaling for relative mouse movement."
+   "GUIEXT_MOUSE_SMOOTHING"                  0 "Mouse Smoothing"
+   "GUIEXT_MOUSE_SMOOTHING_HINT"             0 "Blend the current mouse delta with the previous sample. Off is lowest latency."
+   "GUIEXT_SHOW_FRAME_STATS"                 0 "Frame Pacing Overlay"
+   "GUIEXT_SHOW_FRAME_STATS_HINT"            0 "Show measured presentation FPS, frame time, and a 60-frame pacing graph."
+   "GUIEXT_SAFE_60"                          0 "Return to Safe 60 FPS"
+   "GUIEXT_SAFE_60_HINT"                     0 "Set the frame cap to 60 FPS and enable VSync."
+   "GUIEXT_QUALITY_PRESET"                   0 "Quality Preset"
+   "GUIEXT_QUALITY_PRESET_HINT"              0 "Apply modular renderer settings while retaining original assets as fallback."
+   "GUIEXT_APPLY"                            0 "Apply"
+   "GUIEXT_RESET_VIDEO"                      0 "Reset Video Settings"
+   "GUIEXT_RESET_VIDEO_HINT"                 0 "Restore recommended borderless, timing, and renderer defaults."
+   "GUIEXT_RESET_VIDEO_TITLE"                0 "Reset Video Settings"
+   "GUIEXT_RESET_VIDEO_Q"                    0 "Restore all video settings to recommended defaults? Controls and gameplay settings are not changed."
+   "GUIEXT_SAFE_VIDEO"                       0 "Apply Safe Video Mode"
+   "GUIEXT_SAFE_VIDEO_HINT"                  0 "Use windowed 60 FPS and disable optional renderer features."
+   "GUIEXT_SAFE_VIDEO_TITLE"                 0 "Apply Safe Video Mode"
+   "GUIEXT_SAFE_VIDEO_Q"                     0 "Apply conservative windowed video settings? Controls and gameplay settings are not changed."
+   "GUIEXT_DIAGNOSTICS"                      0 "Renderer Diagnostics"
+   "GUIEXT_DIAGNOSTICS_HINT"                 0 "Show the active GPU, API, fallback, display, VSync, and frame-cap state."
+   "GUIEXT_DIAGNOSTICS_TITLE"                0 "Renderer Diagnostics"
+   "GUIEXT_ANISOTROPY"                       0 "Anisotropic Filtering"
+   "GUIEXT_ANISOTROPY_HINT"                  0 "Improve oblique texture clarity when supported by the active renderer."
+   "GUIEXT_MIPMAP_BIAS"                      0 "Mipmap Distance"
+   "GUIEXT_MIPMAP_BIAS_HINT"                 0 "0.25 keeps detailed mips longer; 1.0 is the original distance; maximum 4.0."
+
+   "GUIEXT_DISABLE_MISSION_CONFIRMATION"        0 "Disable mission start confirmation"
+   "GUIEXT_DISABLE_MISSION_CONFIRMATION_HINT"   0 "Enter the mission as soon as the level is loaded?"
+
+   "GUIEXT_INCONSISTENT_PHYS"                   0 "Restore inconsistent physics"
+   "GUIEXT_INCONSISTENT_PHYS_HINT"              0 "Sets physics delta to the render framerate instead of 150Hz?"
+
+   "GUIEXT_CORPSE_DESPAWN"                      0 "Disable corpse despawning"
+   "GUIEXT_CORPSE_DESPAWN_HINT"                 0 "Prevent despawn for corpse bodies?"
+
+   "GUIEXT_50HZ_MIDAIR_PHYS"                    0 "Restore 50Hz midair player physics"
+   "GUIEXT_50HZ_MIDAIR_PHYS_HINT"               0 "Step player physics and POV at 50Hz while midair?"
+
+   "GUIEXT_LEDGE_SQUEEZE"                       0 "Ease climbing onto ledges"
+   "GUIEXT_LEDGE_SQUEEZE_HINT"                  0 "Shrink the player collider while midair so it catches less on gap corners?"
+
+#******************************
+#  Controls
+#******************************
+   "KEY_JOY1_B9"                                0 "Joy 1 Button 9"
+   "KEY_JOY1_B10"                               0 "Joy 1 Button 10"
+   "KEY_JOY1_B11"                               0 "Joy 1 Button 11"
+   "KEY_JOY1_B12"                               0 "Joy 1 Button 12"
+   "KEY_JOY1_B13"                               0 "Joy 1 Button 13"
+   "KEY_JOY1_B14"                               0 "Joy 1 Button 14"
+   "KEY_JOY1_B15"                               0 "Joy 1 Button 15"
+   "KEY_JOY1_B16"                               0 "Joy 1 Button 16"
+   "KEY_JOY1_B17"                               0 "Joy 1 Button 17"
+   "KEY_JOY1_B18"                               0 "Joy 1 Button 18"
+   "KEY_JOY1_B19"                               0 "Joy 1 Button 19"
+   "KEY_JOY1_B20"                               0 "Joy 1 Button 20"
+   "KEY_JOY1_B21"                               0 "Joy 1 Button 21"
+   "KEY_JOY1_B22"                               0 "Joy 1 Button 22"
+   "KEY_JOY1_B23"                               0 "Joy 1 Button 23"
+   "KEY_JOY1_B24"                               0 "Joy 1 Button 24"
+   "KEY_JOY1_B25"                               0 "Joy 1 Button 25"
+   "KEY_JOY1_B26"                               0 "Joy 1 Button 26"
+   "KEY_JOY1_B27"                               0 "Joy 1 Button 27"
+
+   "KEY_JOY2_B9"                                0 "Joy 2 Button 9"
+   "KEY_JOY2_B10"                               0 "Joy 2 Button 10"
+   "KEY_JOY2_B11"                               0 "Joy 2 Button 11"
+   "KEY_JOY2_B12"                               0 "Joy 2 Button 12"
+   "KEY_JOY2_B13"                               0 "Joy 2 Button 13"
+   "KEY_JOY2_B14"                               0 "Joy 2 Button 14"
+   "KEY_JOY2_B15"                               0 "Joy 2 Button 15"
+   "KEY_JOY2_B16"                               0 "Joy 2 Button 16"
+   "KEY_JOY2_B17"                               0 "Joy 2 Button 17"
+   "KEY_JOY2_B18"                               0 "Joy 2 Button 18"
+   "KEY_JOY2_B19"                               0 "Joy 2 Button 19"
+   "KEY_JOY2_B20"                               0 "Joy 2 Button 20"
+   "KEY_JOY2_B21"                               0 "Joy 2 Button 21"
+   "KEY_JOY2_B22"                               0 "Joy 2 Button 22"
+   "KEY_JOY2_B23"                               0 "Joy 2 Button 23"
+   "KEY_JOY2_B24"                               0 "Joy 2 Button 24"
+   "KEY_JOY2_B25"                               0 "Joy 2 Button 25"
+   "KEY_JOY2_B26"                               0 "Joy 2 Button 26"
+   "KEY_JOY2_B27"                               0 "Joy 2 Button 27"
+
+   "KEY_MOUSE_B5"                               0 "Mouse Button 5"
+   "KEY_MOUSE_B6"                               0 "Mouse Button 6"
+   "KEY_MOUSE_B7"                               0 "Mouse Button 7"
+   "KEY_MOUSE_B8"                               0 "Mouse Button 8"
+
+#******************************
+#  Control Setup strings
+#******************************/
+
+   ### Names for the control functions (actions).
+   ### They match the names returned in sithControl_EnumBindings() and
+   ### CONTROL_FUNCTION_NAMES in sithControl.h
+   "GAMERESTORE"     0 "Game Restore"
+   "GAMERECORD"      0 "Game Record"
+   "DEBUG"           0 "Debug"
+   "USELASTSELECTED" 0 "Use Selected Skill/Item"
+
+
+END

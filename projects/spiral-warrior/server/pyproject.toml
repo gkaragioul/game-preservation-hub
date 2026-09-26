@@ -1,0 +1,20 @@
+[project]
+name = "spiralwarrior-local-server"
+version = "0.1.0"
+description = "Local offline backend emulator for Spiral Warrior preservation lab"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.111",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+  "preservation_artifact: requires ignored proprietary preservation inputs and the accepted local Android build toolchain",
+]

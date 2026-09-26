@@ -1,0 +1,19 @@
+release-assets/
+
+# World War 3: only the public summary, dated research update, cover image and ballistics charts belong here.
+# The source, captures, certificates and manuals are private and must never be added.
+/projects/world-war-3/*
+!/projects/world-war-3/README.md
+!/projects/world-war-3/research-update-2026-09.md
+!/projects/world-war-3/assets/
+!/projects/world-war-3/weapons/
+
+# Third-party add-on sounds, models and videos are not redistributed (see the Heretic II README).
+/projects/heretic-ii-apple-silicon/addons/**/*.[Ww][Aa][Vv]
+/projects/heretic-ii-apple-silicon/addons/**/*.[Ff][Mm]
+/projects/heretic-ii-apple-silicon/addons/**/*.[Ss][Mm][Kk]
+/projects/heretic-ii-apple-silicon/addons/golgotha/
+/projects/heretic-ii-apple-silicon/addons/turtle/
+
+# Visual Studio caches.
+.vs/

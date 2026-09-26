@@ -1,0 +1,122 @@
+
+
+Note: You need to have the ZT_Essentials.zip extracted before extracting this .zip
+          It is available at the website below.
+
+Also note: This document is based on the ZTown-Part-1.txt but has additional info under the 
+	 "Known Bugs" section.
+
+Title: Zombie Town Part 2
+
+Version of map file: v1.00
+
+Author: Rogue Rodent
+
+Website: http://freespace.virgin.net/rodent.zone
+
+Contact: bex.zone@virgin.net
+
+Description: Heretic2 Single Player Level.
+	    
+Additional info: Zombie Town Part 2 is also currently available. At the end of "Part 1" the game
+	        will try to load up "Heretic II\base\maps\rodent_zone\Part-2.bsp". Any future maps,
+	        .bsp files, Rodent releases for this series can be put in the above folder and
+	        named to Part-3, Part-4 etc. This also applies to any other H2 level the user
+	        wishes to be run after a "Zombie Town" map eg. Mymap.bsp renamed to 
+	        Part 3.bsp will be loaded after Zombie Town Part 2 is completed.
+                           
+
+Additional Credits: Raven Software for letting us take H2 apart :-) Phantom for the "Tree_
+	              bark_red" texture which goes so nicely with the trees Rodent modelled.
+                          
+-Play Information-
+
+Single Player: Yes  
+
+Co-operative: Yes... But since Brian Spence "wasp" a friend, fellow mapper and beta tester for 
+		 Rodent`s work has been missing for weeks now, Rodent has been unable
+		 to have co-op or other beta testing done by anyone other than himself :-(
+		 Feed back anyone?
+Deathmatch: No
+
+Difficulty Settings: Yes
+
+New Sounds: Yes... In the form of Plague Elf voices re-ordered ie. "one-liners" that didn`t seem
+		to be played much before in the original H2, are now played more often.
+		Rodent is really into having events in the map trigger .wav files being played
+		and is currently recording over 100 lines of dialog by two ladies he is friends
+	                with in England. 
+
+New Graphics: Yes... A few new textures by Rodent and one from Phantom. Other ZT maps
+		   in future might well have further new tex as long as they fit in with the
+		   theme :-)
+New Music: No
+
+Secrets: Yes... Lots, some containing the powerful weapons but their harder to find (or at
+              least their ment to be ;-) None of the secrets contain stuff that is needed to get
+              through ZT, they just might make it easier or more fun. Tip: As a rule, the player
+              gets rewarded for trashing stuff in ZT, like wooden crates but there might be a near 
+              by monster who gets woken up by the noise so be careful.
+
+-Construction-
+
+Base: New level from scratch... Well, to be exact the base was built from previous unreleased
+          Rodent maps.
+
+Editor used: HereticED to start off with, then QERadiant.
+
+Build time: 6 months for the 1st two Zombie Town maps including converting over to QERadiant
+	  which although worth it ment redoing a lot of Part 1. Part 3 is going really quickly and
+	  should be done within a month. It won`t be as detailed due to it`s setting but should
+	  be very cool looking and hopefully fun.
+
+Texture Sets used: Silver Spring set plus generic looking textures from other H2 sets eg. rocks,
+	               dirt, grass etc. This still keeps the Silver Spring look be it through a slightly
+	               quirky Rodent way of looking at H2 ;-)
+
+Compile machine: Dell P2 300... Rodent has tried very hard to keep R_Speeds and Frame Rate
+	              as good as possible, balanced against the high levels of detail in these
+	              1st two ZT maps. A Voodoo3 (or higher) graphics card is recommended to
+	              achieve decent performance.
+
+Known Bugs: Believe it or not, Rodent spent well over a month testing the 1st two ZT maps,
+	      improving, adding and removing stuff. The removing was mainly down to
+	      "maxing out" the editor or engine :-( The up side is there is Tons of stuff left over
+	      or not yet tried which given time is intended to go into future ZT maps... Egh, those
+	      bugs Rodent was mentioning are inconsistent crashes of the game due to the
+	      "death machines" either getting clogged up with dead a body or killing too many
+	      monsters in one go. Well that's what Rodent guesses is going on :-\
+	
+	      Also as the Q2 engine sometimes has trouble "seeing" round corners and since fog
+	      is used, occasionally a strip of white wall is drawn for a few seconds, Rodent has
+	      tried several tricks to get around this but to no avail :-( Anyone know how fix this? 
+
+	 Q: So why release maps which can crash at all, even if not very frequently?
+
+	 A: The "death machines", btw there not b-movie style robots, are what Rodent likes
+	      building most of all and when people see them it should be apparent why their 
+	      used, even if there not 100% stable. Besides one day someone might point out to 
+	      Rodent how to "fix" them ...Hope this hasn`t put off anyone from having a 
+	      look at the ZT maps. Bottom line is that if people don`t like this "twist" on the H2 
+	      theme then H2 can be fully restored to before ZT was installed, to the best of 
+	      Rodent`s limited knowledge :-)
+
+	      The boat at the end of Part 2 sometimes gets stuck on it`s path. This can be due to
+	      a fish or other monster blocking it. The player needs to board the boat at some 
+	      point in the game (you can kill all the monsters 1st as the boat is on a large looped
+	      path) but the boat is used to carry the player "off" the level. If the boat is obviously
+	      blocked by a monster then gib the monster, if that doesn`t work try running around
+	      the jetty a couple of times as there is a couple of invisible triggers that are "ment" 
+	      to get the boat going again. In constant tests of this seq the boat sometimes just
+	      won`t budge after it has got stuck so Rodent recommends saving soon after 1st 
+	      seeing the boat. Hope know one has this bug crop up, it is rare but frustrating :-\
+
+Installation: Extract ZTown-Part-2.zip into the root folder of Heretic2 with "Use Folder Names"
+ 	   option of Winzip (or similar) enabled.
+
+Uninstalling: Refer to the "Heretic II\ZTown_Readme.txt" 
+
+Running the level: After installing both ZT_Essentials and this file, you should have a "Zombie
+	              Town" Icon which when run sets up the "set game" function of H2 and loads
+	              up the 1st level.
+

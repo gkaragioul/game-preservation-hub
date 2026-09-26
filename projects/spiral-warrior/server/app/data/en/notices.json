@@ -1,0 +1,9 @@
+{
+  "notices": [
+    {
+      "id": "welcome",
+      "title": "Welcome to Spiral Warrior Offline",
+      "body": "This local preservation build uses an offline backend. Online services, payments, rankings, and multiplayer are disabled."
+    }
+  ]
+}
