@@ -24,7 +24,7 @@ nativefiledialog-extended, nlohmann/json, and DrMinGW components.
 The complete tagged corresponding source can be obtained with:
 
 ```text
-git clone --branch 1.0 --recurse-submodules https://github.com/gkaragioul/OpenJKDF2-AMD-Enhanced.git
+git clone --branch 1.0 --recurse-submodules https://github.com/gkaragioul/OpenJKDF2-Modern.git
 ```
 
 The distribution permits modification for personal use and reverse engineering

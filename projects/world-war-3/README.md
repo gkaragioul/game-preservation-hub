@@ -1,6 +1,6 @@
 # World War 3 — Offline Preservation Research
 
-**Status: paused.** &nbsp;·&nbsp; **Source: private** (this page is a public summary)
+**Status: paused.** &nbsp;·&nbsp; **Source: not published** (this page is a public summary)
 
 Research into keeping a **legally purchased** copy of *World War 3* (Steam app **674020**, Unreal Engine 4.21) bootable for **private, offline use** after the official online services shut down on **3 August 2026**.
 

@@ -10,7 +10,7 @@
 
 ## Global Constraints
 
-- Public repository: `gkaragioul/OpenJKDF2-AMD-Enhanced`.
+- Public repository: `gkaragioul/OpenJKDF2-Modern`.
 - The final public repository exposes exactly one branch named `main`.
 - The exact release tag is `1.0`; the release title is `OpenJKDF2 AMD Enhanced 1.0`.
 - Preserve upstream `LICENSE.md` verbatim and license George Karagioules's modifications under the same terms.
@@ -187,7 +187,7 @@ git commit -m "docs: prepare OpenJKDF2 AMD Enhanced 1.0"
 ### Task 4: Produce the clean 1.0 Windows package
 
 **Files:**
-- Generated: `dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip`
+- Generated: `dist/OpenJKDF2-Modern-windows-x64-1.0.zip`
 - Generated: `dist/SHA256SUMS.txt`
 - Generated: package `BUILD-PROVENANCE.json`
 - Generated: package `PACKAGE-MANIFEST.json`
@@ -217,14 +217,14 @@ Expected: engine, renderer smoke tool, and display watchdog build successfully.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-windows-package.ps1 -BuildDir build/msvc-release -OutputDir dist
-Move-Item -LiteralPath dist/OpenJKDF2-AMD-Enhanced-windows-x64.zip -Destination dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip
-(Get-FileHash dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant() + '  OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip' | Set-Content dist/SHA256SUMS.txt -Encoding ascii
+Move-Item -LiteralPath dist/OpenJKDF2-Modern-windows-x64.zip -Destination dist/OpenJKDF2-Modern-windows-x64-1.0.zip
+(Get-FileHash dist/OpenJKDF2-Modern-windows-x64-1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant() + '  OpenJKDF2-Modern-windows-x64-1.0.zip' | Set-Content dist/SHA256SUMS.txt -Encoding ascii
 ```
 
 - [ ] **Step 4: Verify package boundary, manifest, and clean provenance**
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-windows-package.ps1 -ZipPath dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-windows-package.ps1 -ZipPath dist/OpenJKDF2-Modern-windows-x64-1.0.zip
 ```
 
 Expected: zero proprietary findings, valid manifest, all required licenses, and `source_dirty: false` for the release commit.
@@ -244,8 +244,8 @@ Expected: zero proprietary findings, valid manifest, all required licenses, and 
 ```powershell
 git branch -m main
 git remote rename origin upstream
-gh repo fork shinyquagsire23/OpenJKDF2 --fork-name OpenJKDF2-AMD-Enhanced --clone=false
-git remote add origin https://github.com/gkaragioul/OpenJKDF2-AMD-Enhanced.git
+gh repo fork shinyquagsire23/OpenJKDF2 --fork-name OpenJKDF2-Modern --clone=false
+git remote add origin https://github.com/gkaragioul/OpenJKDF2-Modern.git
 ```
 
 Expected: `upstream` points to the original project and `origin` to George's public fork.
@@ -254,11 +254,11 @@ Expected: `upstream` points to the original project and `origin` to George's pub
 
 ```powershell
 git push -u origin main
-gh api -X PATCH repos/gkaragioul/OpenJKDF2-AMD-Enhanced -f default_branch=main -f description='Modern Windows presentation, controls, display safety, diagnostics, and AMD Radeon validation for OpenJKDF2; requires legally owned game data.'
-gh api -X DELETE repos/gkaragioul/OpenJKDF2-AMD-Enhanced/git/refs/heads/master
+gh api -X PATCH repos/gkaragioul/OpenJKDF2-Modern -f default_branch=main -f description='Modern Windows presentation, controls, display safety, diagnostics, and AMD Radeon validation for OpenJKDF2; requires legally owned game data.'
+gh api -X DELETE repos/gkaragioul/OpenJKDF2-Modern/git/refs/heads/master
 ```
 
-Expected: `gh api repos/gkaragioul/OpenJKDF2-AMD-Enhanced/branches --jq '.[].name'` prints only `main`.
+Expected: `gh api repos/gkaragioul/OpenJKDF2-Modern/branches --jq '.[].name'` prints only `main`.
 
 - [ ] **Step 3: Create and push the exact annotated tag**
 
@@ -270,14 +270,14 @@ git push origin 1.0
 - [ ] **Step 4: Render the release body with the real checksum**
 
 ```powershell
-$hash = (Get-FileHash dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+$hash = (Get-FileHash dist/OpenJKDF2-Modern-windows-x64-1.0.zip -Algorithm SHA256).Hash.ToLowerInvariant()
 (Get-Content docs/RELEASE-1.0.md -Raw).Replace('__ZIP_SHA256__', $hash) | Set-Content build/release-1.0-body.md -Encoding utf8
 ```
 
 - [ ] **Step 5: Publish GitHub Release 1.0**
 
 ```powershell
-gh release create 1.0 dist/OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip dist/SHA256SUMS.txt --repo gkaragioul/OpenJKDF2-AMD-Enhanced --title 'OpenJKDF2 AMD Enhanced 1.0' --notes-file build/release-1.0-body.md --verify-tag
+gh release create 1.0 dist/OpenJKDF2-Modern-windows-x64-1.0.zip dist/SHA256SUMS.txt --repo gkaragioul/OpenJKDF2-Modern --title 'OpenJKDF2 AMD Enhanced 1.0' --notes-file build/release-1.0-body.md --verify-tag
 ```
 
 Expected: public release with exactly the ZIP and checksum assets.
@@ -297,15 +297,15 @@ Expected: public release with exactly the ZIP and checksum assets.
 - Modify: the existing tools/project discovery component that links to individual project pages.
 
 **Interfaces:**
-- Consumes: GitHub latest release asset `OpenJKDF2-AMD-Enhanced-windows-x64-1.0.zip` and four optimized captures.
+- Consumes: GitHub latest release asset `OpenJKDF2-Modern-windows-x64-1.0.zip` and four optimized captures.
 - Produces: `/openjkdf2-enhanced` and `/download/openjkdf2-enhanced`.
 
 - [ ] **Step 1: Add the exact latest-release mapping**
 
 ```javascript
 'openjkdf2-enhanced': {
-  repo: 'OpenJKDF2-AMD-Enhanced',
-  preferred: [/^OpenJKDF2-AMD-Enhanced-windows-x64-\d+(?:\.\d+)*\.zip$/i]
+  repo: 'OpenJKDF2-Modern',
+  preferred: [/^OpenJKDF2-Modern-windows-x64-\d+(?:\.\d+)*\.zip$/i]
 }
 ```
 
@@ -359,9 +359,9 @@ Expected: successful production deployment on the linked project/domain.
 - [ ] **Step 2: Verify GitHub state**
 
 ```powershell
-gh repo view gkaragioul/OpenJKDF2-AMD-Enhanced --json nameWithOwner,visibility,defaultBranchRef,url
-gh api repos/gkaragioul/OpenJKDF2-AMD-Enhanced/branches --jq '.[].name'
-gh release view 1.0 --repo gkaragioul/OpenJKDF2-AMD-Enhanced --json name,tagName,isDraft,isPrerelease,url,assets
+gh repo view gkaragioul/OpenJKDF2-Modern --json nameWithOwner,visibility,defaultBranchRef,url
+gh api repos/gkaragioul/OpenJKDF2-Modern/branches --jq '.[].name'
+gh release view 1.0 --repo gkaragioul/OpenJKDF2-Modern --json name,tagName,isDraft,isPrerelease,url,assets
 ```
 
 Expected: public, default `main`, only `main`, exact tag `1.0`, non-draft/non-prerelease, ZIP and checksum assets.

@@ -54,4 +54,4 @@ preserved before removing the package directory.
 
 See `LICENSING.md`, `THIRD-PARTY-NOTICES.md`, and the `Licenses` directory for
 source and third-party terms. The matching tagged source is available at
-https://github.com/gkaragioul/OpenJKDF2-AMD-Enhanced/tree/1.0.
+https://github.com/gkaragioul/OpenJKDF2-Modern/tree/1.0.

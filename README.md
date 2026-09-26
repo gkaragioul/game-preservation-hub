@@ -29,7 +29,7 @@ Recovery, native ports, and compatibility work. Each project adds evidence to a 
 <td width="50%" valign="top">
 <a href="projects/world-war-3/"><img src="projects/world-war-3/assets/project-cover.jpg" alt="World War 3" width="480" /></a>
 <h3><a href="projects/world-war-3/">World War 3</a></h3>
-<p>Offline preservation · Research summary on a Windows client after its online services disappeared; the source is private.</p>
+<p>Offline preservation · Research summary on a Windows client after its online services disappeared; the source is not published.</p>
 </td>
 </tr>
 <tr>
@@ -67,7 +67,7 @@ Recovery, native ports, and compatibility work. Each project adds evidence to a 
 
 </table>
 
-Project documentation, requirements, and updates live inside each project folder. The older standalone repositories are archived and kept for reference: [Spiral Warrior](https://github.com/gkaragioul/spiral-warrior-offline-preservation), [Heretic II Apple Silicon](https://github.com/gkaragioul/Heretic2_Apple_Silicon), [Theme Hospital Apple Silicon](https://github.com/gkaragioul/ThemeHospital_Apple_Silicon), [Oni Modern](https://github.com/gkaragioul/OniModern) and [OpenJKDF2 Enhanced](https://github.com/gkaragioul/OpenJKDF2-Modern). The World War 3 and Condemned 2 folders are research summaries; their source is private.
+Project documentation, requirements, and updates live inside each project folder. The older standalone repositories are archived and kept for reference: [Spiral Warrior](https://github.com/gkaragioul/spiral-warrior-offline-preservation), [Heretic II Apple Silicon](https://github.com/gkaragioul/Heretic2_Apple_Silicon), [Theme Hospital Apple Silicon](https://github.com/gkaragioul/ThemeHospital_Apple_Silicon), [Oni Modern](https://github.com/gkaragioul/OniModern) and [OpenJKDF2 Enhanced](https://github.com/gkaragioul/OpenJKDF2-Modern). The World War 3 and Condemned 2 folders are research summaries; their source is not published.
 
 ## Your findings can help the next player.
 
@@ -88,6 +88,6 @@ Rights holders and add-on authors who believe something here should not be publi
 
 ## License and disclaimer
 
-The hub's own files (tools, compatibility data and documentation) are released under the [MIT License](LICENSE). Each project folder carries its own licence and notices, which cover only that project's own code and documentation, never the games, their assets or their trademarks.
+The hub's own files (tools, compatibility data and documentation) are released under the [MIT License](LICENSE) (scope: [LICENSE-SCOPE.md](LICENSE-SCOPE.md)). Each project folder carries its own licence and notices, which cover only that project's own code and documentation, never the games, their assets or their trademarks.
 
 Everything here is provided **as is, without warranty of any kind**. You use it at your own risk, and you are responsible for owning the games you use it with, for complying with the licences involved and with the laws where you live, and for any loss or damage that results.
